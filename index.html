@@ -1,13 +1,903 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CineVault — Discover. Save. Track.</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%23f59e0b%22/><path fill=%22%230b0e14%22 d=%22M22 25h56a5 5 0 0 1 5 5v40a5 5 0 0 1-5 5H22a5 5 0 0 1-5-5V30a5 5 0 0 1 5-5zm5 8a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3H27zm0 18a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3H27zm40-18a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3h-6zm0 18a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3h-6zM44 33h12v34H44V33z%22/></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app" class="cineby-app">
+
+    <!-- Top Header / Navbar -->
+    <header class="cineby-header" :class="{ 'is-scrolled': isScrolled }">
+      <div class="container header-container">
+        <!-- Brand on Left -->
+        <div class="brand" @click="setActiveTab('discover')">
+          <div class="brand-logo">
+            <i class="fa-solid fa-film"></i>
+          </div>
+          <span class="brand-name">CineVault</span>
+        </div>
+
+        <!-- Right Side: Links, Search & Theme Toggle -->
+        <div class="header-right-side">
+          <nav class="desktop-nav">
+            <button 
+              class="header-nav-btn" 
+              :class="{ active: activeTab === 'discover' && !activeSearchQuery }" 
+              @click="setActiveTab('discover')"
+            >
+              <i class="fa-solid fa-house"></i>
+              <span>Home</span>
+            </button>
+            <button 
+              class="header-nav-btn" 
+              :class="{ active: activeTab === 'watchlist' }" 
+              @click="setActiveTab('watchlist')"
+            >
+              <i class="fa-solid fa-bookmark"></i>
+              <span>Watchlist</span>
+              <span v-if="watchlistCount > 0" class="nav-counter">{{ watchlistCount }}</span>
+            </button>
+            <button 
+              class="header-nav-btn" 
+              :class="{ active: activeTab === 'favorites' }" 
+              @click="setActiveTab('favorites')"
+            >
+              <i class="fa-solid fa-heart"></i>
+              <span>Favorites</span>
+              <span v-if="favoriteCount > 0" class="nav-counter fav">{{ favoriteCount }}</span>
+            </button>
+          </nav>
+
+          <div class="header-tools">
+            <button 
+              class="header-tool-btn" 
+              @click="openSearchModal" 
+              title="Search (Click or Press /)" 
+              aria-label="Search"
+            >
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <button 
+              class="theme-toggle-btn" 
+              @click="toggleDarkMode" 
+              :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+              aria-label="Toggle Theme"
+            >
+              <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
+
+            <button 
+              class="mobile-menu-btn" 
+              @click="toggleMobileMenu" 
+              :aria-expanded="isMobileMenuOpen"
+              aria-label="Toggle Navigation Menu"
+              :title="isMobileMenuOpen ? 'Close Menu' : 'Open Menu'"
+            >
+              <i class="fa-solid" :class="isMobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Full-Screen Mobile Navigation Drawer Overlay -->
+    <transition name="mobile-menu-slide">
+      <div 
+        v-if="isMobileMenuOpen" 
+        class="mobile-nav-backdrop" 
+        @click="closeMobileMenu"
+      >
+        <div class="mobile-nav-drawer" @click.stop>
+          <div class="mobile-drawer-header">
+            <div class="brand" @click="setActiveTab('discover')">
+              <div class="brand-logo">
+                <i class="fa-solid fa-film"></i>
+              </div>
+              <span class="brand-name">CineVault</span>
+            </div>
+            <button class="mobile-drawer-close-btn" @click="closeMobileMenu" aria-label="Close Menu">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="mobile-nav-list">
+            <button 
+              class="mobile-nav-link" 
+              :class="{ active: activeTab === 'discover' && !activeSearchQuery }"
+              @click="setActiveTab('discover')"
+            >
+              <i class="fa-solid fa-house"></i>
+              <span>Home</span>
+            </button>
+
+            <button 
+              class="mobile-nav-link" 
+              :class="{ active: activeTab === 'watchlist' }"
+              @click="setActiveTab('watchlist')"
+            >
+              <i class="fa-solid fa-bookmark"></i>
+              <span>Watchlist</span>
+              <span v-if="watchlistCount > 0" class="nav-counter">{{ watchlistCount }}</span>
+            </button>
+
+            <button 
+              class="mobile-nav-link" 
+              :class="{ active: activeTab === 'favorites' }"
+              @click="setActiveTab('favorites')"
+            >
+              <i class="fa-solid fa-heart"></i>
+              <span>Favorites</span>
+              <span v-if="favoriteCount > 0" class="nav-counter fav">{{ favoriteCount }}</span>
+            </button>
+
+            <button 
+              class="mobile-nav-link" 
+              @click="openSearchModal"
+            >
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span>Search Movies</span>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Main Content Area -->
+    <main class="cineby-main">
+
+      <!-- Cineby Full-Bleed Hero Carousel (Discover mode) -->
+      <section 
+        v-if="activeTab === 'discover' && !activeSearchQuery && currentHeroMovie && !loading && !error"
+        class="hero-swiper"
+        @mouseenter="stopHeroAutoplay"
+        @mouseleave="startHeroAutoplay"
+      >
+        <div 
+          class="hero-backdrop-slide"
+          :style="{ backgroundImage: `url('${getBackdropUrl(currentHeroMovie.backdrop_path)}')` }"
+        >
+          <div class="hero-vignette"></div>
+          <div class="hero-top-scrim"></div>
+          <div class="hero-corner-glow"></div>
+        </div>
+
+        <div class="hero-slide-content container">
+          <div class="hero-info-wrapper">
+            <h1 class="hero-movie-title">{{ currentHeroMovie.title }}</h1>
+            
+            <div class="hero-meta-row">
+              <span class="hero-rating-badge">
+                <i class="fa-solid fa-star"></i> {{ formatRating(currentHeroMovie.vote_average) }}
+              </span>
+              <span class="meta-dot">·</span>
+              <span class="hero-year">{{ formatYear(currentHeroMovie.release_date) }}</span>
+              <template v-for="(gName, idx) in getGenreNames(currentHeroMovie).slice(0, 3)" :key="gName">
+                <span class="meta-dot">·</span>
+                <span class="hero-genre-text">{{ gName }}</span>
+              </template>
+              <span class="meta-dot">·</span>
+              <span class="hero-quality-badge">HD</span>
+            </div>
+
+            <p class="hero-synopsis">{{ currentHeroMovie.overview }}</p>
+
+            <div class="hero-cta-buttons">
+              <button class="btn-cineby-play" @click="openMovieDetails(currentHeroMovie)">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>View Details & Trailer</span>
+              </button>
+
+              <button 
+                class="btn-cineby-info" 
+                :class="{ active: isInWatchlist(currentHeroMovie) }"
+                @click="toggleWatchlist(currentHeroMovie)"
+              >
+                <i :class="isInWatchlist(currentHeroMovie) ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
+                <span>{{ isInWatchlist(currentHeroMovie) ? 'In Watchlist' : 'Add to Watchlist' }}</span>
+              </button>
+
+              <button 
+                class="btn-cineby-icon fav" 
+                :class="{ active: isFavorite(currentHeroMovie) }"
+                @click="toggleFavorite(currentHeroMovie)"
+                :title="isFavorite(currentHeroMovie) ? 'Remove Favorite' : 'Add Favorite'"
+              >
+                <i :class="isFavorite(currentHeroMovie) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide Controls -->
+        <div class="hero-carousel-nav" v-if="heroMovies.length > 1">
+          <button class="hero-nav-arrow prev" @click="prevHeroSlide" aria-label="Previous slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="hero-pagination-dots">
+            <button 
+              v-for="(hMovie, idx) in heroMovies" 
+              :key="hMovie.id"
+              class="hero-dot"
+              :class="{ active: heroSlideIndex === idx }"
+              @click="setHeroSlide(idx)"
+              :aria-label="'Go to slide ' + (idx + 1)"
+            ></button>
+          </div>
+          <button class="hero-nav-arrow next" @click="nextHeroSlide" aria-label="Next slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <div class="container content-wrapper">
+
+        <!-- Active Search Banner -->
+        <div class="cineby-search-banner" v-if="activeSearchQuery">
+          <div class="banner-text">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search results for <strong>"{{ activeSearchQuery }}"</strong> ({{ displayedMovies.length }} found)</span>
+          </div>
+          <button class="btn-clear-search" @click="clearSearch">
+            <i class="fa-solid fa-xmark"></i> Clear Search
+          </button>
+        </div>
+
+        <!-- Watchlist Header -->
+        <section v-if="activeTab === 'watchlist'" class="page-title-banner">
+          <div class="title-left">
+            <h1 class="page-heading"><i class="fa-solid fa-bookmark"></i> My Watchlist</h1>
+            <p class="page-subheading">{{ watchlistCount }} {{ watchlistCount === 1 ? 'movie' : 'movies' }} in your personal queue</p>
+          </div>
+          <div class="status-filter-pills">
+            <button 
+              class="status-pill" 
+              :class="{ active: watchlistFilter === 'all' }"
+              @click="watchlistFilter = 'all'"
+            >
+              <i class="fa-solid fa-layer-group"></i>
+              <span>All ({{ watchlistCount }})</span>
+            </button>
+            <button 
+              class="status-pill" 
+              :class="{ active: watchlistFilter === 'plan_to_watch' }"
+              @click="watchlistFilter = 'plan_to_watch'"
+            >
+              <i class="fa-regular fa-clock"></i>
+              <span>Plan ({{ planToWatchCount }})</span>
+            </button>
+            <button 
+              class="status-pill" 
+              :class="{ active: watchlistFilter === 'watching' }"
+              @click="watchlistFilter = 'watching'"
+            >
+              <i class="fa-solid fa-play"></i>
+              <span>Watching ({{ watchingCount }})</span>
+            </button>
+            <button 
+              class="status-pill" 
+              :class="{ active: watchlistFilter === 'completed' }"
+              @click="watchlistFilter = 'completed'"
+            >
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Completed ({{ watchedCount }})</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Favorites Header -->
+        <section v-if="activeTab === 'favorites'" class="page-title-banner">
+          <div class="title-left">
+            <h1 class="page-heading"><i class="fa-solid fa-heart"></i> Favorite Movies</h1>
+            <p class="page-subheading">{{ favoriteCount }} {{ favoriteCount === 1 ? 'movie' : 'movies' }} marked as all-time favorites</p>
+          </div>
+        </section>
+
+        <!-- Discover Controls (Category Strip & Filter Dropdowns) -->
+        <section v-if="activeTab === 'discover' && !activeSearchQuery" class="cineby-filter-section">
+          
+          <div class="filter-top-bar">
+            <!-- Categories -->
+            <div class="category-pills-row">
+              <button 
+                v-for="cat in categories" 
+                :key="cat.id"
+                class="category-btn"
+                :class="{ active: currentCategory === cat.id }"
+                @click="setCategory(cat.id)"
+              >
+                <i :class="cat.icon"></i>
+                <span>{{ cat.label }}</span>
+              </button>
+            </div>
+
+            <!-- Custom Dropdowns: Genre, Rating, and Sort -->
+            <div class="dropdowns-group">
+              
+              <!-- Custom Genre Dropdown -->
+              <div class="custom-dropdown-container" :class="{ open: activeDropdown === 'genre' }">
+                <button class="dropdown-trigger-pill" @click="toggleDropdown('genre')">
+                  <i class="fa-solid fa-masks-theater dropdown-pill-icon"></i>
+                  <span class="dropdown-pill-text">{{ selectedGenreName }}</span>
+                  <i class="fa-solid fa-chevron-down dropdown-chevron"></i>
+                </button>
+
+                <transition name="dropdown-pop">
+                  <div v-if="activeDropdown === 'genre'" class="dropdown-menu-card scrollable">
+                    <div 
+                      class="dropdown-option-item" 
+                      :class="{ active: selectedGenre === null }"
+                      @click="selectGenreOption(null)"
+                    >
+                      <span>All Genres</span>
+                      <i v-if="selectedGenre === null" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div 
+                      v-for="genre in genres" 
+                      :key="genre.id"
+                      class="dropdown-option-item"
+                      :class="{ active: selectedGenre === genre.id }"
+                      @click="selectGenreOption(genre.id)"
+                    >
+                      <span>{{ genre.name }}</span>
+                      <i v-if="selectedGenre === genre.id" class="fa-solid fa-check option-check"></i>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+
+              <!-- Custom Rating Dropdown -->
+              <div class="custom-dropdown-container" :class="{ open: activeDropdown === 'rating' }">
+                <button class="dropdown-trigger-pill" @click="toggleDropdown('rating')">
+                  <i class="fa-solid fa-star dropdown-pill-icon" style="color: var(--color-star);"></i>
+                  <span class="dropdown-pill-text">{{ selectedRatingLabel }}</span>
+                  <i class="fa-solid fa-chevron-down dropdown-chevron"></i>
+                </button>
+
+                <transition name="dropdown-pop">
+                  <div v-if="activeDropdown === 'rating'" class="dropdown-menu-card">
+                    <div class="dropdown-option-item" :class="{ active: minRating === 0 }" @click="selectRatingOption(0)">
+                      <span>All Ratings</span>
+                      <i v-if="minRating === 0" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div class="dropdown-option-item" :class="{ active: minRating === 6 }" @click="selectRatingOption(6)">
+                      <span>6.0+ ★ Good</span>
+                      <i v-if="minRating === 6" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div class="dropdown-option-item" :class="{ active: minRating === 7 }" @click="selectRatingOption(7)">
+                      <span>7.0+ ★ Great</span>
+                      <i v-if="minRating === 7" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div class="dropdown-option-item" :class="{ active: minRating === 8 }" @click="selectRatingOption(8)">
+                      <span>8.0+ ★ Masterpiece</span>
+                      <i v-if="minRating === 8" class="fa-solid fa-check option-check"></i>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+
+              <!-- Custom Sort Dropdown -->
+              <div class="custom-dropdown-container" :class="{ open: activeDropdown === 'sort' }">
+                <button class="dropdown-trigger-pill" @click="toggleDropdown('sort')">
+                  <i class="fa-solid fa-arrow-down-wide-short dropdown-pill-icon"></i>
+                  <span class="dropdown-pill-text">{{ selectedSortLabel }}</span>
+                  <i class="fa-solid fa-chevron-down dropdown-chevron"></i>
+                </button>
+
+                <transition name="dropdown-pop">
+                  <div v-if="activeDropdown === 'sort'" class="dropdown-menu-card">
+                    <div class="dropdown-option-item" :class="{ active: sortBy === 'popularity.desc' }" @click="selectSortOption('popularity.desc')">
+                      <span><i class="fa-solid fa-fire option-icon"></i> Most Popular</span>
+                      <i v-if="sortBy === 'popularity.desc'" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div class="dropdown-option-item" :class="{ active: sortBy === 'vote_average.desc' }" @click="selectSortOption('vote_average.desc')">
+                      <span><i class="fa-solid fa-star option-icon" style="color: var(--color-star);"></i> Highest Rated</span>
+                      <i v-if="sortBy === 'vote_average.desc'" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div class="dropdown-option-item" :class="{ active: sortBy === 'release_date.desc' }" @click="selectSortOption('release_date.desc')">
+                      <span><i class="fa-solid fa-calendar-days option-icon"></i> Newest Releases</span>
+                      <i v-if="sortBy === 'release_date.desc'" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div class="dropdown-option-item" :class="{ active: sortBy === 'title.asc' }" @click="selectSortOption('title.asc')">
+                      <span><i class="fa-solid fa-arrow-down-a-z option-icon"></i> Alphabetical (A-Z)</span>
+                      <i v-if="sortBy === 'title.asc'" class="fa-solid fa-check option-check"></i>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Main Movie Grid Section -->
+        <section class="cineby-section">
+          <div class="section-heading-row">
+            <h2 class="section-title-cineby">
+              <span class="title-icon">
+                <i :class="activeTab === 'discover' ? 'fa-solid fa-compass' : (activeTab === 'watchlist' ? 'fa-solid fa-bookmark' : 'fa-solid fa-heart')"></i>
+              </span>
+              {{ currentSectionTitle }}
+            </h2>
+            <span class="section-count-badge">
+              {{ displayedMovies.length }} {{ displayedMovies.length === 1 ? 'Title' : 'Titles' }}
+            </span>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="loading" class="cineby-state-box">
+            <div class="cineby-spinner"></div>
+            <h3>Loading CineVault Library...</h3>
+            <p>Fetching movies from TMDB</p>
+          </div>
+
+          <!-- Error State -->
+          <div v-else-if="error" class="cineby-state-box error">
+            <i class="fa-solid fa-triangle-exclamation state-icon"></i>
+            <h3>Connection Issue</h3>
+            <p>{{ error }}</p>
+            <button class="btn-cineby-play" style="margin-top: 1rem;" @click="fetchMovies">
+              <i class="fa-solid fa-rotate-right"></i> Try Again
+            </button>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="displayedMovies.length === 0" class="cineby-state-box">
+            <i class="fa-solid fa-film state-icon"></i>
+            <h3 v-if="activeTab === 'watchlist'">Your Watchlist is Empty</h3>
+            <h3 v-else-if="activeTab === 'favorites'">No Favorite Movies Yet</h3>
+            <h3 v-else>No Movies Found</h3>
+            <p v-if="activeTab === 'watchlist'">Browse movies and click "+ Watchlist" to track what you want to watch.</p>
+            <p v-else-if="activeTab === 'favorites'">Click the heart icon on any movie to add it to your favorites collection.</p>
+            <p v-else>No movies matched your current filters. Try selecting a different genre or clearing your search.</p>
+            <button v-if="activeTab !== 'discover' || activeSearchQuery" class="btn-cineby-info" style="margin-top: 1rem;" @click="setActiveTab('discover'); clearSearch();">
+              <i class="fa-solid fa-compass"></i> Discover Movies
+            </button>
+          </div>
+
+          <!-- Movies Grid -->
+          <div v-else class="cineby-grid">
+            <div 
+              v-for="movie in displayedMovies" 
+              :key="movie.id"
+              class="cineby-card"
+              @click="openMovieDetails(movie)"
+            >
+              <div class="card-poster-wrap">
+                <img 
+                  v-if="movie.poster_path" 
+                  :src="getPosterUrl(movie.poster_path, 'w342')" 
+                  :alt="movie.title" 
+                  class="card-poster-img"
+                  loading="lazy" 
+                />
+                <div v-else class="card-no-poster">
+                  <i class="fa-solid fa-film"></i>
+                </div>
+
+                <div class="card-hover-overlay">
+                  <button class="card-action-trigger" @click.stop="openMovieDetails(movie)" title="View Details & Trailer">
+                    <i class="fa-solid fa-circle-info"></i>
+                  </button>
+                  <button 
+                    class="card-action-trigger" 
+                    :class="{ inlist: isInWatchlist(movie) }"
+                    @click.stop="toggleWatchlist(movie)" 
+                    :title="isInWatchlist(movie) ? 'Remove from Watchlist' : 'Add to Watchlist'"
+                  >
+                    <i :class="isInWatchlist(movie) ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
+                  </button>
+                </div>
+
+                <span class="card-hd-badge">HD</span>
+
+                <button 
+                  class="card-fav-action" 
+                  :class="{ favorited: isFavorite(movie) }"
+                  @click.stop="toggleFavorite(movie)"
+                  :title="isFavorite(movie) ? 'Remove Favorite' : 'Add Favorite'"
+                >
+                  <i :class="isFavorite(movie) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+                </button>
+
+                <!-- Interactive status pill for watchlist items -->
+                <button 
+                  v-if="activeTab === 'watchlist'" 
+                  class="card-status-flag interactive"
+                  :class="getWatchStatus(movie.id)"
+                  @click.stop="cycleWatchStatus(movie, $event)"
+                  :title="'Status: ' + getWatchStatusLabel(getWatchStatus(movie.id)) + ' (Click to cycle)'"
+                >
+                  <i :class="getWatchStatus(movie.id) === 'completed' ? 'fa-solid fa-circle-check' : (getWatchStatus(movie.id) === 'watching' ? 'fa-solid fa-play' : 'fa-regular fa-clock')"></i>
+                  <span>{{ getWatchStatusLabel(getWatchStatus(movie.id)) }}</span>
+                  <i class="fa-solid fa-rotate card-cycle-icon"></i>
+                </button>
+              </div>
+
+              <div class="card-details">
+                <h3 class="card-movie-name" :title="movie.title">{{ movie.title }}</h3>
+                <div class="card-sub-meta">
+                  <span class="card-rating"><i class="fa-solid fa-star"></i> {{ formatRating(movie.vote_average) }}</span>
+                  <span class="meta-dot">·</span>
+                  <span>{{ formatYear(movie.release_date) }}</span>
+                  <span class="meta-dot">·</span>
+                  <span class="card-genres-text">{{ getGenreNames(movie).slice(0, 1)[0] || 'Movie' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Centered Cineby-Style Search Modal Overlay -->
+    <transition name="cineby-modal-fade">
+      <div 
+        v-if="isSearchModalOpen" 
+        class="search-modal-backdrop" 
+        @click.self="closeSearchModal"
+      >
+        <div class="search-modal-card">
+          <!-- Header -->
+          <div class="search-modal-header">
+            <h3 class="search-modal-title">Search</h3>
+            <div class="search-modal-header-actions">
+              <!-- Search Type Dropdown -->
+              <div class="custom-dropdown-container" :class="{ open: activeDropdown === 'searchType' }">
+                <button class="search-type-badge" @click="toggleDropdown('searchType')">
+                  <span>{{ selectedSearchTypeLabel }}</span>
+                  <i class="fa-solid fa-chevron-down dropdown-chevron"></i>
+                </button>
+
+                <transition name="dropdown-pop">
+                  <div v-if="activeDropdown === 'searchType'" class="dropdown-menu-card search-type-menu">
+                    <div 
+                      class="dropdown-option-item" 
+                      :class="{ active: searchType === 'all' }" 
+                      @click="selectSearchTypeOption('all')"
+                    >
+                      <span>Movies & TV Shows</span>
+                      <i v-if="searchType === 'all'" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div 
+                      class="dropdown-option-item" 
+                      :class="{ active: searchType === 'movies' }" 
+                      @click="selectSearchTypeOption('movies')"
+                    >
+                      <span>Movies Only</span>
+                      <i v-if="searchType === 'movies'" class="fa-solid fa-check option-check"></i>
+                    </div>
+                    <div 
+                      class="dropdown-option-item" 
+                      :class="{ active: searchType === 'tv' }" 
+                      @click="selectSearchTypeOption('tv')"
+                    >
+                      <span>TV Shows Only</span>
+                      <i v-if="searchType === 'tv'" class="fa-solid fa-check option-check"></i>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+
+              <button class="search-modal-close" @click="closeSearchModal" aria-label="Close search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Input -->
+          <form class="search-modal-form" @submit.prevent="submitSearch()">
+            <i class="fa-solid fa-magnifying-glass search-modal-input-icon"></i>
+            <input 
+              ref="searchModalInput"
+              type="text" 
+              class="search-modal-input" 
+              placeholder="Type here to search..." 
+              v-model="searchQuery" 
+              @keyup.esc="closeSearchModal"
+            />
+            <button 
+              type="button" 
+              v-if="searchQuery" 
+              class="search-modal-clear-btn" 
+              @click="searchQuery = ''"
+              title="Clear input"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </form>
+
+          <!-- Recent Searches -->
+          <div class="search-recent-section" v-if="recentSearches.length > 0">
+            <div class="search-recent-top">
+              <span class="recent-label">RECENT</span>
+              <button class="recent-clear-btn" @click="clearRecentSearches">Clear</button>
+            </div>
+            <div class="search-recent-list">
+              <div 
+                v-for="(item, idx) in recentSearches" 
+                :key="idx"
+                class="recent-item"
+                @click="submitSearch(item)"
+              >
+                <i class="fa-regular fa-clock recent-clock-icon"></i>
+                <span class="recent-text">{{ item }}</span>
+                <button 
+                  class="recent-remove-btn" 
+                  @click.stop="removeRecentSearch(idx)" 
+                  title="Remove"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Cineby Movie Details & Trailer Player Modal -->
+    <transition name="cineby-modal-fade">
+      <div 
+        v-if="selectedMovie" 
+        class="modal-backdrop" 
+        @click.self="closeModal"
+      >
+        <div class="modal-dialog">
+          <button class="modal-close-trigger" @click="closeModal" aria-label="Close modal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+
+          <!-- Trailer Player View or Backdrop Hero -->
+          <div class="modal-video-hero" :style="!activeTrailer ? { backgroundImage: `url('${getBackdropUrl(selectedMovie.backdrop_path)}')` } : {}">
+            <div v-if="activeTrailer" class="video-iframe-wrapper">
+              <iframe 
+                :src="`https://www.youtube.com/embed/${activeTrailer}?autoplay=${isTrailerPlaying ? 1 : 0}&rel=0`"
+                title="Movie Trailer"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div v-else class="no-trailer-scrim">
+              <div class="scrim-overlay"></div>
+            </div>
+          </div>
+
+          <!-- Modal Body Content -->
+          <div class="modal-dialog-body">
+            <div class="modal-columns-layout">
+              
+              <!-- Left Column: Poster & Actions -->
+              <div class="modal-col-left">
+                <div class="modal-poster-frame">
+                  <img 
+                    v-if="selectedMovie.poster_path" 
+                    :src="getPosterUrl(selectedMovie.poster_path, 'w500')" 
+                    :alt="selectedMovie.title"
+                    class="modal-poster-img"
+                  />
+                  <div v-else class="modal-poster-fallback">
+                    <i class="fa-solid fa-film"></i>
+                  </div>
+                </div>
+
+                <div class="modal-action-buttons">
+                  <button 
+                    class="btn-modal-action" 
+                    :class="{ active: isInWatchlist(selectedMovie) }"
+                    @click="toggleWatchlist(selectedMovie)"
+                  >
+                    <i :class="isInWatchlist(selectedMovie) ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
+                    <span>{{ isInWatchlist(selectedMovie) ? 'In Watchlist' : 'Add to Watchlist' }}</span>
+                  </button>
+
+                  <button 
+                    class="btn-modal-action fav" 
+                    :class="{ active: isFavorite(selectedMovie) }"
+                    @click="toggleFavorite(selectedMovie)"
+                  >
+                    <i :class="isFavorite(selectedMovie) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+                    <span>{{ isFavorite(selectedMovie) ? 'Favorited' : 'Favorite' }}</span>
+                  </button>
+
+                  <!-- Watch Status Segmented Button Group -->
+                  <div v-if="isInWatchlist(selectedMovie)" class="modal-status-segmented-wrap">
+                    <div class="status-label-row">
+                      <span class="status-label"><i class="fa-solid fa-bars-progress"></i> Status:</span>
+                      <span class="status-current-badge" :class="getWatchStatus(selectedMovie.id)">
+                        {{ getWatchStatusLabel(getWatchStatus(selectedMovie.id)) }}
+                      </span>
+                    </div>
+                    <div class="modal-status-pills-row">
+                      <button 
+                        class="modal-status-pill-btn" 
+                        :class="{ active: getWatchStatus(selectedMovie.id) === 'plan_to_watch' }"
+                        @click="setWatchStatus(selectedMovie.id, 'plan_to_watch')"
+                        title="Plan to Watch"
+                        aria-label="Plan to Watch"
+                      >
+                        <i class="fa-regular fa-clock"></i>
+                        <span class="status-btn-text">Plan</span>
+                      </button>
+                      <button 
+                        class="modal-status-pill-btn watching" 
+                        :class="{ active: getWatchStatus(selectedMovie.id) === 'watching' }"
+                        @click="setWatchStatus(selectedMovie.id, 'watching')"
+                        title="Watching"
+                        aria-label="Watching"
+                      >
+                        <i class="fa-solid fa-play"></i>
+                        <span class="status-btn-text">Watching</span>
+                      </button>
+                      <button 
+                        class="modal-status-pill-btn completed" 
+                        :class="{ active: getWatchStatus(selectedMovie.id) === 'completed' }"
+                        @click="setWatchStatus(selectedMovie.id, 'completed')"
+                        title="Completed"
+                        aria-label="Completed"
+                      >
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span class="status-btn-text">Watched</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Details, Overview & Cast -->
+              <div class="modal-col-right">
+                <div class="modal-title-header">
+                  <h2 class="modal-movie-title">{{ selectedMovie.title }}</h2>
+                  <p v-if="selectedMovie.tagline" class="modal-tagline">"{{ selectedMovie.tagline }}"</p>
+                </div>
+
+                <!-- Meta Specs -->
+                <div class="modal-specs-bar">
+                  <span class="spec-rating"><i class="fa-solid fa-star"></i> {{ formatRating(selectedMovie.vote_average) }} / 10</span>
+                  <span class="meta-dot">·</span>
+                  <span>{{ formatYear(selectedMovie.release_date) }}</span>
+                  <span class="meta-dot" v-if="selectedMovie.runtime">·</span>
+                  <span v-if="selectedMovie.runtime">{{ selectedMovie.runtime }} min</span>
+                  <span class="meta-dot">·</span>
+                  <span class="hero-quality-badge">HD</span>
+                </div>
+
+                <!-- Genres -->
+                <div class="modal-genre-pills">
+                  <span 
+                    v-for="genre in getGenreNames(selectedMovie)" 
+                    :key="genre"
+                    class="modal-genre-tag"
+                  >
+                    {{ genre }}
+                  </span>
+                </div>
+
+                <!-- Synopsis -->
+                <div class="modal-section-block">
+                  <h4 class="block-title">Overview</h4>
+                  <p class="modal-overview-text">{{ selectedMovie.overview || 'No synopsis available for this title.' }}</p>
+                </div>
+
+                <!-- Meta Info Grid -->
+                <div class="modal-meta-grid">
+                  <div class="meta-item">
+                    <span class="meta-k">Director:</span>
+                    <span class="meta-v">{{ selectedMovieDirector }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-k">Release Date:</span>
+                    <span class="meta-v">{{ formatDate(selectedMovie.release_date) }}</span>
+                  </div>
+                  <div class="meta-item" v-if="selectedMovie.vote_count">
+                    <span class="meta-k">Votes:</span>
+                    <span class="meta-v">{{ selectedMovie.vote_count.toLocaleString() }}</span>
+                  </div>
+                </div>
+
+                <!-- Top Cast -->
+                <div class="modal-section-block" v-if="selectedMovieCast.length > 0">
+                  <h4 class="block-title">Top Cast</h4>
+                  <div class="cast-cards-row">
+                    <div 
+                      v-for="person in selectedMovieCast" 
+                      :key="person.id"
+                      class="cast-member-card"
+                    >
+                      <img 
+                        v-if="person.profile_path" 
+                        :src="getPosterUrl(person.profile_path, 'w185')" 
+                        :alt="person.name" 
+                        class="cast-avatar"
+                        loading="lazy" 
+                      />
+                      <div v-else class="cast-avatar-fallback">
+                        <i class="fa-solid fa-user"></i>
+                      </div>
+                      <span class="cast-name" :title="person.name">{{ person.name }}</span>
+                      <span class="cast-character" :title="person.character">{{ person.character }}</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Compact Minimal Toast Notifier -->
+    <div class="toast-wrapper">
+      <transition name="toast-fade">
+        <div 
+          v-if="toast.show" 
+          class="cineby-toast-compact" 
+          :class="toast.type"
+          @click="dismissToast"
+        >
+          <i class="fa-solid toast-icon" :class="{
+            'fa-circle-check': toast.type === 'success',
+            'fa-heart': toast.type === 'favorite',
+            'fa-trash-can': toast.type === 'remove',
+            'fa-circle-info': toast.type === 'info'
+          }"></i>
+          <span class="toast-text">{{ toast.message }}</span>
+        </div>
+      </transition>
+    </div>
+
+    <!-- Footer -->
+    <footer class="cineby-footer">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <div class="brand" @click="setActiveTab('discover')">
+            <div class="brand-logo">
+              <i class="fa-solid fa-film"></i>
+            </div>
+            <span class="brand-name">CineVault</span>
+          </div>
+          <p class="footer-desc">Your ultimate cinematic discovery, watchlist, and tracking hub.</p>
+        </div>
+
+        <div class="footer-center">
+          <p class="footer-credits-label">VUE.JS 3 ACTIVITY by</p>
+          <div class="footer-names-row">
+            <span class="author-name">Aviso, John Carl</span>
+            <span class="author-dot">·</span>
+            <span class="author-name">Baydal, Lourden</span>
+            <span class="author-dot">·</span>
+            <span class="author-name">Patigas, John Paul</span>
+          </div>
+        </div>
+
+        <div class="footer-right">
+          <p class="tmdb-notice">Data provided by TMDB API.</p>
+          <p class="footer-copy">© 2026 CineVault</p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
 </html>
