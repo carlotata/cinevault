@@ -89,11 +89,13 @@ This project was developed as a collaborative group submission by:
 
 ```text
 cinevault/
-├── index.html          # Semantic HTML5 template, Vue root mounting point, SVG/FA icons, modals
-├── app.js              # Vue 3 application logic, state, methods, computed properties, TMDB API services
-├── style.css           # Complete design system, theme variables, glassmorphism, responsive breakpoints
-├── package.json        # Project metadata, scripts, dependencies (Vue 3, Vite)
-├── vite.config.js      # Vite build and plugin configurations
+├── frontend/           # Vue 3 + Vite frontend
+│   ├── index.html      # Semantic HTML5 template, Vue root mounting point, SVG/FA icons, modals
+│   ├── app.js          # Vue 3 application logic, state, methods, computed properties, TMDB API services
+│   ├── style.css       # Complete design system, theme variables, glassmorphism, responsive breakpoints
+│   ├── package.json    # Project metadata, scripts, dependencies (Vue 3, Vite)
+│   └── vite.config.js  # Vite build and plugin configurations
+├── backend/            # Laravel API backend
 ├── .gitignore          # Version control ignore definitions
 └── README.md           # Project documentation and assignment walkthrough
 ```
@@ -110,7 +112,7 @@ cinevault/
 
 1. **Clone or Navigate to the Project Directory**:
    ```bash
-   cd cinevault
+   cd cinevault/frontend
    ```
 
 2. **Install Dependencies**:
