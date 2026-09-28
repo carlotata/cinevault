@@ -1,8 +1,9 @@
 const { createApp } = Vue;
 
-const DEFAULT_TMDB_API_KEY = '4e44d9029b1270a757cddc766a1bcb63';
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const API_BASE = '/api';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p';
+const TOKEN_KEY = 'cinevault_token';
+const DEFAULT_RECENT_SEARCHES = ['vincenzo', 'inception', 'interstellar'];
 
 const app = createApp({
   data() {
@@ -44,7 +45,16 @@ const app = createApp({
       searchQuery: '',
       activeSearchQuery: '',
       isSearchModalOpen: false,
-      recentSearches: ['vincenzo', 'inception', 'interstellar'],
+      recentSearches: DEFAULT_RECENT_SEARCHES.map(query => ({ id: null, query })),
+      authToken: null,
+      user: null,
+      isAuthModalOpen: false,
+      authMode: 'login',
+      authMessage: '',
+      authForm: { name: '', email: '', password: '', password_confirmation: '' },
+      authErrors: {},
+      authLoading: false,
+      pendingAction: null,
       watchlist: [],
       favorites: [],
       watchStatusMap: {},
@@ -72,6 +82,14 @@ const app = createApp({
   },
 
   computed: {
+    isLoggedIn() {
+      return !!this.user;
+    },
+
+    userInitial() {
+      return this.user && this.user.name ? this.user.name.trim().charAt(0).toUpperCase() : '?';
+    },
+
     filteredMovies() {
       let result = [...this.movies];
 
@@ -243,30 +261,53 @@ const app = createApp({
   },
 
   methods: {
+    async api(path, { method = 'GET', body } = {}) {
+      const headers = { Accept: 'application/json' };
+      if (body !== undefined) headers['Content-Type'] = 'application/json';
+      if (this.authToken) headers.Authorization = `Bearer ${this.authToken}`;
+
+      const response = await fetch(`${API_BASE}${path}`, {
+        method,
+        headers,
+        body: body !== undefined ? JSON.stringify(body) : undefined
+      });
+
+      let data = null;
+      if (response.status !== 204) {
+        try {
+          data = await response.json();
+        } catch (e) {
+          data = null;
+        }
+      }
+
+      if (!response.ok) {
+        if (response.status === 401 && this.authToken) {
+          this.clearSession();
+          this.showToastNotification('Your session expired. Please sign in again.', 'info');
+        }
+        const error = new Error((data && data.message) || `Request failed (${response.status})`);
+        error.status = response.status;
+        error.data = data;
+        throw error;
+      }
+
+      return data;
+    },
+
     async fetchMovies() {
       this.loading = true;
       this.error = null;
       this.activeSearchQuery = '';
 
-      let endpoint = `/movie/${this.currentCategory}`;
-      if (this.currentCategory === 'trending') {
-        endpoint = '/trending/movie/day';
-      }
-
-      const url = `${TMDB_BASE_URL}${endpoint}?api_key=${DEFAULT_TMDB_API_KEY}&language=en-US&page=1`;
-
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP Error ${response.status}: Failed to retrieve data from TMDB.`);
-        }
-        const data = await response.json();
+        const data = await this.api(`/movies/category/${this.currentCategory}?page=1`);
         this.movies = data.results || [];
         this.heroSlideIndex = 0;
         this.startHeroAutoplay();
       } catch (err) {
-        console.error('TMDB API Error:', err);
-        this.error = 'Something went wrong while loading movies. Please check your network connection.';
+        console.error('Movie API Error:', err);
+        this.error = 'Could not load movies. Make sure the CineVault backend is running and try again.';
       } finally {
         this.loading = false;
       }
@@ -284,17 +325,11 @@ const app = createApp({
       this.activeSearchQuery = query;
       this.activeTab = 'discover';
 
-      const url = `${TMDB_BASE_URL}/search/movie?api_key=${DEFAULT_TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=en-US&page=1&include_adult=false`;
-
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP Error ${response.status}: Search request failed.`);
-        }
-        const data = await response.json();
+        const data = await this.api(`/movies/search?query=${encodeURIComponent(query)}`);
         this.movies = data.results || [];
       } catch (err) {
-        console.error('TMDB Search Error:', err);
+        console.error('Movie Search Error:', err);
         this.error = 'Unable to complete search request. Please try again.';
       } finally {
         this.loading = false;
@@ -330,10 +365,12 @@ const app = createApp({
     },
 
     goHome() {
-      const wasSearch = !!this.activeSearchQuery;
-      const wasDifferentTab = this.activeTab !== 'discover';
-      const wasFiltered = this.selectedGenre !== null || this.minRating !== 0 || this.currentCategory !== 'popular';
-      
+      // Genre, rating and sort filters run in the browser, so only a different list needs a reload.
+      const needsReload = !!this.activeSearchQuery
+        || this.currentCategory !== 'popular'
+        || this.movies.length === 0
+        || !!this.error;
+
       this.activeTab = 'discover';
       this.activeSearchQuery = '';
       this.searchQuery = '';
@@ -346,7 +383,7 @@ const app = createApp({
       this.closeMobileMenu();
       this.closeDropdowns();
       
-      if (wasSearch || wasDifferentTab || wasFiltered || this.movies.length === 0) {
+      if (needsReload) {
         this.fetchMovies();
       }
       
@@ -399,22 +436,42 @@ const app = createApp({
       if (!q) return;
 
       this.searchQuery = q;
-      const filtered = this.recentSearches.filter(s => s.toLowerCase() !== q.toLowerCase());
-      this.recentSearches = [q, ...filtered].slice(0, 6);
+      const filtered = this.recentSearches.filter(s => s.query.toLowerCase() !== q.toLowerCase());
+      this.recentSearches = [{ id: null, query: q }, ...filtered].slice(0, 6);
       this.saveLocalStorage();
+
+      if (this.isLoggedIn) {
+        this.api('/recent-searches', { method: 'POST', body: { query: q } })
+          .then(list => { this.recentSearches = list; })
+          .catch(err => console.warn('Failed to save recent search:', err));
+      }
 
       this.closeSearchModal();
       this.searchMovies();
     },
 
+    async loadRecentSearches() {
+      try {
+        this.recentSearches = await this.api('/recent-searches');
+      } catch (err) {
+        console.warn('Failed to load recent searches:', err);
+      }
+    },
+
     clearRecentSearches() {
       this.recentSearches = [];
       this.saveLocalStorage();
+      if (this.isLoggedIn) {
+        this.api('/recent-searches', { method: 'DELETE' }).catch(() => this.loadRecentSearches());
+      }
     },
 
-    removeRecentSearch(idx) {
-      this.recentSearches.splice(idx, 1);
+    removeRecentSearch(item) {
+      this.recentSearches = this.recentSearches.filter(s => s !== item);
       this.saveLocalStorage();
+      if (this.isLoggedIn && item.id) {
+        this.api(`/recent-searches/${item.id}`, { method: 'DELETE' }).catch(() => this.loadRecentSearches());
+      }
     },
 
     clearSearch() {
@@ -425,15 +482,11 @@ const app = createApp({
     },
 
     async fetchGenres() {
-      const url = `${TMDB_BASE_URL}/genre/movie/list?api_key=${DEFAULT_TMDB_API_KEY}&language=en-US`;
       try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          this.genres = data.genres || [];
-        }
+        const data = await this.api('/genres');
+        this.genres = data.genres || this.genres;
       } catch (err) {
-        console.warn('Failed to load genres from TMDB:', err);
+        console.warn('Failed to load genres:', err);
       }
     },
 
@@ -482,16 +535,11 @@ const app = createApp({
         if (dialog) dialog.scrollTop = 0;
       });
 
-      const url = `${TMDB_BASE_URL}/movie/${movie.id}?api_key=${DEFAULT_TMDB_API_KEY}&language=en-US&append_to_response=credits,videos`;
-
       try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          this.selectedMovie = data;
-          this.movieCredits = data.credits || null;
-          this.movieVideos = (data.videos && data.videos.results) ? data.videos.results : [];
-        }
+        const data = await this.api(`/movies/${movie.id}`);
+        this.selectedMovie = data;
+        this.movieCredits = data.credits || null;
+        this.movieVideos = (data.videos && data.videos.results) ? data.videos.results : [];
       } catch (err) {
         console.warn('Failed to fetch enriched movie details:', err);
       } finally {
@@ -512,24 +560,90 @@ const app = createApp({
       document.body.style.overflow = '';
     },
 
-    addToWatchlist(movie) {
-      if (!this.isInWatchlist(movie)) {
-        this.watchlist.push(movie);
-        if (!this.watchStatusMap[movie.id]) {
-          this.watchStatusMap[movie.id] = 'plan_to_watch';
-        }
-        this.saveLocalStorage();
-        this.showToastNotification(`"${movie.title}" added to your watchlist`, 'success');
+    requireAuth(action, message = 'Sign in to save movies to your account.') {
+      if (this.isLoggedIn) return true;
+      this.pendingAction = action;
+      this.openAuthModal('login', message);
+      return false;
+    },
+
+    moviePayload(movie) {
+      return {
+        id: movie.id,
+        title: movie.title,
+        poster_path: movie.poster_path || null,
+        backdrop_path: movie.backdrop_path || null,
+        overview: movie.overview || null,
+        vote_average: typeof movie.vote_average === 'number' ? movie.vote_average : null,
+        popularity: typeof movie.popularity === 'number' ? movie.popularity : null,
+        release_date: movie.release_date || null,
+        genre_ids: movie.genre_ids || (movie.genres || []).map(g => g.id)
+      };
+    },
+
+    async loadWatchlist() {
+      const { data } = await this.api('/watchlist');
+      this.watchlist = data;
+      this.watchStatusMap = Object.fromEntries(data.map(m => [m.id, m.status]));
+    },
+
+    async loadFavorites() {
+      const { data } = await this.api('/favorites');
+      this.favorites = data;
+    },
+
+    async loadSettings() {
+      const settings = await this.api('/settings');
+      this.darkMode = !!settings.dark_mode;
+      this.updateThemeClass();
+      this.saveLocalStorage();
+    },
+
+    async loadUserData() {
+      const results = await Promise.allSettled([
+        this.loadWatchlist(),
+        this.loadFavorites(),
+        this.loadRecentSearches(),
+        this.loadSettings()
+      ]);
+      results
+        .filter(r => r.status === 'rejected')
+        .forEach(r => console.warn('Failed to load account data:', r.reason));
+    },
+
+    async addToWatchlist(movie) {
+      if (!this.requireAuth(() => this.addToWatchlist(movie))) return;
+      if (this.isInWatchlist(movie)) return;
+
+      this.watchlist.push(movie);
+      this.watchStatusMap[movie.id] = 'plan_to_watch';
+      this.showToastNotification(`"${movie.title}" added to your watchlist`, 'success');
+
+      try {
+        await this.api('/watchlist', { method: 'POST', body: this.moviePayload(movie) });
+      } catch (err) {
+        this.watchlist = this.watchlist.filter(m => m.id !== movie.id);
+        delete this.watchStatusMap[movie.id];
+        this.showToastNotification(`Could not add "${movie.title}" to your watchlist`, 'error');
       }
     },
 
-    removeFromWatchlist(movie) {
+    async removeFromWatchlist(movie) {
       const index = this.watchlist.findIndex(m => m.id === movie.id);
-      if (index !== -1) {
-        this.watchlist.splice(index, 1);
-        delete this.watchStatusMap[movie.id];
-        this.saveLocalStorage();
-        this.showToastNotification(`"${movie.title}" removed from watchlist`, 'remove');
+      if (index === -1) return;
+
+      const [removed] = this.watchlist.splice(index, 1);
+      const previousStatus = this.watchStatusMap[movie.id];
+      delete this.watchStatusMap[movie.id];
+      this.showToastNotification(`"${movie.title}" removed from watchlist`, 'remove');
+
+      try {
+        await this.api(`/watchlist/${movie.id}`, { method: 'DELETE' });
+      } catch (err) {
+        if (err.status === 404) return;
+        this.watchlist.splice(index, 0, removed);
+        this.watchStatusMap[movie.id] = previousStatus;
+        this.showToastNotification(`Could not remove "${movie.title}" from your watchlist`, 'error');
       }
     },
 
@@ -541,16 +655,29 @@ const app = createApp({
       }
     },
 
-    toggleFavorite(movie) {
+    async toggleFavorite(movie) {
+      if (!this.requireAuth(() => this.toggleFavorite(movie), 'Sign in to save your favorite movies.')) return;
+
       const index = this.favorites.findIndex(m => m.id === movie.id);
       if (index !== -1) {
-        this.favorites.splice(index, 1);
-        this.saveLocalStorage();
+        const [removed] = this.favorites.splice(index, 1);
         this.showToastNotification(`Removed "${movie.title}" from favorites`, 'remove');
+        try {
+          await this.api(`/favorites/${movie.id}`, { method: 'DELETE' });
+        } catch (err) {
+          if (err.status === 404) return;
+          this.favorites.splice(index, 0, removed);
+          this.showToastNotification(`Could not remove "${movie.title}" from favorites`, 'error');
+        }
       } else {
         this.favorites.push(movie);
-        this.saveLocalStorage();
         this.showToastNotification(`Added "${movie.title}" to favorites`, 'favorite');
+        try {
+          await this.api('/favorites', { method: 'POST', body: this.moviePayload(movie) });
+        } catch (err) {
+          this.favorites = this.favorites.filter(m => m.id !== movie.id);
+          this.showToastNotification(`Could not add "${movie.title}" to favorites`, 'error');
+        }
       }
     },
 
@@ -564,11 +691,18 @@ const app = createApp({
       return this.favorites.some(m => m.id === movie.id);
     },
 
-    setWatchStatus(movieId, status) {
+    async setWatchStatus(movieId, status) {
+      const previous = this.watchStatusMap[movieId];
       this.watchStatusMap[movieId] = status;
-      this.saveLocalStorage();
       const label = this.getWatchStatusLabel(status);
       this.showToastNotification(`Status updated to: ${label}`, 'info');
+
+      try {
+        await this.api(`/watchlist/${movieId}`, { method: 'PATCH', body: { status } });
+      } catch (err) {
+        this.watchStatusMap[movieId] = previous;
+        this.showToastNotification('Could not update the status. Please try again.', 'error');
+      }
     },
 
     cycleWatchStatus(movie, event) {
@@ -610,13 +744,19 @@ const app = createApp({
       this.showToastNotification(`🎲 Revisit your favorite: "${picked.title}"!`, 'favorite');
     },
 
-    clearCompletedWatchlist() {
-      const initialLength = this.watchlist.length;
+    async clearCompletedWatchlist() {
+      const completed = this.watchlist.filter(m => this.watchStatusMap[m.id] === 'completed');
+      if (completed.length === 0) return;
+
       this.watchlist = this.watchlist.filter(m => this.watchStatusMap[m.id] !== 'completed');
-      const removedCount = initialLength - this.watchlist.length;
-      if (removedCount > 0) {
-        this.saveLocalStorage();
-        this.showToastNotification(`Removed ${removedCount} completed movies from watchlist`, 'remove');
+      completed.forEach(m => delete this.watchStatusMap[m.id]);
+      this.showToastNotification(`Removed ${completed.length} completed movies from watchlist`, 'remove');
+
+      try {
+        await this.api('/watchlist/completed', { method: 'DELETE' });
+      } catch (err) {
+        await this.loadWatchlist().catch(() => {});
+        this.showToastNotification('Could not clear completed movies. Please try again.', 'error');
       }
     },
 
@@ -626,16 +766,140 @@ const app = createApp({
       this.clearSearch();
     },
 
-    setActiveTab(tab) {
-      this.activeTab = tab;
+    openAuthModal(mode = 'login', message = '') {
+      this.authMode = mode;
+      this.authMessage = message;
+      this.authErrors = {};
+      this.authForm = { name: '', email: '', password: '', password_confirmation: '' };
+      this.isAuthModalOpen = true;
+      this.closeMobileMenu();
       this.closeDropdowns();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.closeSearchModal();
+      this.focusAuthInput();
+    },
+
+    closeAuthModal() {
+      this.isAuthModalOpen = false;
+      this.pendingAction = null;
+    },
+
+    switchAuthMode(mode) {
+      this.authMode = mode;
+      this.authErrors = {};
+      this.focusAuthInput();
+    },
+
+    focusAuthInput() {
+      this.$nextTick(() => {
+        const input = document.getElementById(this.authMode === 'register' ? 'auth-name' : 'auth-email');
+        if (input) input.focus();
+      });
+    },
+
+    authError(field) {
+      const messages = this.authErrors[field];
+      return messages && messages.length ? messages[0] : '';
+    },
+
+    startSession(token, user) {
+      this.authToken = token;
+      this.user = user;
+      try {
+        localStorage.setItem(TOKEN_KEY, token);
+      } catch (e) {
+        console.warn('LocalStorage save error:', e);
+      }
+    },
+
+    clearSession() {
+      this.authToken = null;
+      this.user = null;
+      this.watchlist = [];
+      this.favorites = [];
+      this.watchStatusMap = {};
+      this.watchlistFilter = 'all';
+      this.recentSearches = this.readGuestRecentSearches();
+      try {
+        localStorage.removeItem(TOKEN_KEY);
+      } catch (e) {
+        console.warn('LocalStorage remove error:', e);
+      }
+    },
+
+    async submitAuth() {
+      if (this.authLoading) return;
+      this.authLoading = true;
+      this.authErrors = {};
+
+      const isRegister = this.authMode === 'register';
+      const body = isRegister
+        ? { ...this.authForm }
+        : { email: this.authForm.email, password: this.authForm.password };
+
+      try {
+        const data = await this.api(isRegister ? '/register' : '/login', { method: 'POST', body });
+        this.startSession(data.token, data.user);
+
+        if (isRegister) {
+          this.api('/settings', { method: 'PUT', body: { dark_mode: this.darkMode } }).catch(() => {});
+        }
+
+        const action = this.pendingAction;
+        this.pendingAction = null;
+        this.isAuthModalOpen = false;
+        this.authForm = { name: '', email: '', password: '', password_confirmation: '' };
+        this.showToastNotification(`Welcome${isRegister ? '' : ' back'}, ${data.user.name}!`, 'success');
+
+        await this.loadUserData();
+        if (action) action();
+      } catch (err) {
+        if (err.status === 422 && err.data && err.data.errors) {
+          this.authErrors = err.data.errors;
+        } else {
+          this.authErrors = { form: [err.message || 'Something went wrong. Please try again.'] };
+        }
+      } finally {
+        this.authLoading = false;
+      }
+    },
+
+    async logout() {
+      this.closeDropdowns();
+      this.closeMobileMenu();
+      try {
+        await this.api('/logout', { method: 'POST' });
+      } catch (err) {
+        console.warn('Logout request failed:', err);
+      }
+      this.clearSession();
+      this.showToastNotification('You have been logged out', 'info');
+    },
+
+    async restoreSession() {
+      let token = null;
+      try {
+        token = localStorage.getItem(TOKEN_KEY);
+      } catch (e) {
+        console.warn('LocalStorage load error:', e);
+      }
+      if (!token) return;
+
+      this.authToken = token;
+      try {
+        this.user = await this.api('/user');
+        await this.loadUserData();
+      } catch (err) {
+        console.warn('Could not restore session:', err);
+      }
     },
 
     toggleDarkMode() {
       this.darkMode = !this.darkMode;
       this.updateThemeClass();
       this.saveLocalStorage();
+      if (this.isLoggedIn) {
+        this.api('/settings', { method: 'PUT', body: { dark_mode: this.darkMode } }).catch(() => {});
+      }
     },
 
     updateThemeClass() {
@@ -717,28 +981,20 @@ const app = createApp({
       this.toast.show = false;
     },
 
+    readGuestRecentSearches() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('cinevault_recent_searches'));
+        if (Array.isArray(saved)) {
+          return saved.filter(q => typeof q === 'string').map(query => ({ id: null, query }));
+        }
+      } catch (e) {
+        console.warn('LocalStorage load error:', e);
+      }
+      return DEFAULT_RECENT_SEARCHES.map(query => ({ id: null, query }));
+    },
+
     loadLocalStorage() {
       try {
-        const savedWatchlist = localStorage.getItem('cinevault_watchlist');
-        if (savedWatchlist) {
-          this.watchlist = JSON.parse(savedWatchlist);
-        }
-
-        const savedFavorites = localStorage.getItem('cinevault_favorites');
-        if (savedFavorites) {
-          this.favorites = JSON.parse(savedFavorites);
-        }
-
-        const savedStatus = localStorage.getItem('cinevault_watch_status');
-        if (savedStatus) {
-          this.watchStatusMap = JSON.parse(savedStatus);
-        }
-
-        const savedRecent = localStorage.getItem('cinevault_recent_searches');
-        if (savedRecent) {
-          this.recentSearches = JSON.parse(savedRecent);
-        }
-
         const savedDarkMode = localStorage.getItem('cinevault_dark_mode');
         if (savedDarkMode !== null) {
           this.darkMode = savedDarkMode === 'true';
@@ -746,15 +1002,15 @@ const app = createApp({
       } catch (e) {
         console.warn('LocalStorage load error:', e);
       }
+      this.recentSearches = this.readGuestRecentSearches();
     },
 
     saveLocalStorage() {
       try {
-        localStorage.setItem('cinevault_watchlist', JSON.stringify(this.watchlist));
-        localStorage.setItem('cinevault_favorites', JSON.stringify(this.favorites));
-        localStorage.setItem('cinevault_watch_status', JSON.stringify(this.watchStatusMap));
-        localStorage.setItem('cinevault_recent_searches', JSON.stringify(this.recentSearches));
         localStorage.setItem('cinevault_dark_mode', this.darkMode.toString());
+        if (!this.isLoggedIn) {
+          localStorage.setItem('cinevault_recent_searches', JSON.stringify(this.recentSearches.map(s => s.query)));
+        }
       } catch (e) {
         console.warn('LocalStorage save error:', e);
       }
@@ -766,6 +1022,7 @@ const app = createApp({
     this.updateThemeClass();
     this.fetchGenres();
     this.fetchMovies();
+    this.restoreSession();
 
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.custom-dropdown-container')) {
@@ -775,7 +1032,9 @@ const app = createApp({
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        if (this.isMobileMenuOpen) {
+        if (this.isAuthModalOpen) {
+          this.closeAuthModal();
+        } else if (this.isMobileMenuOpen) {
           this.closeMobileMenu();
         } else if (this.activeDropdown) {
           this.closeDropdowns();
@@ -785,7 +1044,7 @@ const app = createApp({
           this.closeModal();
         }
       }
-      if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && !this.selectedMovie && !this.isSearchModalOpen) {
+      if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && !this.selectedMovie && !this.isSearchModalOpen && !this.isAuthModalOpen) {
         const activeTagName = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
         if (activeTagName !== 'input' && activeTagName !== 'textarea' && activeTagName !== 'select') {
           e.preventDefault();

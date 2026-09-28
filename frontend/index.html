@@ -24,7 +24,7 @@
     <header class="cineby-header" :class="{ 'is-scrolled': isScrolled }">
       <div class="container header-container">
         <!-- Brand on Left -->
-        <div class="brand" @click="setActiveTab('discover')">
+        <div class="brand" role="button" tabindex="0" aria-label="CineVault home" @click="setActiveTab('discover')" @keydown.enter="setActiveTab('discover')">
           <div class="brand-logo">
             <i class="fa-solid fa-film"></i>
           </div>
@@ -82,6 +82,42 @@
             </button>
 
             <button 
+              v-if="!isLoggedIn"
+              class="header-signin-btn" 
+              @click="openAuthModal('login')" 
+              title="Sign in"
+              aria-label="Sign in"
+            >
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>Sign in</span>
+            </button>
+
+            <div 
+              v-else 
+              class="custom-dropdown-container user-menu" 
+              :class="{ open: activeDropdown === 'user' }"
+            >
+              <button 
+                class="user-avatar-btn" 
+                @click="toggleDropdown('user')" 
+                :title="user.name" 
+                aria-label="Account menu"
+              >{{ userInitial }}</button>
+
+              <transition name="dropdown-pop">
+                <div v-if="activeDropdown === 'user'" class="dropdown-menu-card user-menu-card">
+                  <div class="user-menu-info">
+                    <strong>{{ user.name }}</strong>
+                    <span>{{ user.email }}</span>
+                  </div>
+                  <div class="dropdown-option-item" @click="logout">
+                    <span><i class="fa-solid fa-right-from-bracket option-icon"></i> Log out</span>
+                  </div>
+                </div>
+              </transition>
+            </div>
+
+            <button 
               class="mobile-menu-btn" 
               @click="toggleMobileMenu" 
               :aria-expanded="isMobileMenuOpen"
@@ -104,7 +140,7 @@
       >
         <div class="mobile-nav-drawer" @click.stop>
           <div class="mobile-drawer-header">
-            <div class="brand" @click="setActiveTab('discover')">
+            <div class="brand" role="button" tabindex="0" aria-label="CineVault home" @click="setActiveTab('discover')" @keydown.enter="setActiveTab('discover')">
               <div class="brand-logo">
                 <i class="fa-solid fa-film"></i>
               </div>
@@ -151,6 +187,24 @@
             >
               <i class="fa-solid fa-magnifying-glass"></i>
               <span>Search Movies</span>
+            </button>
+
+            <button 
+              v-if="!isLoggedIn"
+              class="mobile-nav-link" 
+              @click="openAuthModal('login')"
+            >
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>Sign in</span>
+            </button>
+
+            <button 
+              v-else
+              class="mobile-nav-link" 
+              @click="logout"
+            >
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Log out ({{ user.name }})</span>
             </button>
 
           </div>
@@ -459,13 +513,19 @@
           <!-- Empty State -->
           <div v-else-if="displayedMovies.length === 0" class="cineby-state-box">
             <i class="fa-solid fa-film state-icon"></i>
-            <h3 v-if="activeTab === 'watchlist'">Your Watchlist is Empty</h3>
+            <h3 v-if="!isLoggedIn && activeTab === 'watchlist'">Sign in to Use Your Watchlist</h3>
+            <h3 v-else-if="!isLoggedIn && activeTab === 'favorites'">Sign in to See Your Favorites</h3>
+            <h3 v-else-if="activeTab === 'watchlist'">Your Watchlist is Empty</h3>
             <h3 v-else-if="activeTab === 'favorites'">No Favorite Movies Yet</h3>
             <h3 v-else>No Movies Found</h3>
-            <p v-if="activeTab === 'watchlist'">Browse movies and click "+ Watchlist" to track what you want to watch.</p>
+            <p v-if="!isLoggedIn && activeTab !== 'discover'">Your watchlist and favorites are saved to your CineVault account, so they follow you on any device.</p>
+            <p v-else-if="activeTab === 'watchlist'">Browse movies and click "+ Watchlist" to track what you want to watch.</p>
             <p v-else-if="activeTab === 'favorites'">Click the heart icon on any movie to add it to your favorites collection.</p>
             <p v-else>No movies matched your current filters. Try selecting a different genre or clearing your search.</p>
-            <button v-if="activeTab !== 'discover' || activeSearchQuery" class="btn-cineby-info" style="margin-top: 1rem;" @click="setActiveTab('discover'); clearSearch();">
+            <button v-if="!isLoggedIn && activeTab !== 'discover'" class="btn-cineby-play" style="margin-top: 1rem;" @click="openAuthModal('login')">
+              <i class="fa-solid fa-right-to-bracket"></i> Sign in
+            </button>
+            <button v-else-if="activeTab !== 'discover' || activeSearchQuery" class="btn-cineby-info" style="margin-top: 1rem;" @click="setActiveTab('discover'); clearSearch();">
               <i class="fa-solid fa-compass"></i> Discover Movies
             </button>
           </div>
@@ -632,15 +692,15 @@
             <div class="search-recent-list">
               <div 
                 v-for="(item, idx) in recentSearches" 
-                :key="idx"
+                :key="item.id || idx"
                 class="recent-item"
-                @click="submitSearch(item)"
+                @click="submitSearch(item.query)"
               >
                 <i class="fa-regular fa-clock recent-clock-icon"></i>
-                <span class="recent-text">{{ item }}</span>
+                <span class="recent-text">{{ item.query }}</span>
                 <button 
                   class="recent-remove-btn" 
-                  @click.stop="removeRecentSearch(idx)" 
+                  @click.stop="removeRecentSearch(item)" 
                   title="Remove"
                 >
                   <i class="fa-solid fa-xmark"></i>
@@ -648,6 +708,83 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Sign in / Create account Modal -->
+    <transition name="cineby-modal-fade">
+      <div 
+        v-if="isAuthModalOpen" 
+        class="search-modal-backdrop" 
+        @click.self="closeAuthModal"
+      >
+        <div 
+          class="search-modal-card auth-card" 
+          role="dialog" 
+          aria-modal="true" 
+          :aria-label="authMode === 'login' ? 'Sign in' : 'Create account'"
+        >
+          <div class="search-modal-header">
+            <h3 class="search-modal-title">{{ authMode === 'login' ? 'Sign in' : 'Create account' }}</h3>
+            <button class="search-modal-close" @click="closeAuthModal" aria-label="Close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <p v-if="authMessage" class="auth-message">{{ authMessage }}</p>
+
+          <form class="auth-form" @submit.prevent="submitAuth" novalidate>
+            <div v-if="authErrors.form" class="auth-error form">{{ authError('form') }}</div>
+
+            <div v-if="authMode === 'register'" class="auth-field">
+              <label for="auth-name">Name</label>
+              <input id="auth-name" type="text" class="auth-input" v-model="authForm.name" autocomplete="name" />
+              <span v-if="authError('name')" class="auth-error">{{ authError('name') }}</span>
+            </div>
+
+            <div class="auth-field">
+              <label for="auth-email">Email</label>
+              <input id="auth-email" type="email" class="auth-input" v-model="authForm.email" autocomplete="email" />
+              <span v-if="authError('email')" class="auth-error">{{ authError('email') }}</span>
+            </div>
+
+            <div class="auth-field">
+              <label for="auth-password">Password</label>
+              <input 
+                id="auth-password" 
+                type="password" 
+                class="auth-input" 
+                v-model="authForm.password" 
+                :autocomplete="authMode === 'login' ? 'current-password' : 'new-password'" 
+              />
+              <span v-if="authError('password')" class="auth-error">{{ authError('password') }}</span>
+            </div>
+
+            <div v-if="authMode === 'register'" class="auth-field">
+              <label for="auth-password-confirm">Confirm password</label>
+              <input 
+                id="auth-password-confirm" 
+                type="password" 
+                class="auth-input" 
+                v-model="authForm.password_confirmation" 
+                autocomplete="new-password" 
+              />
+            </div>
+
+            <button type="submit" class="btn-cineby-play auth-submit" :disabled="authLoading">
+              {{ authLoading ? 'Please wait...' : (authMode === 'login' ? 'Sign in' : 'Create account') }}
+            </button>
+          </form>
+
+          <p class="auth-switch" v-if="authMode === 'login'">
+            New to CineVault?
+            <button type="button" @click="switchAuthMode('register')">Create an account</button>
+          </p>
+          <p class="auth-switch" v-else>
+            Already have an account?
+            <button type="button" @click="switchAuthMode('login')">Sign in</button>
+          </p>
         </div>
       </div>
     </transition>
@@ -858,7 +995,8 @@
             'fa-circle-check': toast.type === 'success',
             'fa-heart': toast.type === 'favorite',
             'fa-trash-can': toast.type === 'remove',
-            'fa-circle-info': toast.type === 'info'
+            'fa-circle-info': toast.type === 'info',
+            'fa-triangle-exclamation': toast.type === 'error'
           }"></i>
           <span class="toast-text">{{ toast.message }}</span>
         </div>
@@ -869,7 +1007,7 @@
     <footer class="cineby-footer">
       <div class="container footer-inner">
         <div class="footer-left">
-          <div class="brand" @click="setActiveTab('discover')">
+          <div class="brand" role="button" tabindex="0" aria-label="CineVault home" @click="setActiveTab('discover')" @keydown.enter="setActiveTab('discover')">
             <div class="brand-logo">
               <i class="fa-solid fa-film"></i>
             </div>

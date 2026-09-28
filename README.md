@@ -53,7 +53,7 @@ This project was developed as a collaborative group submission by:
 - **Personal Watchlist Queue**: Save movies into your personal queue with live counter badges.
 - **Sub-Filter Categories**: Filter personal watchlist by *All*, *Plan to Watch*, *Watching*, or *Completed*.
 - **Favorites Collection**: Instant 1-click bookmarking for all-time favorite films.
-- **Persistent LocalStorage**: All watchlist entries, watch statuses, favorites, recent search terms, and theme settings are automatically synchronized and persisted in `localStorage`.
+- **Account-Based Persistence**: Sign in to sync your watchlist, watch statuses, favorites, recent searches, and theme setting with the Express + PostgreSQL backend, so they follow you across devices.
 
 ### 5. ☀️ Dark / Light Theming System
 - **CSS Custom Property Tokens**: Fully cohesive design system supporting both **Cinematic Dark** and **Clean Light** modes.
@@ -81,7 +81,8 @@ This project was developed as a collaborative group submission by:
 | **Styling & Design** | **Modern CSS3** | Custom CSS variables, Glassmorphism, CSS Grid, Flexbox, Keyframe animations, Media queries |
 | **Data Source** | **TMDB API (v3)** | Real-time movie catalog, search index, credits, trailer videos, and backdrop imagery |
 | **Typography & Icons** | **Google Fonts (Inter)** & **FontAwesome 6** | Clean sans-serif typography and vector iconography |
-| **Persistence** | **Browser LocalStorage** | Client-side persistent storage for watchlist, favorites, search history, and theme mode |
+| **Backend API** | **Express 5 + PostgreSQL + JWT** | Layered (routes, controllers, services, repositories) REST API with token auth, per-user watchlist/favorites/search history/settings, and a TMDB proxy that keeps the API key server-side |
+| **Migrations** | **node-pg-migrate** | Plain SQL migration files in `backend/migrations` |
 
 ---
 
@@ -95,7 +96,17 @@ cinevault/
 │   ├── style.css       # Complete design system, theme variables, glassmorphism, responsive breakpoints
 │   ├── package.json    # Project metadata, scripts, dependencies (Vue 3, Vite)
 │   └── vite.config.js  # Vite build and plugin configurations
-├── backend/            # Laravel API backend
+├── backend/            # Express + PostgreSQL API
+│   ├── migrations/     # SQL migrations (node-pg-migrate)
+│   ├── src/
+│   │   ├── routes/         # URL -> controller wiring
+│   │   ├── controllers/    # HTTP in/out
+│   │   ├── services/       # Business logic
+│   │   ├── repositories/   # SQL queries
+│   │   ├── middlewares/    # Auth, validation, rate limits, error handling
+│   │   ├── validators/     # zod input schemas
+│   │   └── clients/        # TMDB client
+│   └── test/           # API tests (node:test)
 ├── .gitignore          # Version control ignore definitions
 └── README.md           # Project documentation and assignment walkthrough
 ```
@@ -105,36 +116,82 @@ cinevault/
 ## ⚙️ Installation & Local Setup
 
 ### Prerequisites
-- **Node.js** (version `^22.18.0` or `>=24.12.0` recommended)
-- **npm** package manager
+- **Node.js** (version `>=22`) and **npm**
+- **PostgreSQL** (12 or newer)
+- A free **TMDB API key** (https://www.themoviedb.org/settings/api)
 
-### Step-by-Step Setup
+The frontend never talks to TMDB directly. It calls the Express API (`/api/...`), which proxies TMDB so the key stays on the server. Watchlist, favorites, recent searches and the theme preference are saved per user account in PostgreSQL.
 
-1. **Clone or Navigate to the Project Directory**:
-   ```bash
-   cd cinevault/frontend
-   ```
+### 1. Database
 
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
+Create a PostgreSQL role and an empty database:
 
-3. **Run Development Server**:
-   ```bash
-   npm run dev
-   ```
-   *The application will launch locally at `http://localhost:5173/` (or the port specified in terminal).*
+```bash
+sudo -u postgres psql -c "CREATE USER den WITH PASSWORD 'secret';" -c "CREATE DATABASE cinevault OWNER den;"
+```
 
-4. **Build for Production**:
-   ```bash
-   npm run build
-   ```
+### 2. Backend (Express API) — `cinevault/backend`
 
-5. **Preview Production Build**:
-   ```bash
-   npm run preview
-   ```
+```bash
+cd cinevault/backend
+npm install
+cp .env.example .env
+```
+
+Fill in `backend/.env`:
+
+```env
+PORT=8000
+DATABASE_URL=postgres://den:secret@127.0.0.1:5432/cinevault
+JWT_SECRET=a_long_random_string   # e.g. openssl rand -hex 32
+TMDB_API_KEY=your_tmdb_api_key
+```
+
+Create the tables and start the API on `http://127.0.0.1:8000`:
+
+```bash
+npm run migrate
+npm run dev      # or: npm start
+```
+
+| Command | What it does |
+| :--- | :--- |
+| `npm run migrate` | Applies all pending SQL migrations |
+| `npm run migrate:down` | Undoes the latest migration |
+| `npm run migrate:create -- add-something` | Creates a new SQL migration file in `migrations/` |
+| `npm test` | Runs the API tests (they create and delete their own throwaway users) |
+
+### 3. Frontend (Vue 3 + Vite) — `cinevault/frontend`
+
+Open a second terminal:
+
+```bash
+cd cinevault/frontend
+npm install
+npm run dev
+```
+
+*The app launches at `http://localhost:5173/`. Vite proxies every `/api` request to the Express server on port 8000, so start the backend first.*
+
+Other scripts: `npm run build` (production build) and `npm run preview` (preview the build).
+
+### 4. Using the app
+- Browsing, searching and trailers work without an account.
+- Click **Sign in** to create an account. Adding to the Watchlist or Favorites asks you to sign in first.
+
+### API overview (`/api`)
+
+| Area | Endpoints |
+| :--- | :--- |
+| Auth | `POST /register`, `POST /login`, `POST /logout`, `GET /user` |
+| Movies (TMDB proxy) | `GET /movies/category/{popular\|trending\|top_rated\|now_playing\|upcoming}`, `GET /movies/search?query=`, `GET /movies/{id}`, `GET /genres` |
+| Watchlist | `GET`, `POST /watchlist`, `PATCH /watchlist/{id}` (status), `DELETE /watchlist/{id}`, `DELETE /watchlist/completed` |
+| Favorites | `GET`, `POST /favorites`, `DELETE /favorites/{id}` |
+| Recent searches | `GET`, `POST /recent-searches`, `DELETE /recent-searches/{id}`, `DELETE /recent-searches` |
+| Settings | `GET`, `PUT /settings` (`dark_mode`) |
+| Health | `GET /hello` |
+
+Everything except register, login, `hello` and the movie routes requires an `Authorization: Bearer <token>` header.
 
 ---
 
@@ -148,7 +205,7 @@ cinevault/
 | **Watchlist / Queue Management** | Add/remove movies, assign statuses (*Plan to Watch*, *Watching*, *Completed*), and sub-filter the queue. | ✅ Fulfilled |
 | **Favorites System** | 1-click favorite bookmarking with real-time reactive badge counters. | ✅ Fulfilled |
 | **Modal & Media Playback** | Interactive details modal with responsive embedded YouTube trailer and cast credits. | ✅ Fulfilled |
-| **Data Persistence** | Seamless client-side state caching using `localStorage` across page reloads. | ✅ Fulfilled |
+| **Data Persistence** | Watchlist, favorites, search history and theme are stored per user through the Express API in PostgreSQL and restored on reload. | ✅ Fulfilled |
 | **Dark & Light Themes** | Complete CSS token-based theming with smooth toggle transition and persistent state. | ✅ Fulfilled |
 | **Responsive Design** | Full responsiveness verified on mobile ($\le 480\text{px}$, $\le 640\text{px}$, $\le 768\text{px}$), tablets, and desktop displays. | ✅ Fulfilled |
 | **Clean UI / UX** | Glassmorphism styling, compact toast notifications, and zero layout overflow. | ✅ Fulfilled |

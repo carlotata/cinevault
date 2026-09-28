@@ -208,6 +208,12 @@ img {
   transform: scale(1.08);
 }
 
+.brand:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-md);
+}
+
 .brand-name {
   font-size: clamp(1.2rem, 3vw, 1.45rem);
   font-weight: 900;
@@ -1040,10 +1046,12 @@ img {
   transition: var(--transition);
 }
 
-.hero-nav-arrow:hover {
-  background: var(--primary);
-  color: #0b0e14;
-  border-color: var(--primary);
+@media (hover: hover) {
+  .hero-nav-arrow:hover {
+    background: var(--primary);
+    color: #0b0e14;
+    border-color: var(--primary);
+  }
 }
 
 .light-theme .hero-nav-arrow {
@@ -1053,10 +1061,12 @@ img {
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
 }
 
-.light-theme .hero-nav-arrow:hover {
-  background: var(--primary);
-  color: #0b0e14;
-  border-color: var(--primary);
+@media (hover: hover) {
+  .light-theme .hero-nav-arrow:hover {
+    background: var(--primary);
+    color: #0b0e14;
+    border-color: var(--primary);
+  }
 }
 
 .hero-pagination-dots {
@@ -1077,6 +1087,20 @@ img {
   width: 22px;
   background: var(--primary);
   box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* On narrow screens the buttons span the full width, so the controls get their own centered row below them. */
+@media (max-width: 768px) {
+  .hero-slide-content {
+    padding-bottom: 4.75rem;
+  }
+
+  .hero-carousel-nav {
+    left: 0;
+    right: 0;
+    bottom: 1rem;
+    justify-content: center;
+  }
 }
 
 /* ==========================================================================
@@ -2787,4 +2811,181 @@ img {
 
 .light-theme .cineby-state-box {
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+/* ==========================================================================
+   AUTH (SIGN IN / ACCOUNT MENU)
+   ========================================================================== */
+.header-signin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: clamp(34px, 5vw, 38px);
+  padding: 0 0.95rem;
+  background: var(--bg-neo-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-hi);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.header-signin-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.user-avatar-btn {
+  width: clamp(34px, 5vw, 38px);
+  height: clamp(34px, 5vw, 38px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: #0b0e14;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.user-avatar-btn:hover {
+  box-shadow: 0 0 0 3px var(--primary-subtle);
+}
+
+.header-tools > * {
+  flex-shrink: 0;
+}
+
+/* Beats the mobile `.custom-dropdown-container { width: 100% }` rule used by the filter dropdowns. */
+.custom-dropdown-container.user-menu {
+  width: auto;
+}
+
+.user-menu-card {
+  left: auto;
+  right: 0;
+  min-width: 220px;
+  transform-origin: top right;
+}
+
+.user-menu-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.85rem 0.7rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.user-menu-info strong {
+  color: var(--text-hi);
+  font-size: 0.9rem;
+}
+
+.user-menu-info span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-card {
+  max-width: 420px;
+}
+
+.auth-message {
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.auth-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+.auth-input {
+  height: 46px;
+  padding: 0 1rem;
+  background: var(--bg-neo-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  font-size: 0.92rem;
+  color: var(--text-hi);
+  outline: none;
+  transition: var(--transition);
+}
+
+.auth-input:focus {
+  background: var(--bg-neo-base);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-subtle);
+}
+
+.auth-error {
+  color: #f87171;
+  font-size: 0.78rem;
+}
+
+.auth-error.form {
+  padding: 0.6rem 0.8rem;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 0.25rem;
+  cursor: pointer;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-mid);
+}
+
+.auth-switch button {
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cineby-toast-compact.error .toast-icon {
+  color: #f87171;
+}
+
+@media (max-width: 480px) {
+  .header-signin-btn {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .header-signin-btn span {
+    display: none;
+  }
 }
