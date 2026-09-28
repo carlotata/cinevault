@@ -1,0 +1,27 @@
+{
+  "name": "cinevault-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CineVault REST API (Express + PostgreSQL)",
+  "scripts": {
+    "start": "node --env-file=.env src/server.js",
+    "dev": "node --env-file=.env --watch src/server.js",
+    "test": "node --env-file=.env --test \"test/*.test.js\"",
+    "migrate": "node --env-file=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js up",
+    "migrate:down": "node --env-file=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js down",
+    "migrate:create": "node --env-file=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js create --migration-file-language sql --migration-filename-format utc"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "jsonwebtoken": "^9.0.3",
+    "node-pg-migrate": "^9.0.0",
+    "pg": "^8.23.0",
+    "zod": "^4.6.5"
+  }
+}
