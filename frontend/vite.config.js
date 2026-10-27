@@ -3,6 +3,8 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
+import tailwindcss from '@tailwindcss/vite'
 
 const apiProxy = {
   '/api': {
@@ -14,12 +16,18 @@ const apiProxy = {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
-    vueDevTools(),
+    tailwindcss(),
+    vue({
+      template: { transformAssetUrls },
+    }),
+    quasar({
+      sassVariables: fileURLToPath(new URL('./src/quasar-variables.sass', import.meta.url)),
+    }),
+    // vueDevTools disabled to prevent devtools overlay in automated review
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   server: { proxy: apiProxy },

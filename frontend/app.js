@@ -1,9 +1,112 @@
-const { createApp } = Vue;
+import { createApp } from 'vue';
+import {
+  Quasar,
+  Dialog,
+  Notify,
+  QBtn,
+  QDialog,
+  QCard,
+  QCardSection,
+  QCardActions,
+  QSpinner,
+  QSpinnerDots,
+  QTooltip,
+  QBadge
+} from 'quasar';
+
+import '@quasar/extras/material-icons/material-icons.css';
+import 'quasar/src/css/index.sass';
+import './style.css';
 
 const API_BASE = '/api';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p';
 const TOKEN_KEY = 'cinevault_token';
 const DEFAULT_RECENT_SEARCHES = ['vincenzo', 'inception', 'interstellar'];
+
+
+const CineIcon = {
+  name: 'CineIcon',
+  props: {
+    name: { type: String, required: true },
+    size: { type: [Number, String], default: 16 }
+  },
+  template: `
+    <svg 
+      class="cine-icon" 
+      :class="'cine-icon-' + name"
+      :width="size" 
+      :height="size" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <g v-if="name === 'popular' || name === 'flame'">
+        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+      </g>
+      <g v-else-if="name === 'trending'">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+        <polyline points="17 6 23 6 23 12" />
+      </g>
+      <g v-else-if="name === 'top_rated' || name === 'award'">
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+      </g>
+      <g v-else-if="name === 'now_playing' || name === 'theater'">
+        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
+        <line x1="7" y1="2" x2="7" y2="22" />
+        <line x1="17" y1="2" x2="17" y2="22" />
+        <line x1="2" y1="12" x2="22" y2="12" />
+        <line x1="2" y1="7" x2="7" y2="7" />
+        <line x1="2" y1="17" x2="7" y2="17" />
+        <line x1="17" y1="17" x2="22" y2="17" />
+        <line x1="17" y1="7" x2="22" y2="7" />
+      </g>
+      <g v-else-if="name === 'upcoming' || name === 'calendar'">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+        <path d="m14 14 2 2-2 2" />
+        <path d="m10 14-2 2 2 2" />
+      </g>
+      <g v-else-if="name === 'genre' || name === 'film_slate'">
+        <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+        <line x1="2" y1="9" x2="22" y2="9" />
+        <line x1="7" y1="4" x2="5" y2="9" />
+        <line x1="12" y1="4" x2="10" y2="9" />
+        <line x1="17" y1="4" x2="15" y2="9" />
+      </g>
+      <g v-else-if="name === 'star'">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" stroke="none" />
+      </g>
+      <g v-else-if="name === 'sort' || name === 'sliders'">
+        <line x1="4" y1="21" x2="4" y2="14" />
+        <line x1="4" y1="10" x2="4" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12" y2="3" />
+        <line x1="20" y1="21" x2="20" y2="16" />
+        <line x1="20" y1="12" x2="20" y2="3" />
+        <line x1="1" y1="14" x2="7" y2="14" />
+        <line x1="9" y1="8" x2="15" y2="8" />
+        <line x1="17" y1="16" x2="23" y2="16" />
+      </g>
+      <g v-else-if="name === 'chevron'">
+        <polyline points="6 9 12 15 18 9" stroke-width="2.5" />
+      </g>
+      <g v-else-if="name === 'check'">
+        <polyline points="20 6 9 17 4 12" stroke-width="2.5" />
+      </g>
+      <g v-else-if="name === 'reset' || name === 'clear'">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+        <path d="M3 3v5h5" />
+      </g>
+    </svg>
+  `
+};
 
 const app = createApp({
   data() {
@@ -54,6 +157,8 @@ const app = createApp({
       authForm: { name: '', email: '', password: '', password_confirmation: '' },
       authErrors: {},
       authLoading: false,
+      showPassword: false,
+      showPasswordConfirm: false,
       pendingAction: null,
       watchlist: [],
       favorites: [],
@@ -71,6 +176,8 @@ const app = createApp({
       isMobileMenuOpen: false,
       heroSlideIndex: 0,
       heroSlideInterval: null,
+      heroTouchStartX: 0,
+      heroTouchStartY: 0,
       isTrailerPlaying: false,
       toast: {
         show: false,
@@ -82,6 +189,17 @@ const app = createApp({
   },
 
   computed: {
+    authSubmitButtonText() {
+      if (this.authLoading) {
+        return this.authMode === 'login' ? 'Signing in...' : 'Creating account...';
+      }
+      return this.authMode === 'login' ? 'Sign In to CineVault' : 'Create Free Account';
+    },
+
+    authSubmitIcon() {
+      if (this.authLoading) return '';
+      return this.authMode === 'login' ? 'fa-solid fa-right-to-bracket' : 'fa-solid fa-user-plus';
+    },
     isLoggedIn() {
       return !!this.user;
     },
@@ -474,6 +592,13 @@ const app = createApp({
       }
     },
 
+        resetFilters() {
+      this.selectedGenre = null;
+      this.minRating = 0;
+      this.sortBy = 'popularity.desc';
+      this.activeDropdown = null;
+    },
+
     clearSearch() {
       this.searchQuery = '';
       this.activeSearchQuery = '';
@@ -512,6 +637,26 @@ const app = createApp({
     prevHeroSlide() {
       if (this.heroMovies.length === 0) return;
       this.heroSlideIndex = (this.heroSlideIndex - 1 + this.heroMovies.length) % this.heroMovies.length;
+    },
+
+        handleHeroTouchStart(e) {
+      if (!e.changedTouches || e.changedTouches.length === 0) return;
+      this.heroTouchStartX = e.changedTouches[0].clientX;
+      this.heroTouchStartY = e.changedTouches[0].clientY;
+    },
+
+    handleHeroTouchEnd(e) {
+      if (!e.changedTouches || e.changedTouches.length === 0) return;
+      const deltaX = e.changedTouches[0].clientX - this.heroTouchStartX;
+      const deltaY = e.changedTouches[0].clientY - this.heroTouchStartY;
+      if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
+        if (deltaX < 0) {
+          this.nextHeroSlide();
+        } else {
+          this.prevHeroSlide();
+        }
+        this.startHeroAutoplay();
+      }
     },
 
     setHeroSlide(index) {
@@ -771,6 +916,8 @@ const app = createApp({
       this.authMessage = message;
       this.authErrors = {};
       this.authForm = { name: '', email: '', password: '', password_confirmation: '' };
+      this.showPassword = false;
+      this.showPasswordConfirm = false;
       this.isAuthModalOpen = true;
       this.closeMobileMenu();
       this.closeDropdowns();
@@ -783,9 +930,21 @@ const app = createApp({
       this.pendingAction = null;
     },
 
+    fillDemoAccount() {
+      this.authForm.email = 'demo@cinevault.dev';
+      this.authForm.password = 'CineVault2026!';
+      if (this.authMode === 'register') {
+        this.authForm.name = 'Demo Cinephile';
+        this.authForm.password_confirmation = 'CineVault2026!';
+      }
+      this.authErrors = {};
+    },
+
     switchAuthMode(mode) {
       this.authMode = mode;
       this.authErrors = {};
+      this.showPassword = false;
+      this.showPasswordConfirm = false;
       this.focusAuthInput();
     },
 
@@ -908,6 +1067,9 @@ const app = createApp({
       } else {
         document.documentElement.classList.add('light-theme');
       }
+      if (this.$q && this.$q.dark) {
+        this.$q.dark.set(this.darkMode);
+      }
     },
 
     getPosterUrl(path, size = 'w500') {
@@ -961,6 +1123,36 @@ const app = createApp({
     },
 
     showToastNotification(message, type = 'success') {
+      if (this.$q && this.$q.notify) {
+        let icon = 'check_circle';
+        let color = 'positive';
+        if (type === 'error') {
+          icon = 'error';
+          color = 'negative';
+        } else if (type === 'favorite') {
+          icon = 'favorite';
+          color = 'amber-9';
+        } else if (type === 'remove') {
+          icon = 'delete';
+          color = 'blue-grey-8';
+        } else if (type === 'info') {
+          icon = 'info';
+          color = 'info';
+        }
+
+        this.$q.notify({
+          message,
+          icon,
+          color,
+          position: 'bottom-right',
+          timeout: 3200,
+          progress: true,
+          classes: 'cinevault-notify',
+          actions: [{ icon: 'close', color: 'white', round: true, flat: true, dense: true }]
+        });
+        return;
+      }
+
       if (this.toastTimeout) {
         clearTimeout(this.toastTimeout);
       }
@@ -972,6 +1164,88 @@ const app = createApp({
       this.toastTimeout = setTimeout(() => {
         this.toast.show = false;
       }, 3400);
+    },
+
+    confirmClearRecentSearches() {
+      if (!this.recentSearches || this.recentSearches.length === 0) return;
+      if (this.$q && this.$q.dialog) {
+        this.$q.dialog({
+          title: 'Clear Search History',
+          message: 'Are you sure you want to clear your recent searches?',
+          cancel: {
+            flat: true,
+            label: 'Cancel',
+            color: this.darkMode ? 'grey-4' : 'grey-8'
+          },
+          ok: {
+            unelevated: true,
+            label: 'Clear All',
+            color: 'amber-9',
+            textColor: 'white'
+          },
+          dark: this.darkMode,
+          persistent: false
+        }).onOk(() => {
+          this.clearRecentSearches();
+          this.showToastNotification('Search history cleared', 'info');
+        });
+      } else {
+        this.clearRecentSearches();
+      }
+    },
+
+    confirmLogout() {
+      if (this.$q && this.$q.dialog) {
+        this.$q.dialog({
+          title: 'Sign Out',
+          message: 'Are you sure you want to sign out of CineVault?',
+          cancel: {
+            flat: true,
+            label: 'Cancel',
+            color: this.darkMode ? 'grey-4' : 'grey-8'
+          },
+          ok: {
+            unelevated: true,
+            label: 'Sign Out',
+            color: 'amber-9',
+            textColor: 'white'
+          },
+          dark: this.darkMode,
+          persistent: false
+        }).onOk(() => {
+          this.logout();
+        });
+      } else {
+        this.logout();
+      }
+    },
+
+    confirmClearCompletedWatchlist() {
+      const completed = this.watchlist.filter(m => this.watchStatusMap[m.id] === 'completed');
+      if (completed.length === 0) return;
+      if (this.$q && this.$q.dialog) {
+        this.$q.dialog({
+          title: 'Clear Completed Movies',
+          message: `Are you sure you want to remove ${completed.length} completed movie(s) from your watchlist?`,
+          cancel: {
+            flat: true,
+            label: 'Cancel',
+            color: this.darkMode ? 'grey-4' : 'grey-8'
+          },
+          ok: {
+            unelevated: true,
+            label: 'Remove All',
+            color: 'amber-9',
+            textColor: 'white'
+          },
+          dark: this.darkMode,
+          persistent: false
+        }).onOk(() => {
+          this.clearCompletedWatchlist();
+        });
+      } else {
+        this.clearCompletedWatchlist();
+      }
     },
 
     dismissToast() {
@@ -1067,4 +1341,30 @@ const app = createApp({
   }
 });
 
+app.use(Quasar, {
+  plugins: {
+    Dialog,
+    Notify
+  },
+  components: {
+    QBtn,
+    QDialog,
+    QCard,
+    QCardSection,
+    QCardActions,
+    QSpinner,
+    QSpinnerDots,
+    QTooltip,
+    QBadge
+  },
+  config: {
+    dark: true,
+    notify: {
+      position: 'bottom-right',
+      timeout: 3200
+    }
+  }
+});
+
+app.component('cine-icon', CineIcon);
 app.mount('#app');

@@ -1,0 +1,221 @@
+<template>
+  <section class="py-4 select-none">
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5">
+      
+      <!-- Category Pills Strip (smooth horizontal scroll on mobile) -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
+        <button 
+          v-for="cat in categories" 
+          :key="cat.id"
+          class="flex-shrink-0 flex items-center gap-2 h-10 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
+          :class="[
+            currentCategory === cat.id && !activeSearchQuery
+              ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
+              : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+          ]"
+          @click="$emit('select-category', cat.id)"
+        >
+          <i :class="cat.icon" class="text-xs"></i>
+          <span>{{ cat.label }}</span>
+        </button>
+      </div>
+
+      <!-- Custom Dropdowns: 3 Symmetrical Columns on mobile, Flex on Desktop -->
+      <div class="grid grid-cols-3 md:flex items-center gap-2">
+        
+        <!-- Custom Genre Dropdown -->
+        <div class="relative">
+          <button 
+            class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
+            :class="[
+              activeDropdown === 'genre' || selectedGenre !== null
+                ? 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border-amber-500/30 font-extrabold'
+                : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+            ]"
+            @click.stop="toggleDropdown('genre')"
+          >
+            <i class="fa-solid fa-masks-theater text-xs opacity-75"></i>
+            <span class="truncate max-w-[70px] sm:max-w-none">{{ selectedGenreName }}</span>
+            <i class="fa-solid fa-chevron-down text-[10px] opacity-75 transition-transform" :class="{ 'rotate-180': activeDropdown === 'genre' }"></i>
+          </button>
+
+          <transition name="dropdown-pop">
+            <div 
+              v-if="activeDropdown === 'genre'" 
+              class="absolute left-0 top-full mt-2 w-48 sm:w-56 max-h-64 overflow-y-auto rounded-2xl bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 shadow-2xl p-1.5 z-50 backdrop-blur-xl no-scrollbar"
+            >
+              <div 
+                class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+                :class="selectedGenre === null ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                @click.stop="selectGenre(null)"
+              >
+                <span>All Genres</span>
+                <i v-if="selectedGenre === null" class="fa-solid fa-check text-xs"></i>
+              </div>
+              <div 
+                v-for="genre in genres" 
+                :key="genre.id"
+                class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+                :class="selectedGenre === genre.id ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                @click.stop="selectGenre(genre.id)"
+              >
+                <span>{{ genre.name }}</span>
+                <i v-if="selectedGenre === genre.id" class="fa-solid fa-check text-xs"></i>
+              </div>
+            </div>
+          </transition>
+        </div>
+
+        <!-- Custom Rating Dropdown -->
+        <div class="relative">
+          <button 
+            class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
+            :class="[
+              activeDropdown === 'rating' || minRating > 0
+                ? 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border-amber-500/30 font-extrabold'
+                : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+            ]"
+            @click.stop="toggleDropdown('rating')"
+          >
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <span class="truncate max-w-[70px] sm:max-w-none">{{ selectedRatingLabel }}</span>
+            <i class="fa-solid fa-chevron-down text-[10px] opacity-75 transition-transform" :class="{ 'rotate-180': activeDropdown === 'rating' }"></i>
+          </button>
+
+          <transition name="dropdown-pop">
+            <div 
+              v-if="activeDropdown === 'rating'" 
+              class="absolute left-1/2 -translate-x-1/2 md:translate-x-0 md:left-0 top-full mt-2 w-48 rounded-2xl bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 shadow-2xl p-1.5 z-50 backdrop-blur-xl"
+            >
+              <div 
+                v-for="opt in [
+                  { val: 0, label: 'All Ratings' },
+                  { val: 6, label: '6.0+ ★ Good' },
+                  { val: 7, label: '7.0+ ★ Great' },
+                  { val: 8, label: '8.0+ ★ Masterpiece' }
+                ]"
+                :key="opt.val"
+                class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+                :class="minRating === opt.val ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                @click.stop="selectRating(opt.val)"
+              >
+                <span>{{ opt.label }}</span>
+                <i v-if="minRating === opt.val" class="fa-solid fa-check text-xs"></i>
+              </div>
+            </div>
+          </transition>
+        </div>
+
+        <!-- Custom Sort Dropdown -->
+        <div class="relative">
+          <button 
+            class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
+            :class="[
+              activeDropdown === 'sort' || sortBy !== 'popularity.desc'
+                ? 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border-amber-500/30 font-extrabold'
+                : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+            ]"
+            @click.stop="toggleDropdown('sort')"
+          >
+            <i class="fa-solid fa-arrow-down-wide-short text-xs opacity-75"></i>
+            <span class="truncate max-w-[70px] sm:max-w-none">{{ selectedSortLabel }}</span>
+            <i class="fa-solid fa-chevron-down text-[10px] opacity-75 transition-transform" :class="{ 'rotate-180': activeDropdown === 'sort' }"></i>
+          </button>
+
+          <transition name="dropdown-pop">
+            <div 
+              v-if="activeDropdown === 'sort'" 
+              class="absolute right-0 top-full mt-2 w-52 rounded-2xl bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 shadow-2xl p-1.5 z-50 backdrop-blur-xl"
+            >
+              <div 
+                v-for="opt in [
+                  { key: 'popularity.desc', icon: 'fa-solid fa-fire', label: 'Most Popular' },
+                  { key: 'vote_average.desc', icon: 'fa-solid fa-star', label: 'Highest Rated' },
+                  { key: 'release_date.desc', icon: 'fa-solid fa-calendar-days', label: 'Newest Releases' },
+                  { key: 'title.asc', icon: 'fa-solid fa-arrow-down-a-z', label: 'Alphabetical (A-Z)' }
+                ]"
+                :key="opt.key"
+                class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+                :class="sortBy === opt.key ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                @click.stop="selectSort(opt.key)"
+              >
+                <span class="flex items-center gap-2">
+                  <i :class="opt.icon" class="text-xs"></i>
+                  <span>{{ opt.label }}</span>
+                </span>
+                <i v-if="sortBy === opt.key" class="fa-solid fa-check text-xs"></i>
+              </div>
+            </div>
+          </transition>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  categories: { type: Array, default: () => [] },
+  currentCategory: { type: String, default: 'popular' },
+  activeSearchQuery: { type: String, default: '' },
+  genres: { type: Array, default: () => [] },
+  selectedGenre: { type: [Number, String], default: null },
+  minRating: { type: Number, default: 0 },
+  sortBy: { type: String, default: 'popularity.desc' },
+  activeDropdown: { type: String, default: null }
+})
+
+const emit = defineEmits([
+  'select-category',
+  'toggle-dropdown',
+  'update:selectedGenre',
+  'update:minRating',
+  'update:sortBy',
+  'reset-filters',
+  'close-dropdowns'
+])
+
+const selectedGenreName = computed(() => {
+  if (!props.selectedGenre) return 'All Genres'
+  const found = props.genres.find(g => g.id === Number(props.selectedGenre))
+  return found ? found.name : 'All Genres'
+})
+
+const selectedRatingLabel = computed(() => {
+  if (!props.minRating) return 'All Ratings'
+  return `${props.minRating}.0+ ★`
+})
+
+const selectedSortLabel = computed(() => {
+  switch (props.sortBy) {
+    case 'vote_average.desc': return 'Highest Rated'
+    case 'release_date.desc': return 'Newest'
+    case 'title.asc': return 'A-Z'
+    case 'popularity.desc':
+    default: return 'Most Popular'
+  }
+})
+
+const toggleDropdown = (name) => {
+  emit('toggle-dropdown', name)
+}
+
+const selectGenre = (genreId) => {
+  emit('update:selectedGenre', genreId)
+  emit('close-dropdowns')
+}
+
+const selectRating = (rating) => {
+  emit('update:minRating', rating)
+  emit('close-dropdowns')
+}
+
+const selectSort = (sortKey) => {
+  emit('update:sortBy', sortKey)
+  emit('close-dropdowns')
+}
+</script>
