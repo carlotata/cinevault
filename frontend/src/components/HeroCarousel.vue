@@ -118,8 +118,9 @@
           <button 
             class="h-12 px-7 rounded-full font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             :class="darkMode 
-              ? 'bg-white hover:bg-zinc-200 text-black shadow-xl shadow-black/40' 
+              ? 'keep-white !bg-white hover:!bg-zinc-100 !text-zinc-950 font-black shadow-xl shadow-black/40' 
               : 'bg-zinc-950 hover:bg-black text-white shadow-xl shadow-zinc-950/20'"
+            :style="darkMode ? { backgroundColor: '#ffffff', color: '#09090b' } : {}"
             @click="$emit('open-details', currentMovie)"
           >
             <i class="fa-solid fa-circle-info text-base"></i>

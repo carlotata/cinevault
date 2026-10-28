@@ -318,20 +318,8 @@
                     </div>
                   </div>
 
-                  <!-- Cast Carousel Rail with Overlay Buttons and Visible Scrollbar -->
-                  <div class="relative group/cast min-w-0 w-full">
-                    <!-- Left Floating Arrow Button -->
-                    <button
-                      v-show="!isCastAtStart"
-                      type="button"
-                      class="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer opacity-90 hover:opacity-100"
-                      :class="darkMode ? 'bg-black/80 text-white border-white/20 hover:bg-black' : 'bg-white/95 text-zinc-800 border-zinc-300 hover:bg-white shadow-zinc-400/30'"
-                      @click="scrollCast('left')"
-                      aria-label="Previous cast members"
-                    >
-                      <i class="fa-solid fa-chevron-left text-xs"></i>
-                    </button>
-
+                  <!-- Cast Carousel Rail with Visible Amber Scrollbar -->
+                  <div class="relative min-w-0 w-full">
                     <!-- Scrollable Container -->
                     <div 
                       ref="castRailRef"
@@ -386,18 +374,6 @@
                         </span>
                       </div>
                     </div>
-
-                    <!-- Right Floating Arrow Button -->
-                    <button
-                      v-show="!isCastAtEnd"
-                      type="button"
-                      class="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer opacity-90 hover:opacity-100"
-                      :class="darkMode ? 'bg-black/80 text-white border-white/20 hover:bg-black' : 'bg-white/95 text-zinc-800 border-zinc-300 hover:bg-white shadow-zinc-400/30'"
-                      @click="scrollCast('right')"
-                      aria-label="Next cast members"
-                    >
-                      <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </button>
                   </div>
                 </div>
 

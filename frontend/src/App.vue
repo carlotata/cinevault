@@ -326,8 +326,72 @@ const isTrailerPlaying = ref(false)
 
 const loading = ref(false)
 const error = ref(null)
+
+// Theme System (3-Mode System: system / light / dark + Instant 0ms LocalStorage)
+const THEME_STORAGE_KEY = 'cinevault_theme'
+const THEME_MODE_KEY = 'cinevault_theme_mode'
 const darkMode = ref(true)
 const themeMode = ref('system')
+let systemThemeMediaQuery = null
+
+const updateThemeClass = () => {
+  const isDark = darkMode.value
+  if (isDark) {
+    document.documentElement.classList.add('dark')
+    document.documentElement.classList.remove('light', 'light-theme')
+    document.body.classList.add('dark')
+    document.body.classList.remove('light', 'light-theme')
+  } else {
+    document.documentElement.classList.remove('dark')
+    document.documentElement.classList.add('light', 'light-theme')
+    document.body.classList.remove('dark')
+    document.body.classList.add('light', 'light-theme')
+  }
+  if ($q && $q.dark) {
+    $q.dark.set(isDark)
+  }
+}
+
+const applyThemeWithTransition = (fn) => {
+  // Instant synchronous execution (0ms delay - surface transitions handled smoothly by CSS)
+  fn()
+}
+
+const setThemeMode = (mode) => {
+  themeMode.value = mode
+  if (mode === 'system') {
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    darkMode.value = prefersDark !== false
+  } else {
+    darkMode.value = (mode === 'dark')
+  }
+  updateThemeClass()
+  saveLocalStorage()
+
+  if (isLoggedIn.value) {
+    api('/settings', { method: 'PUT', body: { dark_mode: darkMode.value } })
+      .catch(err => console.warn('Could not sync theme with account settings:', err))
+  }
+}
+
+const toggleDarkMode = () => {
+  let nextMode = 'dark'
+  if (themeMode.value === 'system') {
+    nextMode = darkMode.value ? 'light' : 'dark'
+  } else if (themeMode.value === 'dark') {
+    nextMode = 'light'
+  } else {
+    nextMode = 'system'
+  }
+  setThemeMode(nextMode)
+}
+
+const handleSystemThemeChange = (e) => {
+  if (themeMode.value === 'system') {
+    darkMode.value = e.matches
+    updateThemeClass()
+  }
+}
 
 const currentPage = ref(1)
 const totalPages = ref(1)
@@ -1237,83 +1301,7 @@ const confirmClearRecentSearches = () => {
   }
 }
 
-// Theme & Local Storage (3-Mode System: system / light / dark + LocalStorage + View Transitions)
-const THEME_STORAGE_KEY = 'cinevault_theme'
-const THEME_MODE_KEY = 'cinevault_theme_mode'
-let systemThemeMediaQuery = null
-
-const applyThemeWithTransition = (fn) => {
-  if (typeof document.startViewTransition === 'function') {
-    document.startViewTransition(() => {
-      fn()
-    })
-  } else {
-    document.documentElement.classList.add('theme-transitioning')
-    fn()
-    setTimeout(() => {
-      document.documentElement.classList.remove('theme-transitioning')
-    }, 220)
-  }
-}
-
-const setThemeMode = (mode) => {
-  themeMode.value = mode
-  applyThemeWithTransition(() => {
-    if (mode === 'system') {
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      darkMode.value = prefersDark !== false
-    } else {
-      darkMode.value = (mode === 'dark')
-    }
-    updateThemeClass()
-    saveLocalStorage()
-  })
-
-  if (isLoggedIn.value) {
-    api('/settings', { method: 'PUT', body: { dark_mode: darkMode.value } })
-      .catch(err => console.warn('Could not sync theme with account settings:', err))
-  }
-}
-
-const toggleDarkMode = () => {
-  let nextMode = 'dark'
-  if (themeMode.value === 'system') {
-    nextMode = darkMode.value ? 'light' : 'dark'
-  } else if (themeMode.value === 'dark') {
-    nextMode = 'light'
-  } else {
-    nextMode = 'system'
-  }
-  setThemeMode(nextMode)
-}
-
-const updateThemeClass = () => {
-  const isDark = darkMode.value
-  if (isDark) {
-    document.documentElement.classList.add('dark')
-    document.documentElement.classList.remove('light', 'light-theme')
-    document.body.classList.add('dark')
-    document.body.classList.remove('light', 'light-theme')
-  } else {
-    document.documentElement.classList.remove('dark')
-    document.documentElement.classList.add('light', 'light-theme')
-    document.body.classList.remove('dark')
-    document.body.classList.add('light', 'light-theme')
-  }
-  if ($q && $q.dark) {
-    $q.dark.set(isDark)
-  }
-}
-
-const handleSystemThemeChange = (e) => {
-  if (themeMode.value === 'system') {
-    applyThemeWithTransition(() => {
-      darkMode.value = e.matches
-      updateThemeClass()
-    })
-  }
-}
-
+// Guest Recent Searches LocalStorage
 const readGuestRecentSearches = () => {
   try {
     const saved = JSON.parse(localStorage.getItem('cinevault_recent_searches'))

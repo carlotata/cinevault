@@ -7,7 +7,7 @@
       @click.self="$emit('close')"
     >
       <div 
-        class="w-[92vw] max-w-lg max-h-[85dvh] flex flex-col rounded-3xl p-5 sm:p-6 relative transition-all border overflow-hidden"
+        class="w-[94vw] sm:w-full max-w-lg max-h-[85dvh] flex flex-col rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative transition-all border overflow-hidden mx-auto"
         :class="darkMode 
           ? 'bg-[#111622] border-white/10 text-white shadow-2xl shadow-black/80' 
           : 'bg-white border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-300/40'"
@@ -17,7 +17,7 @@
       >
         <!-- Modal Top Bar -->
         <div 
-          class="flex items-center justify-between pb-4 border-b mb-4"
+          class="flex items-center justify-between pb-3 sm:pb-4 border-b mb-3.5 sm:mb-4"
           :class="darkMode ? 'border-white/5' : 'border-zinc-100'"
         >
           <div class="flex items-center gap-2.5">
@@ -30,7 +30,7 @@
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </div>
             <h3 
-              class="font-display text-lg sm:text-xl font-black tracking-tight !m-0"
+              class="font-display text-base sm:text-xl font-black tracking-tight !m-0"
               :class="darkMode ? 'text-white' : 'text-zinc-900'"
             >
               Search Movies
@@ -50,25 +50,25 @@
         </div>
 
         <!-- Search Input Bar -->
-        <form class="relative mb-5" @submit.prevent="handleSubmit">
+        <form class="relative mb-4 sm:mb-5 min-w-0" @submit.prevent="handleSubmit">
           <div 
-            class="flex items-center h-13 px-4 rounded-2xl border focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all"
+            class="flex items-center h-12 sm:h-13 px-3 sm:px-4 rounded-2xl border focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all min-w-0 gap-2"
             :class="darkMode 
               ? 'bg-black/50 border-white/10 shadow-inner' 
               : 'bg-zinc-50 border-zinc-300 shadow-xs'"
           >
             <i 
-              class="fa-solid fa-magnifying-glass mr-3 text-base shrink-0 transition-colors"
+              class="fa-solid fa-magnifying-glass text-sm sm:text-base shrink-0 transition-colors"
               :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'"
             ></i>
             <input 
               ref="searchInputRef"
               type="text" 
-              class="flex-1 min-w-0 bg-transparent text-sm border-0 outline-none ring-0 focus:outline-none focus:ring-0 focus:border-0 !border-none !outline-none" 
+              class="flex-1 min-w-0 bg-transparent text-xs sm:text-sm border-0 outline-none ring-0 focus:outline-none focus:ring-0 focus:border-0 !border-none !outline-none" 
               :class="darkMode 
                 ? 'text-white placeholder-zinc-500' 
                 : 'text-zinc-900 placeholder-zinc-400'"
-              placeholder="Search by movie title, character, or director..." 
+              placeholder="Search movies, cast, director..." 
               v-model="inputQuery" 
               @keyup.esc="$emit('close')"
             />
@@ -76,7 +76,7 @@
             <button 
               type="button" 
               v-if="inputQuery" 
-              class="shrink-0 w-6 h-6 rounded-full flex items-center justify-center mr-2 text-xs transition-colors cursor-pointer" 
+              class="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors cursor-pointer" 
               :class="darkMode 
                 ? 'bg-white/10 hover:bg-white/20 text-zinc-300 hover:text-white' 
                 : 'bg-zinc-200 hover:bg-zinc-300 text-zinc-600 hover:text-black'"
@@ -88,10 +88,11 @@
 
             <button 
               type="submit" 
-              class="shrink-0 h-8 px-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/20"
+              class="shrink-0 h-8 sm:h-8.5 px-2.5 sm:px-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 active:scale-95"
+              aria-label="Submit search"
             >
-              <span>Search</span>
-              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              <span class="hidden sm:inline">Search</span>
+              <i class="fa-solid fa-arrow-right text-[11px] sm:text-[10px]"></i>
             </button>
           </div>
         </form>
@@ -127,10 +128,10 @@
             class="pt-4 border-t"
             :class="darkMode ? 'border-white/5' : 'border-zinc-100'"
           >
-            <div class="flex items-center justify-between text-[11px] font-black uppercase tracking-wider mb-2">
-              <span :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Recent Queries</span>
+            <div class="flex items-center justify-between text-[11px] font-black uppercase tracking-wider mb-2 gap-2 min-w-0">
+              <span class="truncate" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Recent Queries</span>
               <button 
-                class="normal-case font-semibold text-xs transition-colors cursor-pointer"
+                class="shrink-0 normal-case font-bold text-xs transition-colors cursor-pointer"
                 :class="darkMode 
                   ? 'text-zinc-400 hover:text-amber-400' 
                   : 'text-zinc-500 hover:text-amber-700'"
