@@ -398,7 +398,7 @@ const isUserMenuOpen = ref(false)
 const isMobileDrawerOpen = ref(false)
 
 const isHeroBlended = computed(() => {
-  return !isScrolled.value && props.activeTab === 'discover' && props.currentCategory === 'popular' && !props.activeSearchQuery
+  return !isScrolled.value && props.activeTab === 'discover' && !props.activeSearchQuery
 })
 
 const handleScroll = () => {

@@ -24,7 +24,7 @@
 
       <!-- Cineby Full-Bleed Hero Carousel (Discover mode) -->
       <HeroCarousel 
-        v-if="activeTab === 'discover' && currentCategory === 'popular' && !activeSearchQuery && heroMovies.length > 0 && !error"
+        v-if="activeTab === 'discover' && !activeSearchQuery && heroMovies.length > 0 && !error"
         :movies="heroMovies"
         :current-index="heroSlideIndex"
         :genres="genres"
@@ -41,13 +41,13 @@
         @resume-autoplay="startHeroAutoplay"
       />
       <HeroSkeleton 
-        v-else-if="activeTab === 'discover' && currentCategory === 'popular' && !activeSearchQuery && loading && heroMovies.length === 0"
+        v-else-if="activeTab === 'discover' && !activeSearchQuery && loading && heroMovies.length === 0"
         :dark-mode="darkMode"
       />
 
       <div 
         class="container content-wrapper"
-        :class="{ '!pt-28 sm:!pt-32 lg:!pt-36': activeTab !== 'discover' || activeSearchQuery || currentCategory !== 'popular' || heroMovies.length === 0 }"
+        :class="{ '!pt-28 sm:!pt-32 lg:!pt-36': activeTab !== 'discover' || activeSearchQuery || heroMovies.length === 0 }"
       >
 
         <!-- Active Search Banner -->
@@ -211,6 +211,7 @@
       :is-open="isSearchModalOpen"
       :recent-searches="recentSearches"
       :initial-query="searchQuery"
+      :dark-mode="darkMode"
       @close="closeSearchModal"
       @submit-search="submitSearch"
       @remove-recent="removeRecentSearch"
@@ -652,6 +653,8 @@ const setCategory = (catId) => {
   searchQuery.value = ''
   activeSearchQuery.value = ''
   currentPage.value = 1
+  heroSlideIndex.value = 0
+  closeDropdowns()
   fetchMovies(1)
 }
 
