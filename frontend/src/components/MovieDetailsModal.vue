@@ -51,14 +51,14 @@
             <!-- Left Column: Poster & Quick Action Buttons -->
             <div class="flex flex-col items-center md:items-start gap-4">
               <!-- Poster Frame -->
-              <div class="w-44 sm:w-52 md:w-full aspect-[2/3] rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 shadow-xl shadow-black/50">
+              <div class="w-44 sm:w-52 md:w-full aspect-[2/3] rounded-2xl overflow-hidden bg-zinc-100 dark:bg-[#182030] border border-zinc-200 dark:border-white/10 shadow-xl shadow-black/50">
                 <img 
                   v-if="movie.poster_path" 
                   :src="getPosterUrl(movie.poster_path, 'w500')" 
                   :alt="movie.title"
                   class="w-full h-full object-cover"
                 />
-                <div v-else class="w-full h-full flex items-center justify-center bg-zinc-800 text-zinc-600 text-3xl">
+                <div v-else class="w-full h-full flex items-center justify-center bg-zinc-200 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-3xl">
                   <i class="fa-solid fa-film"></i>
                 </div>
               </div>
@@ -150,17 +150,17 @@
 
               <!-- Meta Specs Row -->
               <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs font-semibold text-zinc-600 dark:text-zinc-300">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-bold">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-bold">
                   <i class="fa-solid fa-star text-[11px]"></i>
                   {{ formatRating(movie.vote_average) }} / 10
                 </span>
-                <span class="text-zinc-400 dark:text-zinc-600 font-bold">·</span>
+                <span class="text-zinc-400 dark:text-zinc-400 font-bold">·</span>
                 <span>{{ formatYear(movie.release_date) }}</span>
                 <template v-if="movie.runtime">
-                  <span class="text-zinc-400 dark:text-zinc-600 font-bold">·</span>
+                  <span class="text-zinc-400 dark:text-zinc-400 font-bold">·</span>
                   <span>{{ movie.runtime }} min</span>
                 </template>
-                <span class="text-zinc-400 dark:text-zinc-600 font-bold">·</span>
+                <span class="text-zinc-400 dark:text-zinc-400 font-bold">·</span>
                 <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-zinc-200 dark:bg-black/60 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-white/10">
                   HD
                 </span>

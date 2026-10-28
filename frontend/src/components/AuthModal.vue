@@ -6,7 +6,7 @@
       @click.self="$emit('close')"
     >
       <div 
-        class="w-full max-w-md rounded-3xl p-6 sm:p-8 relative transition-all border"
+        class="w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-3xl p-6 sm:p-8 relative transition-all border no-scrollbar"
         :class="darkMode 
           ? 'bg-[#111622] border-white/10 text-white shadow-2xl shadow-black/80' 
           : 'bg-white border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-300/40'"
@@ -101,7 +101,7 @@
         </div>
 
         <!-- Form Fields -->
-        <form class="space-y-4" @submit.prevent="handleSubmit" novalidate>
+        <form method="post" class="space-y-4" @submit.prevent="handleSubmit" novalidate>
           
           <!-- Name Field (Register Only) -->
           <div v-if="!isLogin">
@@ -286,7 +286,13 @@ const form = ref({
 const isLogin = computed(() => localMode.value === 'login')
 
 const formError = computed(() => {
-  return props.errors && props.errors.form ? props.errors.form : null
+  if (!props.errors) return null
+  if (typeof props.errors.form === 'string') return props.errors.form
+  if (Array.isArray(props.errors.form) && props.errors.form.length > 0) return props.errors.form[0]
+  if (typeof props.errors.general === 'string') return props.errors.general
+  if (Array.isArray(props.errors.general) && props.errors.general.length > 0) return props.errors.general[0]
+  if (typeof props.errors.message === 'string') return props.errors.message
+  return null
 })
 
 const switchMode = (newMode) => {

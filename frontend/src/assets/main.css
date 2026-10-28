@@ -2,12 +2,17 @@
 @import "../../style.css" layer(legacy);
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, :where(.dark *)));
 
-:root {
+:root,
+html.dark,
+body.dark {
   --bg-app: #080b11;
   --bg-surface: #111622;
   --bg-card: #182030;
+  --bg-neo-base: #080b11;
+  --bg-neo-surface: #121721;
+  --bg-neo-card: #182030;
   --bg-input: rgba(0, 0, 0, 0.45);
   --border-subtle: rgba(255, 255, 255, 0.08);
   --text-main: #f8fafc;
@@ -16,10 +21,15 @@
 }
 
 html.light,
-html.light-theme {
+html.light-theme,
+body.light,
+body.light-theme {
   --bg-app: #f4f6fa;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
+  --bg-neo-base: #f4f6fa;
+  --bg-neo-surface: #ffffff;
+  --bg-neo-card: #ffffff;
   --bg-input: #f1f5f9;
   --border-subtle: rgba(0, 0, 0, 0.09);
   --text-main: #0f172a;
@@ -31,12 +41,25 @@ html.light-theme {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 
 .theme-card-panel {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+/* Universal surface transitions for smooth theme interpolation */
+header,
+main,
+footer,
+nav,
+dialog,
+[role="dialog"],
+.cineby-card {
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
 
 @theme {

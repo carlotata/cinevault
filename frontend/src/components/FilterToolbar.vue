@@ -1,9 +1,9 @@
 <template>
   <section class="py-4 select-none">
-    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5">
+    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5">
       
-      <!-- Category Pills Strip (smooth horizontal scroll on mobile) -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
+      <!-- Category Pills Strip (smooth horizontal scroll on mobile & tablet) -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 no-scrollbar whitespace-nowrap">
         <button 
           v-for="cat in categories" 
           :key="cat.id"
@@ -22,8 +22,8 @@
         </button>
       </div>
 
-      <!-- Custom Dropdowns: 3 Symmetrical Columns on mobile, Flex on Desktop -->
-      <div class="grid grid-cols-3 md:flex items-center gap-2">
+      <!-- Custom Dropdowns: 3 Symmetrical Columns on mobile/tablet, Flex on Desktop -->
+      <div class="grid grid-cols-3 lg:flex items-center gap-2">
         
         <!-- Custom Genre Dropdown -->
         <div class="relative">

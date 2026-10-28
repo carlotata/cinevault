@@ -42,9 +42,9 @@
           :class="darkMode ? 'text-zinc-300' : 'text-zinc-800'"
         >
           <span>Aviso, John Carl</span>
-          <span class="text-amber-500 font-extrabold">·</span>
+          <span :class="darkMode ? 'text-amber-400' : 'text-amber-700'" class="font-extrabold">·</span>
           <span>Baydal, Lourden</span>
-          <span class="text-amber-500 font-extrabold">·</span>
+          <span :class="darkMode ? 'text-amber-400' : 'text-amber-700'" class="font-extrabold">·</span>
           <span>Patigas, John Paul</span>
         </div>
       </div>

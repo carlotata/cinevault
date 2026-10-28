@@ -9,12 +9,14 @@
       :watchlist-count="watchlistCount"
       :favorite-count="favoriteCount"
       :dark-mode="darkMode"
+      :theme-mode="themeMode"
       :is-logged-in="isLoggedIn"
       :user="user"
       :user-initial="userInitial"
       @navigate="handleNavigate"
       @open-search="openSearchModal"
       @toggle-theme="toggleDarkMode"
+      @set-theme-mode="setThemeMode"
       @open-auth="openAuthModal"
       @logout="confirmLogout"
     />
@@ -324,6 +326,7 @@ const isTrailerPlaying = ref(false)
 const loading = ref(false)
 const error = ref(null)
 const darkMode = ref(true)
+const themeMode = ref('system')
 
 const currentPage = ref(1)
 const totalPages = ref(1)
@@ -777,11 +780,15 @@ const closeModal = (syncUrl = true) => {
 // Search Modal
 const openSearchModal = () => {
   isSearchModalOpen.value = true
+  document.body.style.overflow = 'hidden'
   closeDropdowns()
 }
 
 const closeSearchModal = () => {
   isSearchModalOpen.value = false
+  if (!selectedMovie.value && !isAuthModalOpen.value) {
+    document.body.style.overflow = ''
+  }
 }
 
 const submitSearch = (query) => {
@@ -819,6 +826,9 @@ const handleHashChange = async () => {
         } else {
           openMovieDetails({ id: movieId, title: 'Loading Film Details...' })
         }
+      }
+      if (movies.value.length === 0) {
+        fetchMovies(1)
       }
       return
     }
@@ -865,6 +875,8 @@ const handleHashChange = async () => {
       if (currentCategory.value !== catId) {
         currentCategory.value = catId
         fetchMovies()
+      } else if (movies.value.length === 0) {
+        fetchMovies()
       }
       return
     }
@@ -876,6 +888,8 @@ const handleHashChange = async () => {
       activeSearchQuery.value = ''
       if (currentCategory.value !== 'popular') {
         currentCategory.value = 'popular'
+        fetchMovies()
+      } else if (movies.value.length === 0) {
         fetchMovies()
       }
     }
@@ -1048,11 +1062,15 @@ const openAuthModal = (mode = 'login', message = '') => {
   authMessage.value = message
   authErrors.value = {}
   isAuthModalOpen.value = true
+  document.body.style.overflow = 'hidden'
 }
 
 const closeAuthModal = () => {
   isAuthModalOpen.value = false
   pendingAction.value = null
+  if (!selectedMovie.value && !isSearchModalOpen.value) {
+    document.body.style.overflow = ''
+  }
 }
 
 const startSession = (token, userData) => {
@@ -1103,6 +1121,8 @@ const submitAuth = async (formData) => {
   } catch (err) {
     if (err.status === 422 && err.data && err.data.errors) {
       authErrors.value = err.data.errors
+    } else if (err.status === 502 || err.status === 503) {
+      authErrors.value = { form: ['CineVault service is momentarily unreachable. Please check your connection or try again in a moment.'] }
     } else {
       authErrors.value = { form: [err.message || 'Authentication failed. Please try again.'] }
     }
@@ -1123,10 +1143,12 @@ const logout = async () => {
 
 const syncUserTheme = (userData) => {
   if (userData && typeof userData.dark_mode === 'boolean') {
+    themeMode.value = userData.dark_mode ? 'dark' : 'light'
     darkMode.value = userData.dark_mode
     updateThemeClass()
     try {
-      localStorage.setItem('cinevault_theme', darkMode.value ? 'dark' : 'light')
+      localStorage.setItem(THEME_MODE_KEY, themeMode.value)
+      localStorage.setItem(THEME_STORAGE_KEY, darkMode.value ? 'dark' : 'light')
       localStorage.setItem('cinevault_dark_mode', darkMode.value.toString())
     } catch (e) {}
   }
@@ -1214,24 +1236,54 @@ const confirmClearRecentSearches = () => {
   }
 }
 
-// Theme & Local Storage (Device OS Preference + LocalStorage + Account Synced)
+// Theme & Local Storage (3-Mode System: system / light / dark + LocalStorage + View Transitions)
 const THEME_STORAGE_KEY = 'cinevault_theme'
+const THEME_MODE_KEY = 'cinevault_theme_mode'
 let systemThemeMediaQuery = null
 
-const toggleDarkMode = () => {
-  document.documentElement.classList.add('theme-transitioning')
-  darkMode.value = !darkMode.value
-  updateThemeClass()
-  saveLocalStorage()
+const applyThemeWithTransition = (fn) => {
+  if (typeof document.startViewTransition === 'function') {
+    document.startViewTransition(() => {
+      fn()
+    })
+  } else {
+    document.documentElement.classList.add('theme-transitioning')
+    fn()
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning')
+    }, 220)
+  }
+}
+
+const setThemeMode = (mode) => {
+  themeMode.value = mode
+  applyThemeWithTransition(() => {
+    if (mode === 'system') {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      darkMode.value = prefersDark !== false
+    } else {
+      darkMode.value = (mode === 'dark')
+    }
+    updateThemeClass()
+    saveLocalStorage()
+  })
 
   if (isLoggedIn.value) {
     api('/settings', { method: 'PUT', body: { dark_mode: darkMode.value } })
       .catch(err => console.warn('Could not sync theme with account settings:', err))
   }
+}
 
-  setTimeout(() => {
-    document.documentElement.classList.remove('theme-transitioning')
-  }, 220)
+const toggleDarkMode = () => {
+  let nextMode = 'dark'
+  if (themeMode.value === 'system') {
+    nextMode = darkMode.value ? 'light' : 'dark'
+  } else if (themeMode.value === 'dark') {
+    nextMode = 'light'
+  } else {
+    nextMode = 'system'
+  }
+  setThemeMode(nextMode)
 }
 
 const updateThemeClass = () => {
@@ -1253,11 +1305,11 @@ const updateThemeClass = () => {
 }
 
 const handleSystemThemeChange = (e) => {
-  // Only auto-switch if user hasn't explicitly set a preference and is not logged in with account pref
-  const stored = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem('cinevault_dark_mode')
-  if (!stored && !isLoggedIn.value) {
-    darkMode.value = e.matches
-    updateThemeClass()
+  if (themeMode.value === 'system') {
+    applyThemeWithTransition(() => {
+      darkMode.value = e.matches
+      updateThemeClass()
+    })
   }
 }
 
@@ -1273,19 +1325,33 @@ const readGuestRecentSearches = () => {
 
 const loadLocalStorage = () => {
   try {
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem('cinevault_dark_mode')
-    if (savedTheme !== null) {
-      darkMode.value = (savedTheme === 'dark' || savedTheme === 'true')
-    } else if (window.matchMedia) {
-      // Fallback to system OS preference
-      darkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches !== false
+    const savedMode = localStorage.getItem(THEME_MODE_KEY)
+    if (savedMode === 'light' || savedMode === 'dark' || savedMode === 'system') {
+      themeMode.value = savedMode
+    } else {
+      const legacyTheme = localStorage.getItem(THEME_STORAGE_KEY)
+      if (legacyTheme === 'light' || legacyTheme === 'dark') {
+        themeMode.value = legacyTheme
+      } else {
+        themeMode.value = 'system'
+      }
     }
-  } catch (e) {}
+
+    if (themeMode.value === 'system') {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      darkMode.value = prefersDark !== false
+    } else {
+      darkMode.value = (themeMode.value === 'dark')
+    }
+  } catch (e) {
+    darkMode.value = true
+  }
   recentSearches.value = readGuestRecentSearches()
 }
 
 const saveLocalStorage = () => {
   try {
+    localStorage.setItem(THEME_MODE_KEY, themeMode.value)
     localStorage.setItem(THEME_STORAGE_KEY, darkMode.value ? 'dark' : 'light')
     localStorage.setItem('cinevault_dark_mode', darkMode.value.toString())
     if (!isLoggedIn.value) {

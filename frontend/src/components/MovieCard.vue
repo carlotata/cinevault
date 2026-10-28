@@ -4,12 +4,12 @@
     @click="$emit('open-details', movie)"
   >
     <!-- Poster Frame (Aspect 2:3) -->
-    <div class="relative w-full aspect-[2/3] rounded-2xl overflow-hidden bg-zinc-900 border border-white/5 shadow-lg shadow-black/40 group-hover:shadow-2xl group-hover:shadow-amber-500/10 group-hover:border-amber-500/30 transition-all duration-300">
+    <div class="relative w-full aspect-[2/3] rounded-2xl overflow-hidden bg-zinc-100 dark:bg-[#182030] border border-zinc-200/80 dark:border-white/5 shadow-md shadow-zinc-300/40 dark:shadow-black/40 group-hover:shadow-2xl group-hover:shadow-amber-500/10 group-hover:border-amber-500/40 transition-all duration-300">
       
       <!-- Shimmer Placeholder Skeleton -->
       <div 
         v-if="!imageLoaded && posterUrl" 
-        class="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 animate-pulse"
+        class="absolute inset-0 bg-gradient-to-r from-zinc-200 via-zinc-100 to-zinc-200 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 animate-pulse"
       ></div>
 
       <!-- Poster Image with Smooth Fade-in -->
@@ -23,7 +23,7 @@
         :style="{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.4s ease, transform 0.5s ease' }"
         @load="imageLoaded = true"
       />
-      <div v-else class="w-full h-full flex items-center justify-center bg-zinc-800/80 text-zinc-600 text-3xl">
+      <div v-else class="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 dark:text-zinc-600 text-3xl">
         <i class="fa-solid fa-film"></i>
       </div>
 
@@ -104,13 +104,13 @@
         {{ movie.title }}
       </p>
       <div class="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-        <span class="inline-flex items-center gap-1 text-amber-500 dark:text-amber-400 font-bold flex-shrink-0">
+        <span class="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold flex-shrink-0">
           <i class="fa-solid fa-star text-[10px]"></i>
           {{ formatRating(movie.vote_average) }}
         </span>
-        <span class="text-zinc-400 dark:text-zinc-600 font-bold">·</span>
+        <span class="text-zinc-400 dark:text-zinc-400 font-bold">·</span>
         <span class="flex-shrink-0">{{ formatYear(movie.release_date) }}</span>
-        <span class="text-zinc-400 dark:text-zinc-600 font-bold">·</span>
+        <span class="text-zinc-400 dark:text-zinc-400 font-bold">·</span>
         <span class="truncate text-zinc-500 dark:text-zinc-400">{{ primaryGenre }}</span>
       </div>
     </div>

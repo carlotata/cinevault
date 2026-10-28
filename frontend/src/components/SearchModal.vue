@@ -7,7 +7,7 @@
       @click.self="$emit('close')"
     >
       <div 
-        class="w-full max-w-xl rounded-3xl p-5 sm:p-6 relative transition-all border"
+        class="w-[92vw] max-w-lg max-h-[85dvh] flex flex-col rounded-3xl p-5 sm:p-6 relative transition-all border overflow-hidden"
         :class="darkMode 
           ? 'bg-[#111622] border-white/10 text-white shadow-2xl shadow-black/80' 
           : 'bg-white border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-300/40'"
@@ -25,7 +25,7 @@
               class="w-8 h-8 rounded-lg flex items-center justify-center border"
               :class="darkMode 
                 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' 
-                : 'bg-amber-50 text-amber-600 border-amber-200'"
+                : 'bg-amber-50 text-amber-700 border-amber-200'"
             >
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </div>
@@ -96,80 +96,83 @@
           </div>
         </form>
 
-        <!-- Quick Trending Keywords -->
-        <div class="mb-5">
-          <div 
-            class="text-[11px] font-black uppercase tracking-wider mb-2.5"
-            :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
-          >
-            Popular Searches
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button 
-              v-for="kw in ['Spider-Man', 'Oppenheimer', 'Dune', 'Batman', 'Interstellar']" 
-              :key="kw"
-              class="px-3 py-1 rounded-full text-xs font-semibold border transition-all cursor-pointer"
-              :class="darkMode 
-                ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-amber-400 border-white/5' 
-                : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-amber-600 border-zinc-200'"
-              @click="quickSearch(kw)"
-            >
-              {{ kw }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Recent Searches List -->
-        <div 
-          v-if="recentSearches.length > 0" 
-          class="pt-4 border-t"
-          :class="darkMode ? 'border-white/5' : 'border-zinc-100'"
-        >
-          <div class="flex items-center justify-between text-[11px] font-black uppercase tracking-wider mb-2">
-            <span :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Recent Queries</span>
-            <button 
-              class="normal-case font-semibold text-xs transition-colors cursor-pointer"
-              :class="darkMode 
-                ? 'text-zinc-400 hover:text-amber-400' 
-                : 'text-zinc-500 hover:text-amber-600'"
-              @click="$emit('clear-recent')"
-            >
-              Clear all
-            </button>
-          </div>
-
-          <div class="space-y-1">
+        <!-- Scrollable Suggestion & History Area -->
+        <div class="overflow-y-auto max-h-[50dvh] no-scrollbar pr-1 -mr-1">
+          <!-- Quick Trending Keywords -->
+          <div class="mb-5">
             <div 
-              v-for="(item, idx) in recentSearches" 
-              :key="item.id || idx"
-              class="group flex items-center justify-between px-3 py-2 rounded-xl transition-colors cursor-pointer"
-              :class="darkMode 
-                ? 'bg-transparent hover:bg-white/[0.04]' 
-                : 'bg-transparent hover:bg-zinc-100'"
-              @click="quickSearch(item.query)"
+              class="text-[11px] font-black uppercase tracking-wider mb-2.5"
+              :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
             >
-              <div 
-                class="flex items-center gap-2.5 text-xs transition-colors"
-                :class="darkMode 
-                  ? 'text-zinc-300 group-hover:text-amber-400' 
-                  : 'text-zinc-700 group-hover:text-amber-600'"
-              >
-                <i 
-                  class="fa-regular fa-clock text-[11px]"
-                  :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'"
-                ></i>
-                <span class="font-medium">{{ item.query }}</span>
-              </div>
+              Popular Searches
+            </div>
+            <div class="flex flex-wrap gap-2">
               <button 
-                class="w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all cursor-pointer"
+                v-for="kw in ['Spider-Man', 'Oppenheimer', 'Dune', 'Batman', 'Interstellar']" 
+                :key="kw"
+                class="px-3 py-1 rounded-full text-xs font-semibold border transition-all cursor-pointer"
                 :class="darkMode 
-                  ? 'text-zinc-400 hover:text-rose-400 hover:bg-white/10' 
-                  : 'text-zinc-400 hover:text-rose-500 hover:bg-zinc-200'"
-                @click.stop="$emit('remove-recent', item)" 
-                title="Remove"
+                  ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-amber-400 border-white/5' 
+                  : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-amber-700 border-zinc-200'"
+                @click="quickSearch(kw)"
               >
-                <i class="fa-solid fa-xmark text-xs"></i>
+                {{ kw }}
               </button>
+            </div>
+          </div>
+
+          <!-- Recent Searches List -->
+          <div 
+            v-if="recentSearches.length > 0" 
+            class="pt-4 border-t"
+            :class="darkMode ? 'border-white/5' : 'border-zinc-100'"
+          >
+            <div class="flex items-center justify-between text-[11px] font-black uppercase tracking-wider mb-2">
+              <span :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Recent Queries</span>
+              <button 
+                class="normal-case font-semibold text-xs transition-colors cursor-pointer"
+                :class="darkMode 
+                  ? 'text-zinc-400 hover:text-amber-400' 
+                  : 'text-zinc-500 hover:text-amber-700'"
+                @click="$emit('clear-recent')"
+              >
+                Clear all
+              </button>
+            </div>
+
+            <div class="space-y-1">
+              <div 
+                v-for="(item, idx) in recentSearches" 
+                :key="item.id || idx"
+                class="group flex items-center justify-between px-3 py-2 rounded-xl transition-colors cursor-pointer"
+                :class="darkMode 
+                  ? 'bg-transparent hover:bg-white/[0.04]' 
+                  : 'bg-transparent hover:bg-zinc-100'"
+                @click="quickSearch(item.query)"
+              >
+                <div 
+                  class="flex items-center gap-2.5 text-xs transition-colors"
+                  :class="darkMode 
+                    ? 'text-zinc-300 group-hover:text-amber-400' 
+                    : 'text-zinc-700 group-hover:text-amber-700'"
+                >
+                  <i 
+                    class="fa-regular fa-clock text-[11px]"
+                    :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'"
+                  ></i>
+                  <span class="font-medium">{{ item.query }}</span>
+                </div>
+                <button 
+                  class="w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all cursor-pointer"
+                  :class="darkMode 
+                    ? 'text-zinc-400 hover:text-rose-400 hover:bg-white/10' 
+                    : 'text-zinc-400 hover:text-rose-500 hover:bg-zinc-200'"
+                  @click.stop="$emit('remove-recent', item)" 
+                  title="Remove"
+                >
+                  <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>

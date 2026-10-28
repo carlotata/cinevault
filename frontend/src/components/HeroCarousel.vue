@@ -1,7 +1,7 @@
 <template>
   <section 
     v-if="currentMovie"
-    class="relative w-full overflow-hidden select-none group min-h-[460px] sm:min-h-[540px] md:min-h-[620px] lg:min-h-[700px] flex items-end transition-colors duration-200"
+    class="relative w-full overflow-hidden select-none group min-h-[480px] sm:min-h-[520px] lg:h-[70vh] lg:min-h-[560px] lg:max-h-[760px] flex items-end transition-colors duration-200"
     :class="darkMode ? 'bg-[#080b11]' : 'bg-[#f4f6fa]'"
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
@@ -80,21 +80,21 @@
           <!-- Star Rating -->
           <span 
             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md backdrop-blur-md font-bold transition-colors"
-            :class="darkMode ? 'bg-black/50 text-amber-400 border border-white/10' : 'bg-white/95 text-amber-600 border border-zinc-200/90 shadow-xs'"
+            :class="darkMode ? 'bg-black/50 text-amber-400 border border-white/10' : 'bg-white/95 text-amber-700 border border-zinc-200/90 shadow-xs'"
           >
             <i class="fa-solid fa-star text-[11px]"></i>
             {{ formatRating(currentMovie.vote_average) }}
           </span>
 
-          <span :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'" class="font-bold">·</span>
+          <span :class="darkMode ? 'text-zinc-400' : 'text-zinc-400'" class="font-bold">·</span>
           <span>{{ formatYear(currentMovie.release_date) }}</span>
           
           <template v-for="name in getMovieGenres(currentMovie).slice(0, 2)" :key="name">
-            <span :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'" class="font-bold">·</span>
+            <span :class="darkMode ? 'text-zinc-400' : 'text-zinc-400'" class="font-bold">·</span>
             <span>{{ name }}</span>
           </template>
 
-          <span :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'" class="font-bold">·</span>
+          <span :class="darkMode ? 'text-zinc-400' : 'text-zinc-400'" class="font-bold">·</span>
           <span 
             class="px-2 py-0.5 rounded text-[10px] font-black uppercase transition-colors"
             :class="darkMode ? 'bg-black/50 text-zinc-300 border border-white/10' : 'bg-white/95 text-zinc-800 border border-zinc-300/80 shadow-xs'"

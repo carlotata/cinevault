@@ -135,12 +135,67 @@
     >
       <!-- Page Summary Info -->
       <div class="text-xs sm:text-sm font-medium" :class="darkMode ? 'text-zinc-400' : 'text-zinc-600'">
-        Showing page <span class="font-extrabold text-amber-500">{{ currentPage }}</span> of <span class="font-extrabold" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ totalPages }}</span>
+        Showing page <span class="font-extrabold text-amber-700 dark:text-amber-400">{{ currentPage }}</span> of <span class="font-extrabold" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ totalPages }}</span>
         <span v-if="totalResults > 0" class="hidden sm:inline"> ({{ totalResults.toLocaleString() }} total titles)</span>
       </div>
 
-      <!-- Pagination Buttons -->
-      <nav class="flex items-center gap-1.5 sm:gap-2 select-none" aria-label="Catalog Pagination">
+      <!-- Mobile Truncated Pagination (< sm, zero horizontal blowout) -->
+      <nav class="flex sm:hidden items-center justify-between w-full max-w-xs mx-auto gap-1 select-none" aria-label="Mobile Catalog Pagination">
+        <button
+          type="button"
+          :disabled="currentPage <= 1"
+          @click="$emit('change-page', currentPage - 1)"
+          class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          :class="darkMode 
+            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10' 
+            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
+          aria-label="Previous Page"
+        >
+          <i class="fa-solid fa-chevron-left text-xs"></i>
+        </button>
+
+        <div class="flex items-center gap-1">
+          <template v-for="(p, idx) in mobileVisiblePages" :key="'mob-' + idx">
+            <span 
+              v-if="p === '...'" 
+              class="w-5 text-center text-xs font-bold"
+              :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'"
+            >
+              ···
+            </span>
+            <button
+              v-else
+              type="button"
+              @click="$emit('change-page', p)"
+              class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-extrabold transition-all border cursor-pointer"
+              :class="p === currentPage 
+                ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/30' 
+                : darkMode 
+                  ? 'bg-white/[0.04] text-zinc-300 border-white/10' 
+                  : 'bg-zinc-100 text-zinc-700 border-zinc-200'"
+              :aria-current="p === currentPage ? 'page' : undefined"
+            >
+              {{ p }}
+            </button>
+          </template>
+        </div>
+
+        <button
+          type="button"
+          :disabled="currentPage >= totalPages"
+          @click="$emit('change-page', currentPage + 1)"
+          class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          :class="darkMode 
+            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10' 
+            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
+          aria-label="Next Page"
+        >
+          <i class="fa-solid fa-chevron-right text-xs"></i>
+        </button>
+      </nav>
+
+      <!-- Desktop Pagination Buttons (>= sm) -->
+      <nav class="hidden sm:flex items-center gap-1.5 sm:gap-2 select-none" aria-label="Desktop Catalog Pagination">
         <!-- First Page Button -->
         <button
           type="button"
@@ -262,6 +317,21 @@ defineEmits([
   'open-auth',
   'change-page'
 ])
+
+const mobileVisiblePages = computed(() => {
+  const current = props.currentPage
+  const total = props.totalPages
+  if (total <= 4) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+  if (current <= 2) {
+    return [1, 2, '...', total]
+  }
+  if (current >= total - 1) {
+    return [1, '...', total - 1, total]
+  }
+  return [1, '...', current, '...', total]
+})
 
 const visiblePages = computed(() => {
   const current = props.currentPage

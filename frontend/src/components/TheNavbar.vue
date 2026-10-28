@@ -144,7 +144,7 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
 
-        <!-- Theme Toggle -->
+        <!-- 3-Mode Theme Toggle (System / Dark / Light) -->
         <button 
           class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all border cursor-pointer"
           :class="[
@@ -153,9 +153,12 @@
               : 'bg-white/80 hover:bg-white text-amber-600 hover:text-amber-700 border-zinc-200/80 shadow-xs'
           ]"
           @click="$emit('toggle-theme')" 
-          :aria-label="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+          :aria-label="`Theme: ${themeMode} mode (click to cycle)`"
+          :title="`Theme: ${themeMode} mode (click to cycle)`"
         >
-          <i :class="darkMode ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-amber-600'"></i>
+          <i v-if="themeMode === 'system'" class="fa-solid fa-circle-half-stroke text-amber-400 text-sm"></i>
+          <i v-else-if="darkMode" class="fa-solid fa-moon text-amber-400 text-sm"></i>
+          <i v-else class="fa-solid fa-sun text-amber-600 text-sm"></i>
         </button>
 
         <!-- Guest: Sign In Button (Hidden on mobile as it's prominently inside the burger sidebar) -->
@@ -336,6 +339,34 @@
               >
                 <i class="fa-solid fa-magnifying-glass text-zinc-400"></i> Search Movies
               </button>
+
+              <!-- Theme Mode Selector (Mobile Drawer) -->
+              <div class="pt-3 px-1">
+                <span class="text-[10px] font-black uppercase tracking-wider block mb-2" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Appearance</span>
+                <div class="grid grid-cols-3 gap-1 p-1 rounded-xl border" :class="darkMode ? 'bg-white/[0.04] border-white/5' : 'bg-zinc-100 border-zinc-200'">
+                  <button 
+                    class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    :class="themeMode === 'light' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
+                    @click="$emit('set-theme-mode', 'light')"
+                  >
+                    <i class="fa-solid fa-sun text-[10px]"></i> Light
+                  </button>
+                  <button 
+                    class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    :class="themeMode === 'dark' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
+                    @click="$emit('set-theme-mode', 'dark')"
+                  >
+                    <i class="fa-solid fa-moon text-[10px]"></i> Dark
+                  </button>
+                  <button 
+                    class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    :class="themeMode === 'system' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
+                    @click="$emit('set-theme-mode', 'system')"
+                  >
+                    <i class="fa-solid fa-desktop text-[10px]"></i> Auto
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -386,12 +417,13 @@ const props = defineProps({
   watchlistCount: { type: Number, default: 0 },
   favoriteCount: { type: Number, default: 0 },
   darkMode: { type: Boolean, default: true },
+  themeMode: { type: String, default: 'system' },
   isLoggedIn: { type: Boolean, default: false },
   user: { type: Object, default: () => ({ name: '', email: '' }) },
   userInitial: { type: String, default: 'U' }
 })
 
-defineEmits(['navigate', 'open-search', 'toggle-theme', 'open-auth', 'logout'])
+defineEmits(['navigate', 'open-search', 'toggle-theme', 'set-theme-mode', 'open-auth', 'logout'])
 
 const isScrolled = ref(false)
 const isUserMenuOpen = ref(false)
