@@ -123,57 +123,77 @@
                     <span>{{ isFavorite(movie) ? 'Favorited' : 'Add to Favorites' }}</span>
                   </button>
 
-                  <!-- Watchlist Status Segmented Controls -->
+                  <!-- Watchlist Status Selector (Responsive Vertical Action List) -->
                   <div 
                     v-if="isInWatchlist(movie)" 
-                    class="w-full mt-2 p-2.5 rounded-2xl border space-y-2"
-                    :class="darkMode ? 'bg-black/40 border-white/5' : 'bg-zinc-100 border-zinc-200'"
+                    class="w-full mt-2 p-3 rounded-2xl border transition-all"
+                    :class="darkMode ? 'bg-black/40 border-white/5 shadow-inner' : 'bg-zinc-50 border-zinc-200 shadow-xs'"
                   >
                     <div 
-                      class="flex items-center justify-between text-[11px] font-bold"
+                      class="flex items-center justify-between text-[11px] font-black uppercase tracking-wider mb-2.5 px-0.5"
                       :class="darkMode ? 'text-zinc-400' : 'text-zinc-600'"
                     >
-                      <span>Watch Status:</span>
+                      <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders text-[10px] text-amber-500"></i>
+                        <span>Watch Status</span>
+                      </span>
                       <span 
-                        class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase"
+                        class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border"
                         :class="[
-                          currentWatchStatus === 'completed' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : (currentWatchStatus === 'watching' ? 'bg-sky-500/20 text-sky-600 dark:text-sky-400' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400')
+                          currentWatchStatus === 'completed' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : (currentWatchStatus === 'watching' ? 'bg-sky-500/20 text-sky-600 dark:text-sky-400 border-sky-500/30' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30')
                         ]"
                       >
                         {{ getWatchStatusLabel(currentWatchStatus) }}
                       </span>
                     </div>
 
-                    <div 
-                      class="grid grid-cols-3 gap-1 p-1 rounded-xl"
-                      :class="darkMode ? 'bg-white/[0.04]' : 'bg-zinc-200/70'"
-                    >
+                    <div class="space-y-1.5 w-full">
+                      <!-- Plan to Watch Option -->
                       <button 
-                        class="py-1.5 px-2 rounded-lg text-[10px] font-extrabold transition-all cursor-pointer text-center" 
+                        type="button"
+                        class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'plan_to_watch' 
-                          ? 'bg-amber-500 text-black shadow-sm' 
-                          : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950')"
+                          ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-sm' 
+                          : (darkMode ? 'bg-white/[0.04] text-zinc-300 border-white/5 hover:bg-white/[0.08] hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'plan_to_watch')"
                       >
-                        Plan
+                        <span class="flex items-center gap-2 truncate">
+                          <i class="fa-regular fa-clock text-[11px]"></i>
+                          <span>Plan to Watch</span>
+                        </span>
+                        <i v-if="currentWatchStatus === 'plan_to_watch'" class="fa-solid fa-check text-xs"></i>
                       </button>
+
+                      <!-- Currently Watching Option -->
                       <button 
-                        class="py-1.5 px-2 rounded-lg text-[10px] font-extrabold transition-all cursor-pointer text-center" 
+                        type="button"
+                        class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'watching' 
-                          ? 'bg-sky-500 text-white shadow-sm' 
-                          : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950')"
+                          ? 'bg-sky-500 text-white border-sky-500 font-extrabold shadow-sm' 
+                          : (darkMode ? 'bg-white/[0.04] text-zinc-300 border-white/5 hover:bg-white/[0.08] hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'watching')"
                       >
-                        Watching
+                        <span class="flex items-center gap-2 truncate">
+                          <i class="fa-solid fa-play text-[11px]"></i>
+                          <span>Currently Watching</span>
+                        </span>
+                        <i v-if="currentWatchStatus === 'watching'" class="fa-solid fa-check text-xs"></i>
                       </button>
+
+                      <!-- Watched / Completed Option -->
                       <button 
-                        class="py-1.5 px-2 rounded-lg text-[10px] font-extrabold transition-all cursor-pointer text-center" 
+                        type="button"
+                        class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'completed' 
-                          ? 'bg-emerald-500 text-black shadow-sm' 
-                          : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950')"
+                          ? 'bg-emerald-500 text-black border-emerald-500 font-extrabold shadow-sm' 
+                          : (darkMode ? 'bg-white/[0.04] text-zinc-300 border-white/5 hover:bg-white/[0.08] hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'completed')"
                       >
-                        Watched
+                        <span class="flex items-center gap-2 truncate">
+                          <i class="fa-solid fa-circle-check text-[11px]"></i>
+                          <span>Watched / Completed</span>
+                        </span>
+                        <i v-if="currentWatchStatus === 'completed'" class="fa-solid fa-check text-xs"></i>
                       </button>
                     </div>
                   </div>

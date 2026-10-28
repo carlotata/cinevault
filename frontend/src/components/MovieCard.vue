@@ -47,23 +47,23 @@
         <i :class="isFavorite ? 'fa-solid fa-heart' : 'fa-regular fa-heart'" class="text-xs"></i>
       </button>
 
-      <!-- Hover Overlay Actions -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3.5 gap-2.5">
+      <!-- Hover Overlay Actions (Centered in poster - Never covering bottom status pill) -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 z-20 backdrop-blur-[2px]">
         <button 
-          class="group/btn w-9 h-9 rounded-full bg-black/60 hover:bg-amber-500 border border-white/20 hover:border-amber-500 flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-black/50 cursor-pointer"
+          class="group/btn w-10 h-10 rounded-full bg-black/70 hover:bg-amber-500 border border-white/20 hover:border-amber-500 flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-xl shadow-black/60 cursor-pointer"
           @click.stop="$emit('open-details', movie)" 
           title="View Details & Trailer"
           aria-label="View Details"
         >
-          <i class="fa-solid fa-circle-info text-sm text-white group-hover/btn:!text-black transition-colors"></i>
+          <i class="fa-solid fa-circle-info text-base text-white group-hover/btn:!text-black transition-colors"></i>
         </button>
 
         <button 
-          class="group/btn w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-black/50 cursor-pointer"
+          class="group/btn w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-200 hover:scale-110 active:scale-95 shadow-xl shadow-black/60 cursor-pointer"
           :class="[
             isInWatchlist 
               ? 'bg-amber-500 text-black border-amber-500 shadow-amber-500/30' 
-              : 'bg-black/60 hover:bg-amber-500 border-white/20 hover:border-amber-500 text-white'
+              : 'bg-black/70 hover:bg-amber-500 border-white/20 hover:border-amber-500 text-white'
           ]"
           @click.stop="$emit('toggle-watchlist', movie)" 
           :title="isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'"
@@ -73,24 +73,24 @@
             :class="[
               isInWatchlist ? 'fa-solid fa-check text-black' : 'fa-solid fa-plus text-white group-hover/btn:!text-black'
             ]" 
-            class="text-sm transition-colors"
+            class="text-base transition-colors"
           ></i>
         </button>
       </div>
 
-      <!-- Interactive Status Pill for Watchlist Tab -->
+      <!-- Interactive Status Pill for Watchlist Tab (Responsive, Unobstructed) -->
       <button 
         v-if="isWatchlistTab" 
-        class="absolute bottom-2.5 left-2.5 right-2.5 py-1 px-3 rounded-full text-[11px] font-bold flex items-center justify-between backdrop-blur-md transition-all cursor-pointer z-10 shadow-lg"
+        class="absolute bottom-2.5 left-2.5 right-2.5 h-7 px-2.5 sm:px-3 rounded-full text-[10px] sm:text-[11px] font-black flex items-center justify-between backdrop-blur-md transition-all cursor-pointer z-10 shadow-lg border select-none min-w-0"
         :class="statusBadgeClasses"
         @click.stop="$emit('cycle-status', movie)"
         :title="'Status: ' + statusLabel + ' (Click to cycle)'"
       >
-        <span class="flex items-center gap-1.5 truncate">
-          <i :class="statusIcon"></i>
-          <span>{{ statusLabel }}</span>
+        <span class="flex items-center gap-1.5 min-w-0 truncate">
+          <i :class="statusIcon" class="text-[10px] shrink-0"></i>
+          <span class="truncate">{{ statusLabel }}</span>
         </span>
-        <i class="fa-solid fa-rotate text-[10px] opacity-75"></i>
+        <i class="fa-solid fa-rotate text-[9px] shrink-0 opacity-75 ml-1"></i>
       </button>
 
     </div>
