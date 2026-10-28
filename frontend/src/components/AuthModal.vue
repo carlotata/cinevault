@@ -6,44 +6,59 @@
       @click.self="$emit('close')"
     >
       <div 
-        class="w-full max-w-md bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-400/20 dark:shadow-black/80 relative transition-all"
+        class="w-full max-w-md rounded-3xl p-6 sm:p-8 relative transition-all border"
+        :class="darkMode 
+          ? 'bg-[#111622] border-white/10 text-white shadow-2xl shadow-black/80' 
+          : 'bg-white border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-300/40'"
         role="dialog" 
         aria-modal="true" 
         :aria-label="isLogin ? 'Sign in' : 'Create account'"
       >
         <!-- Close Button -->
         <button 
-          class="absolute top-5 right-5 w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-white/5 dark:hover:bg-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer border border-zinc-200 dark:border-white/5"
+          class="absolute top-5 right-5 w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer border"
+          :class="darkMode 
+            ? 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border-white/5' 
+            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900 border-zinc-200'"
           @click="$emit('close')" 
           aria-label="Close dialog"
         >
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
 
-        <!-- Brand Icon & Specific Headline (Two-Beat Antithesis) -->
-        <div class="flex items-center gap-3 mb-5">
+        <!-- Brand Icon & Header -->
+        <div class="flex items-center gap-3 mb-6">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-extrabold shadow-lg shadow-amber-500/25 shrink-0">
             <i class="fa-solid fa-film text-base"></i>
           </div>
           <div>
-            <h3 class="font-display text-lg sm:text-xl font-black text-zinc-900 dark:text-white tracking-tight !m-0">
-              {{ isLogin ? 'Welcome Back — Pick up where you paused' : 'Claim Your CineVault — Save & stream free' }}
+            <h3 
+              class="font-display text-xl font-bold tracking-tight !m-0"
+              :class="darkMode ? 'text-white' : 'text-zinc-900'"
+            >
+              {{ isLogin ? 'Welcome Back' : 'Create CineVault Account' }}
             </h3>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-              {{ isLogin ? 'Instant access to your synced cloud queue' : 'Your private cinematic vault with zero paywalls' }}
+            <p 
+              class="text-xs mt-0.5"
+              :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
+            >
+              {{ isLogin ? 'Access your synced watchlist and favorites' : 'Join CineVault to track and rate your favorite films' }}
             </p>
           </div>
         </div>
 
         <!-- Segmented Mode Toggle (Sign In / Create Account) -->
-        <div class="grid grid-cols-2 p-1 rounded-full bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200 dark:border-white/5 mb-5 text-xs font-bold">
+        <div 
+          class="grid grid-cols-2 p-1 rounded-full mb-6 text-xs font-bold border"
+          :class="darkMode ? 'bg-white/[0.04] border-white/5' : 'bg-zinc-100 border-zinc-200'"
+        >
           <button 
             type="button"
             class="py-2.5 rounded-full transition-all cursor-pointer flex items-center justify-center gap-2"
             :class="[
               isLogin 
                 ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold' 
-                : 'text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white'
+                : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950')
             ]"
             @click="switchMode('login')"
           >
@@ -56,7 +71,7 @@
             :class="[
               !isLogin 
                 ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold' 
-                : 'text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white'
+                : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950')
             ]"
             @click="switchMode('register')"
           >
@@ -65,158 +80,173 @@
           </button>
         </div>
 
-        <!-- 1-3 Key Bullets for Register Mode (Benefit before feature, scannable) -->
-        <div v-if="!isLogin" class="mb-5 p-3 rounded-2xl bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/5 text-xs space-y-2">
-          <div class="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-            <i class="fa-solid fa-circle-check text-amber-500 text-[10px]"></i>
-            <span><strong>Cloud Sync</strong> — Access your queue on any phone or laptop</span>
-          </div>
-          <div class="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-            <i class="fa-solid fa-circle-check text-amber-500 text-[10px]"></i>
-            <span><strong>Instant Dossiers</strong> — Full trailers, cast rails, and HD backdrops</span>
-          </div>
-          <div class="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-            <i class="fa-solid fa-circle-check text-amber-500 text-[10px]"></i>
-            <span><strong>Zero Tracking</strong> — Private collection with no subscription fees</span>
-          </div>
-        </div>
-
         <!-- Contextual Notification Banner -->
         <div 
           v-if="message" 
-          class="flex items-start gap-2.5 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-300 text-xs font-medium mb-4"
+          class="flex items-start gap-2.5 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs font-medium mb-5"
+          :class="darkMode ? 'text-amber-300' : 'text-amber-700'"
         >
-          <i class="fa-solid fa-circle-info mt-0.5 text-amber-500 dark:text-amber-400"></i>
+          <i class="fa-solid fa-circle-info mt-0.5 text-amber-500"></i>
           <span>{{ message }}</span>
         </div>
 
         <!-- General Form Error -->
         <div 
           v-if="formError" 
-          class="flex items-start gap-2.5 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-300 text-xs font-medium mb-4"
+          class="flex items-start gap-2.5 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs font-medium mb-5"
+          :class="darkMode ? 'text-rose-300' : 'text-rose-600'"
         >
-          <i class="fa-solid fa-triangle-exclamation mt-0.5 text-rose-500 dark:text-rose-400"></i>
+          <i class="fa-solid fa-triangle-exclamation mt-0.5 text-rose-500"></i>
           <span>{{ formError }}</span>
         </div>
 
         <!-- Form Fields -->
-        <form class="space-y-3.5" @submit.prevent="handleSubmit" novalidate>
+        <form class="space-y-4" @submit.prevent="handleSubmit" novalidate>
           
           <!-- Name Field (Register Only) -->
           <div v-if="!isLogin">
-            <label for="auth-name" class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+            <label 
+              for="auth-name" 
+              class="block text-xs font-bold mb-1.5"
+              :class="darkMode ? 'text-zinc-300' : 'text-zinc-700'"
+            >
               Your Name
             </label>
             <div class="relative">
               <input 
                 id="auth-name" 
                 type="text" 
-                class="w-full h-11 px-4 rounded-xl bg-zinc-50 dark:bg-black/40 border border-zinc-300 dark:border-white/10 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                class="w-full h-11 px-4 rounded-xl border text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                :class="darkMode 
+                  ? 'bg-black/40 border-white/10 text-white placeholder-zinc-500' 
+                  : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400'"
                 v-model="form.name" 
                 placeholder="e.g. Alex Hunter"
                 autocomplete="name" 
               />
             </div>
-            <span v-if="errors.name" class="text-rose-500 dark:text-rose-400 text-xs mt-1 block">
+            <span v-if="errors.name" class="text-rose-500 text-xs mt-1 block">
               {{ errors.name[0] }}
             </span>
           </div>
 
           <!-- Email Field -->
           <div>
-            <label for="auth-email" class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+            <label 
+              for="auth-email" 
+              class="block text-xs font-bold mb-1.5"
+              :class="darkMode ? 'text-zinc-300' : 'text-zinc-700'"
+            >
               Email Address
             </label>
             <div class="relative">
               <input 
                 id="auth-email" 
                 type="email" 
-                class="w-full h-11 px-4 rounded-xl bg-zinc-50 dark:bg-black/40 border border-zinc-300 dark:border-white/10 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                class="w-full h-11 px-4 rounded-xl border text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                :class="darkMode 
+                  ? 'bg-black/40 border-white/10 text-white placeholder-zinc-500' 
+                  : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400'"
                 v-model="form.email" 
                 placeholder="name@example.com"
                 autocomplete="email" 
               />
             </div>
-            <span v-if="errors.email" class="text-rose-500 dark:text-rose-400 text-xs mt-1 block">
+            <span v-if="errors.email" class="text-rose-500 text-xs mt-1 block">
               {{ errors.email[0] }}
             </span>
           </div>
 
           <!-- Password Field with Visibility Toggle -->
           <div>
-            <label for="auth-password" class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+            <label 
+              for="auth-password" 
+              class="block text-xs font-bold mb-1.5"
+              :class="darkMode ? 'text-zinc-300' : 'text-zinc-700'"
+            >
               Password
             </label>
             <div class="relative">
               <input 
                 id="auth-password" 
                 :type="showPassword ? 'text' : 'password'" 
-                class="w-full h-11 pl-4 pr-11 rounded-xl bg-zinc-50 dark:bg-black/40 border border-zinc-300 dark:border-white/10 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                class="w-full h-11 pl-4 pr-11 rounded-xl border text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                :class="darkMode 
+                  ? 'bg-black/40 border-white/10 text-white placeholder-zinc-500' 
+                  : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400'"
                 v-model="form.password" 
                 placeholder="••••••••"
                 :autocomplete="isLogin ? 'current-password' : 'new-password'" 
               />
               <button 
                 type="button" 
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer p-1"
+                class="absolute right-3 top-1/2 -translate-y-1/2 transition-colors cursor-pointer p-1"
+                :class="darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'"
                 @click="showPassword = !showPassword"
                 :title="showPassword ? 'Hide password' : 'Show password'"
               >
                 <i :class="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-xs"></i>
               </button>
             </div>
-            <span v-if="errors.password" class="text-rose-500 dark:text-rose-400 text-xs mt-1 block">
+            <span v-if="errors.password" class="text-rose-500 text-xs mt-1 block">
               {{ errors.password[0] }}
             </span>
           </div>
 
           <!-- Confirm Password (Register Only) -->
           <div v-if="!isLogin">
-            <label for="auth-password-confirm" class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+            <label 
+              for="auth-password-confirm" 
+              class="block text-xs font-bold mb-1.5"
+              :class="darkMode ? 'text-zinc-300' : 'text-zinc-700'"
+            >
               Confirm Password
             </label>
             <div class="relative">
               <input 
                 id="auth-password-confirm" 
                 :type="showPassword ? 'text' : 'password'" 
-                class="w-full h-11 pl-4 pr-11 rounded-xl bg-zinc-50 dark:bg-black/40 border border-zinc-300 dark:border-white/10 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                class="w-full h-11 pl-4 pr-11 rounded-xl border text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                :class="darkMode 
+                  ? 'bg-black/40 border-white/10 text-white placeholder-zinc-500' 
+                  : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400'"
                 v-model="form.password_confirmation" 
                 placeholder="••••••••"
                 autocomplete="new-password" 
               />
             </div>
-            <span v-if="errors.password_confirmation" class="text-rose-500 dark:text-rose-400 text-xs mt-1 block">
+            <span v-if="errors.password_confirmation" class="text-rose-500 text-xs mt-1 block">
               {{ errors.password_confirmation[0] }}
             </span>
           </div>
 
-          <!-- Objection Handling Right Before CTA (Reduces Friction) -->
-          <div class="pt-1 text-[11px] font-medium text-zinc-500 dark:text-zinc-400 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-shield-halved text-emerald-500"></i>
-            <span>No credit card required · Free forever · Cancel anytime</span>
-          </div>
-
-          <!-- Submit Button (Clear Verb + Outcome) -->
+          <!-- Submit Button -->
           <button 
             type="submit" 
-            class="w-full h-12 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm tracking-wide shadow-lg shadow-amber-500/25 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:pointer-events-none" 
+            class="w-full h-12 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm tracking-wide shadow-lg shadow-amber-500/25 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:pointer-events-none" 
             :disabled="loading"
           >
             <i v-if="loading" class="fa-solid fa-circle-notch fa-spin text-sm"></i>
             <i v-else :class="isLogin ? 'fa-solid fa-right-to-bracket' : 'fa-solid fa-user-check'" class="text-xs"></i>
-            <span>{{ loading ? 'Securing your account...' : (isLogin ? 'Sign In to My Vault' : 'Create Free Account Now') }}</span>
+            <span>{{ loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account') }}</span>
           </button>
         </form>
 
         <!-- 1-Click Demo Fill -->
-        <div class="mt-4 pt-3.5 border-t border-zinc-100 dark:border-white/5 text-center">
+        <div 
+          class="mt-5 pt-4 border-t text-center transition-colors"
+          :class="darkMode ? 'border-white/5' : 'border-zinc-100'"
+        >
           <button 
             type="button" 
-            class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 text-xs font-semibold border border-amber-500/20 transition-all cursor-pointer"
+            class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer"
+            :class="darkMode 
+              ? 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border-amber-500/20' 
+              : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 border-amber-500/30'"
             @click="fillDemo"
           >
             <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i>
-            <span>Fill Demo Credentials (Instant Test)</span>
+            <span>Fill Demo Credentials</span>
           </button>
         </div>
 
@@ -233,7 +263,8 @@ const props = defineProps({
   mode: { type: String, default: 'login' },
   message: { type: String, default: '' },
   loading: { type: Boolean, default: false },
-  errors: { type: Object, default: () => ({}) }
+  errors: { type: Object, default: () => ({}) },
+  darkMode: { type: Boolean, default: true }
 })
 
 const emit = defineEmits(['close', 'submit', 'switch-mode', 'update:mode'])

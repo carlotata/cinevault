@@ -63,17 +63,6 @@
     <div class="relative z-10 w-full max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 pb-10 sm:pb-16 pt-24">
       <div class="max-w-3xl lg:max-w-4xl xl:max-w-5xl">
         
-        <!-- Scannable Theatrical Badge (Aphorism / Two-beat antithesis / Em dash) -->
-        <div 
-          class="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 text-[11px] sm:text-xs font-black tracking-wider uppercase backdrop-blur-md border transition-colors shadow-xs"
-          :class="darkMode 
-            ? 'bg-white/10 text-amber-400 border-amber-400/30' 
-            : 'bg-white/90 text-amber-600 border-amber-500/30 shadow-amber-500/10'"
-        >
-          <i class="fa-solid fa-bolt text-amber-500 text-[10px]"></i>
-          <span>Curated Cinema — Zero Search Fatigue</span>
-        </div>
-
         <!-- Big Bold Uppercase Title (Cinematic Display Typography) -->
         <h1 
           class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-black uppercase tracking-tight leading-[0.98] break-words line-clamp-3 mb-3.5 transition-colors"
@@ -113,39 +102,18 @@
           </span>
         </div>
 
-        <!-- Synopsis (Punchy, Scannable, Body supports headline) -->
+        <!-- Synopsis -->
         <p 
-          class="text-xs sm:text-sm lg:text-base leading-relaxed line-clamp-2 sm:line-clamp-3 max-w-2xl mb-4 transition-colors"
+          class="text-xs sm:text-sm lg:text-base leading-relaxed line-clamp-2 sm:line-clamp-3 max-w-2xl mb-6 transition-colors"
           :class="darkMode ? 'text-zinc-300 drop-shadow' : 'text-zinc-700'"
         >
           {{ currentMovie.overview }}
         </p>
 
-        <!-- Micro Objection Handler / Key Bullets Before CTA (Write for lazy people, handle friction) -->
-        <div 
-          class="flex flex-wrap items-center gap-3 text-xs font-semibold mb-6 transition-colors"
-          :class="darkMode ? 'text-zinc-400' : 'text-zinc-600'"
-        >
-          <span class="inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-circle-check text-emerald-500 text-[11px]"></i>
-            <span>100% Free Access</span>
-          </span>
-          <span :class="darkMode ? 'text-zinc-600' : 'text-zinc-300'">·</span>
-          <span class="inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-shield-halved text-amber-500 text-[11px]"></i>
-            <span>No Credit Card</span>
-          </span>
-          <span :class="darkMode ? 'text-zinc-600' : 'text-zinc-300'">·</span>
-          <span class="inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-bolt text-sky-500 text-[11px]"></i>
-            <span>Instant HD Trailers</span>
-          </span>
-        </div>
-
-        <!-- CTA Action Buttons (Iconic High-Contrast Pills) -->
+        <!-- CTA Action Buttons -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           
-          <!-- Primary CTA: Clear Verb + Outcome -->
+          <!-- Primary CTA: View Details & Trailer -->
           <button 
             class="h-12 px-7 rounded-full font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             :class="darkMode 
@@ -153,12 +121,12 @@
               : 'bg-zinc-950 hover:bg-black text-white shadow-xl shadow-zinc-950/20'"
             @click="$emit('open-details', currentMovie)"
           >
-            <i class="fa-solid fa-play text-sm"></i>
-            <span>Stream Official Trailer</span>
+            <i class="fa-solid fa-circle-info text-base"></i>
+            <span>View Details & Trailer</span>
           </button>
 
           <div class="flex items-center gap-2.5">
-            <!-- Secondary CTA: Clear Verb + Outcome (Watchlist) -->
+            <!-- Secondary CTA: Watchlist Button -->
             <button 
               class="flex-1 sm:flex-initial h-12 px-6 rounded-full font-bold text-sm backdrop-blur-md flex items-center justify-center gap-2 border transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               :class="[
@@ -171,10 +139,10 @@
               @click="$emit('toggle-watchlist', currentMovie)"
             >
               <i :class="isInWatchlist(currentMovie) ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
-              <span>{{ isInWatchlist(currentMovie) ? 'Saved in Watchlist' : 'Add to My Watchlist' }}</span>
+              <span>{{ isInWatchlist(currentMovie) ? 'In Watchlist' : 'Add to Watchlist' }}</span>
             </button>
 
-            <!-- Favorite Button: Clear Outcome -->
+            <!-- Favorite Button -->
             <button 
               class="h-12 w-12 rounded-full backdrop-blur-md flex items-center justify-center border transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
               :class="[
@@ -185,7 +153,7 @@
                       : 'bg-white/95 hover:bg-white text-zinc-800 border-zinc-300 shadow-sm')
               ]"
               @click="$emit('toggle-favorite', currentMovie)"
-              :aria-label="isFavorite(currentMovie) ? 'Remove from favorites' : 'Add to favorites'"
+              :aria-label="isFavorite(currentMovie) ? 'Remove Favorite' : 'Add Favorite'"
             >
               <i :class="isFavorite(currentMovie) ? 'fa-solid fa-heart text-black' : 'fa-regular fa-heart text-zinc-400 dark:text-zinc-200'"></i>
             </button>

@@ -62,14 +62,14 @@
         </div>
 
         <!-- Watchlist Header -->
-        <section v-if="activeTab === 'watchlist'" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-8 border-b border-zinc-200 dark:border-white/5 mb-6">
+        <section v-if="activeTab === 'watchlist'" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-5 border-b border-zinc-200 dark:border-white/5 mb-5">
           <div>
-            <h1 class="font-display text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight flex items-center gap-3 !m-0">
-              <i class="fa-solid fa-bookmark text-amber-500"></i>
+            <h1 class="font-display !text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 !m-0">
+              <i class="fa-solid fa-bookmark text-amber-500 text-base"></i>
               <span>My Watchlist</span>
             </h1>
-            <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1 font-medium">
-              {{ watchlistCount }} {{ watchlistCount === 1 ? 'movie' : 'movies' }} in your personal queue
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-medium">
+              {{ watchlistCount }} {{ watchlistCount === 1 ? 'movie' : 'movies' }} in queue
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
@@ -125,14 +125,14 @@
         </section>
 
         <!-- Favorites Header -->
-        <section v-if="activeTab === 'favorites'" class="py-8 border-b border-zinc-200 dark:border-white/5 mb-6">
+        <section v-if="activeTab === 'favorites'" class="py-5 border-b border-zinc-200 dark:border-white/5 mb-5">
           <div>
-            <h1 class="font-display text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight flex items-center gap-3 !m-0">
-              <i class="fa-solid fa-heart text-rose-500"></i>
+            <h1 class="font-display !text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 !m-0">
+              <i class="fa-solid fa-heart text-rose-500 text-base"></i>
               <span>Favorite Movies</span>
             </h1>
-            <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1 font-medium">
-              {{ favoriteCount }} {{ favoriteCount === 1 ? 'movie' : 'movies' }} marked as all-time favorites
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-medium">
+              {{ favoriteCount }} {{ favoriteCount === 1 ? 'movie' : 'movies' }} pinned
             </p>
           </div>
         </section>
@@ -218,6 +218,7 @@
       :message="authMessage"
       :loading="authLoading"
       :errors="authErrors"
+      :dark-mode="darkMode"
       @close="closeAuthModal"
       @submit="submitAuth"
       @switch-mode="authMode = $event"
@@ -225,7 +226,7 @@
     />
 
     <!-- Footer -->
-    <TheFooter @navigate="handleNavigate" />
+    <TheFooter :dark-mode="darkMode" @navigate="handleNavigate" />
 
   </div>
 </template>

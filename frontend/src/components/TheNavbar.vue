@@ -8,11 +8,11 @@
             : 'bg-white/92 backdrop-blur-xl border-b border-zinc-200/90 shadow-sm text-zinc-900')
         : (isHeroBlended
             ? (darkMode
-                ? 'bg-gradient-to-b from-[#080b11]/90 via-[#080b11]/40 to-transparent border-b border-transparent text-white shadow-none'
-                : 'bg-gradient-to-b from-[#f4f6fa]/95 via-[#f4f6fa]/50 to-transparent border-b border-transparent text-zinc-900 shadow-none')
+                ? 'bg-gradient-to-b from-[#080b11]/90 via-[#080b11]/40 to-transparent border-none text-white shadow-none'
+                : 'bg-gradient-to-b from-[#f4f6fa]/95 via-[#f4f6fa]/50 to-transparent border-none text-zinc-900 shadow-none')
             : (darkMode
-                ? 'bg-transparent border-b border-transparent text-white shadow-none'
-                : 'bg-transparent border-b border-transparent text-zinc-900 shadow-none')
+                ? 'bg-transparent border-none text-white shadow-none'
+                : 'bg-transparent border-none text-zinc-900 shadow-none')
           )
     ]"
   >

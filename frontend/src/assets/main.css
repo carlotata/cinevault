@@ -85,8 +85,14 @@ html, body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Neutralize Quasar heading blowup (unlayered so it overrides unlayered Quasar styles) */
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
 @layer base {
-  /* Neutralize Quasar's exaggerated heading font-sizes in base layer so Tailwind utility classes win */
   h1, h2, h3, h4, h5, h6 {
     font-size: inherit;
     font-weight: inherit;
