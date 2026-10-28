@@ -2,13 +2,13 @@
   <transition name="cineby-modal-fade">
     <div 
       v-if="movie" 
-      class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto" 
+      class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-6 overflow-y-auto" 
       @click.self="$emit('close')"
       role="dialog"
       aria-modal="true"
       :aria-label="movie.title"
     >
-      <div class="relative w-full max-w-4xl max-h-[92vh] bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 rounded-3xl overflow-y-auto shadow-2xl shadow-zinc-400/20 dark:shadow-black/90 block my-auto no-scrollbar transition-all">
+      <div class="relative w-full max-w-4xl max-h-[92vh] sm:max-h-[90vh] bg-white dark:bg-[#111622] border-t sm:border border-zinc-200 dark:border-white/10 rounded-t-3xl sm:rounded-3xl overflow-y-auto shadow-2xl shadow-zinc-400/20 dark:shadow-black/90 block sm:my-auto no-scrollbar transition-all">
         
         <!-- Top Close Button -->
         <button 
@@ -399,7 +399,7 @@ const getPosterUrl = (path, size = 'w500') => {
 
 const getBackdropUrl = (path) => {
   if (!path) return ''
-  return `${TMDB_IMAGE_BASE}/original${path}`
+  return `${TMDB_IMAGE_BASE}/w1280${path}`
 }
 
 const formatRating = (val) => {

@@ -1216,6 +1216,7 @@ const THEME_STORAGE_KEY = 'cinevault_theme'
 let systemThemeMediaQuery = null
 
 const toggleDarkMode = () => {
+  document.documentElement.classList.add('theme-transitioning')
   darkMode.value = !darkMode.value
   updateThemeClass()
   saveLocalStorage()
@@ -1224,6 +1225,10 @@ const toggleDarkMode = () => {
     api('/settings', { method: 'PUT', body: { dark_mode: darkMode.value } })
       .catch(err => console.warn('Could not sync theme with account settings:', err))
   }
+
+  setTimeout(() => {
+    document.documentElement.classList.remove('theme-transitioning')
+  }, 220)
 }
 
 const updateThemeClass = () => {

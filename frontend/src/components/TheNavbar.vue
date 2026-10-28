@@ -1,6 +1,6 @@
 <template>
   <header 
-    class="fixed top-0 inset-x-0 z-40 w-full transition-all duration-300"
+    class="fixed top-0 inset-x-0 z-40 w-full transition-colors duration-200"
     :class="[
       isScrolled
         ? (darkMode
@@ -158,8 +158,8 @@
           <i :class="darkMode ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-amber-600'"></i>
         </button>
 
-        <!-- Guest: Sign In Button Only (No sign-up button) -->
-        <div v-if="!isLoggedIn">
+        <!-- Guest: Sign In Button (Hidden on mobile as it's prominently inside the burger sidebar) -->
+        <div v-if="!isLoggedIn" class="hidden sm:block">
           <button 
             class="inline-flex items-center justify-center gap-1.5 sm:gap-2 h-9 sm:h-10 px-3.5 sm:px-5 rounded-full bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold tracking-wide shadow-lg shadow-amber-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
             @click="$emit('open-auth', 'login')" 
@@ -238,16 +238,16 @@
           </transition>
         </div>
 
-        <!-- Mobile Menu Toggle Button -->
+        <!-- Mobile Menu Toggle Button (Clean icon with no box border container) -->
         <button 
-          class="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-sm transition-colors border cursor-pointer"
+          class="md:hidden flex items-center justify-center w-9 h-9 p-0 border-none bg-transparent hover:bg-transparent shadow-none transition-colors cursor-pointer"
           :class="darkMode 
-            ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 border-white/10' 
-            : 'bg-white/80 hover:bg-white text-zinc-800 border-zinc-200/80 shadow-xs'"
+            ? 'text-zinc-200 hover:text-white' 
+            : 'text-zinc-800 hover:text-black'"
           @click="isMobileDrawerOpen = true"
           aria-label="Open mobile menu"
         >
-          <i class="fa-solid fa-bars"></i>
+          <i class="fa-solid fa-bars text-xl"></i>
         </button>
 
       </div>

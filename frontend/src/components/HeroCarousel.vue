@@ -1,7 +1,7 @@
 <template>
   <section 
     v-if="currentMovie"
-    class="relative w-full overflow-hidden select-none group min-h-[460px] sm:min-h-[540px] md:min-h-[620px] lg:min-h-[700px] flex items-end transition-colors duration-300"
+    class="relative w-full overflow-hidden select-none group min-h-[460px] sm:min-h-[540px] md:min-h-[620px] lg:min-h-[700px] flex items-end transition-colors duration-200"
     :class="darkMode ? 'bg-[#080b11]' : 'bg-[#f4f6fa]'"
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
@@ -12,28 +12,29 @@
     <div class="absolute inset-0 z-0">
       <div 
         class="w-full h-full bg-cover bg-center sm:bg-[center_15%] transition-all duration-700 transform group-hover:scale-105"
+        :class="darkMode ? '' : 'brightness-[0.98] contrast-[1.03]'"
         :style="{ backgroundImage: `url(${getBackdropUrl(currentMovie.backdrop_path)})` }"
       ></div>
 
-      <!-- Vignettes: Adaptive Light & Dark Gradients -->
+      <!-- Dark Mode Vignette Layer (Cross-fades smoothly via opacity) -->
       <div 
-        class="absolute inset-0 transition-opacity duration-300"
-        :class="darkMode 
-          ? 'bg-gradient-to-t from-[#080b11] via-[#080b11]/70 via-45% to-transparent' 
-          : 'bg-gradient-to-t from-[#f4f6fa] via-[#f4f6fa]/85 via-50% to-transparent'"
-      ></div>
+        class="absolute inset-0 transition-opacity duration-200 ease-out pointer-events-none"
+        :class="darkMode ? 'opacity-100' : 'opacity-0'"
+      >
+        <div class="absolute inset-0 bg-gradient-to-t from-[#080b11] via-[#080b11]/70 via-45% to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#080b11]/95 via-[#080b11]/60 via-50% to-transparent hidden sm:block"></div>
+        <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#080b11]/85 to-transparent"></div>
+      </div>
+
+      <!-- Light Mode Vignette Layer (Vivid artwork with focused text scrim, never washed out) -->
       <div 
-        class="absolute inset-0 transition-opacity duration-300 hidden sm:block"
-        :class="darkMode 
-          ? 'bg-gradient-to-r from-[#080b11]/95 via-[#080b11]/60 via-50% to-transparent' 
-          : 'bg-gradient-to-r from-[#f4f6fa]/95 via-[#f4f6fa]/70 via-50% to-transparent'"
-      ></div>
-      <div 
-        class="absolute inset-x-0 top-0 h-32 transition-opacity duration-300"
-        :class="darkMode 
-          ? 'bg-gradient-to-b from-[#080b11]/85 to-transparent' 
-          : 'bg-gradient-to-b from-[#f4f6fa]/90 to-transparent'"
-      ></div>
+        class="absolute inset-0 transition-opacity duration-200 ease-out pointer-events-none"
+        :class="!darkMode ? 'opacity-100' : 'opacity-0'"
+      >
+        <div class="absolute inset-0 bg-gradient-to-t from-[#f4f6fa] via-[#f4f6fa]/40 via-30% to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#f4f6fa]/90 via-[#f4f6fa]/35 via-45% to-transparent hidden sm:block"></div>
+        <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#f4f6fa]/70 to-transparent"></div>
+      </div>
     </div>
 
     <!-- Desktop Arrow Controls -->
@@ -231,7 +232,7 @@ const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p'
 
 const getBackdropUrl = (path) => {
   if (!path) return ''
-  return `${TMDB_IMAGE_BASE}/original${path}`
+  return `${TMDB_IMAGE_BASE}/w1280${path}`
 }
 
 const formatYear = (dateString) => {
