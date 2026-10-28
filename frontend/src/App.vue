@@ -202,6 +202,7 @@
       :is-in-watchlist="isInWatchlist"
       :is-favorite="isFavorite"
       :get-watch-status="getWatchStatus"
+      :dark-mode="darkMode"
       @close="closeModal"
       @toggle-watchlist="toggleWatchlist"
       @toggle-favorite="toggleFavorite"

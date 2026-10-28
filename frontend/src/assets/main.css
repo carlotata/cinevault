@@ -239,3 +239,9 @@ input:focus-visible {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
 }
 
+/* Neutralize Quasar !important utility collisions in Dark Mode */
+html.dark .bg-white:not(.keep-white),
+body.dark .bg-white:not(.keep-white) {
+  background-color: var(--bg-surface) !important;
+}
+

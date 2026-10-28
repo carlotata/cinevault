@@ -258,157 +258,159 @@
     </div>
 
     <!-- Mobile Drawer Overlay & Panel -->
-    <transition name="mobile-menu-slide">
-      <div 
-        v-if="isMobileDrawerOpen" 
-        class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex justify-end"
-        @click.self="isMobileDrawerOpen = false"
-      >
+    <Teleport to="body">
+      <transition name="mobile-menu-slide">
         <div 
-          class="w-[82vw] max-w-xs h-full border-l p-5 flex flex-col justify-between shadow-2xl transition-colors"
-          :class="darkMode ? 'bg-[#111622] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'"
+          v-if="isMobileDrawerOpen" 
+          class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex justify-end"
+          @click.self="isMobileDrawerOpen = false"
         >
-          <div>
-            <!-- Drawer Header -->
-            <div class="flex items-center justify-between pb-4 border-b" :class="darkMode ? 'border-white/5' : 'border-zinc-100'">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-black font-extrabold text-xs">
-                  <i class="fa-solid fa-film"></i>
+          <div 
+            class="w-[82vw] max-w-xs h-full h-dvh max-h-screen border-l p-5 flex flex-col justify-between shadow-2xl transition-colors overflow-y-auto no-scrollbar"
+            :class="darkMode ? 'bg-[#111622] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'"
+          >
+            <div>
+              <!-- Drawer Header -->
+              <div class="flex items-center justify-between pb-4 border-b" :class="darkMode ? 'border-white/5' : 'border-zinc-100'">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-black font-extrabold text-xs">
+                    <i class="fa-solid fa-film"></i>
+                  </div>
+                  <span class="text-base font-bold" :class="darkMode ? 'text-white' : 'text-zinc-900'">CineVault</span>
+                  <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-500">PLUS</span>
                 </div>
-                <span class="text-base font-bold" :class="darkMode ? 'text-white' : 'text-zinc-900'">CineVault</span>
-                <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-500">PLUS</span>
+                <button 
+                  class="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors cursor-pointer"
+                  :class="darkMode ? 'bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600'"
+                  @click="isMobileDrawerOpen = false"
+                  aria-label="Close menu"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
               </div>
-              <button 
-                class="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors cursor-pointer"
-                :class="darkMode ? 'bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600'"
-                @click="isMobileDrawerOpen = false"
-                aria-label="Close menu"
-              >
-                <i class="fa-solid fa-xmark"></i>
-              </button>
+
+              <!-- Drawer Links -->
+              <div class="mt-5 space-y-2">
+                <button 
+                  class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+                  :class="activeTab === 'discover' && !activeSearchQuery 
+                    ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
+                    : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
+                  @click="$emit('navigate', 'discover'); isMobileDrawerOpen = false"
+                >
+                  <span class="flex items-center gap-3">
+                    <i class="fa-solid fa-house"></i> Home
+                  </span>
+                </button>
+
+                <button 
+                  class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+                  :class="activeTab === 'watchlist' 
+                    ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
+                    : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
+                  @click="$emit('navigate', 'watchlist'); isMobileDrawerOpen = false"
+                >
+                  <span class="flex items-center gap-3">
+                    <i class="fa-solid fa-bookmark"></i> Watchlist
+                  </span>
+                  <span v-if="watchlistCount > 0" class="text-xs px-2 py-0.5 rounded-full" :class="activeTab === 'watchlist' ? 'bg-black/20 text-black font-bold' : (darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')">
+                    {{ watchlistCount }}
+                  </span>
+                </button>
+
+                <button 
+                  class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+                  :class="activeTab === 'favorites' 
+                    ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
+                    : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
+                  @click="$emit('navigate', 'favorites'); isMobileDrawerOpen = false"
+                >
+                  <span class="flex items-center gap-3">
+                    <i class="fa-solid fa-heart" :class="activeTab === 'favorites' ? 'text-black' : 'text-rose-500'"></i> Favorites
+                  </span>
+                  <span v-if="favoriteCount > 0" class="text-xs px-2 py-0.5 rounded-full" :class="activeTab === 'favorites' ? 'bg-black/20 text-black font-bold' : 'bg-amber-500/20 text-amber-500'">
+                    {{ favoriteCount }}
+                  </span>
+                </button>
+
+                <button 
+                  class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+                  :class="darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100'"
+                  @click="$emit('open-search'); isMobileDrawerOpen = false"
+                >
+                  <i class="fa-solid fa-magnifying-glass text-zinc-400"></i> Search Movies
+                </button>
+
+                <!-- Theme Mode Selector (Mobile Drawer) -->
+                <div class="pt-3 px-1">
+                  <span class="text-[10px] font-black uppercase tracking-wider block mb-2" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Appearance</span>
+                  <div class="grid grid-cols-3 gap-1 p-1 rounded-xl border" :class="darkMode ? 'bg-white/[0.04] border-white/5' : 'bg-zinc-100 border-zinc-200'">
+                    <button 
+                      class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      :class="themeMode === 'light' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
+                      @click="$emit('set-theme-mode', 'light')"
+                    >
+                      <i class="fa-solid fa-sun text-[10px]"></i> Light
+                    </button>
+                    <button 
+                      class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      :class="themeMode === 'dark' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
+                      @click="$emit('set-theme-mode', 'dark')"
+                    >
+                      <i class="fa-solid fa-moon text-[10px]"></i> Dark
+                    </button>
+                    <button 
+                      class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      :class="themeMode === 'system' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
+                      @click="$emit('set-theme-mode', 'system')"
+                    >
+                      <i class="fa-solid fa-desktop text-[10px]"></i> Auto
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Drawer Links -->
-            <div class="mt-5 space-y-2">
-              <button 
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-                :class="activeTab === 'discover' && !activeSearchQuery 
-                  ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
-                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
-                @click="$emit('navigate', 'discover'); isMobileDrawerOpen = false"
-              >
-                <span class="flex items-center gap-3">
-                  <i class="fa-solid fa-house"></i> Home
-                </span>
-              </button>
-
-              <button 
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-                :class="activeTab === 'watchlist' 
-                  ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
-                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
-                @click="$emit('navigate', 'watchlist'); isMobileDrawerOpen = false"
-              >
-                <span class="flex items-center gap-3">
-                  <i class="fa-solid fa-bookmark"></i> Watchlist
-                </span>
-                <span v-if="watchlistCount > 0" class="text-xs px-2 py-0.5 rounded-full" :class="activeTab === 'watchlist' ? 'bg-black/20 text-black font-bold' : (darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')">
-                  {{ watchlistCount }}
-                </span>
-              </button>
-
-              <button 
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-                :class="activeTab === 'favorites' 
-                  ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
-                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
-                @click="$emit('navigate', 'favorites'); isMobileDrawerOpen = false"
-              >
-                <span class="flex items-center gap-3">
-                  <i class="fa-solid fa-heart" :class="activeTab === 'favorites' ? 'text-black' : 'text-rose-500'"></i> Favorites
-                </span>
-                <span v-if="favoriteCount > 0" class="text-xs px-2 py-0.5 rounded-full" :class="activeTab === 'favorites' ? 'bg-black/20 text-black font-bold' : 'bg-amber-500/20 text-amber-500'">
-                  {{ favoriteCount }}
-                </span>
-              </button>
-
-              <button 
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-                :class="darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100'"
-                @click="$emit('open-search'); isMobileDrawerOpen = false"
-              >
-                <i class="fa-solid fa-magnifying-glass text-zinc-400"></i> Search Movies
-              </button>
-
-              <!-- Theme Mode Selector (Mobile Drawer) -->
-              <div class="pt-3 px-1">
-                <span class="text-[10px] font-black uppercase tracking-wider block mb-2" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Appearance</span>
-                <div class="grid grid-cols-3 gap-1 p-1 rounded-xl border" :class="darkMode ? 'bg-white/[0.04] border-white/5' : 'bg-zinc-100 border-zinc-200'">
-                  <button 
-                    class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    :class="themeMode === 'light' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
-                    @click="$emit('set-theme-mode', 'light')"
-                  >
-                    <i class="fa-solid fa-sun text-[10px]"></i> Light
-                  </button>
-                  <button 
-                    class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    :class="themeMode === 'dark' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
-                    @click="$emit('set-theme-mode', 'dark')"
-                  >
-                    <i class="fa-solid fa-moon text-[10px]"></i> Dark
-                  </button>
-                  <button 
-                    class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    :class="themeMode === 'system' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
-                    @click="$emit('set-theme-mode', 'system')"
-                  >
-                    <i class="fa-solid fa-desktop text-[10px]"></i> Auto
-                  </button>
+            <!-- Drawer Footer Auth -->
+            <div class="pt-4 border-t" :class="darkMode ? 'border-white/5' : 'border-zinc-100'">
+              <div v-if="!isLoggedIn">
+                <button 
+                  class="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm shadow-lg shadow-amber-500/25 cursor-pointer"
+                  @click="$emit('open-auth', 'login'); isMobileDrawerOpen = false"
+                >
+                  <i class="fa-solid fa-right-to-bracket text-black"></i>
+                  <span>Sign In to CineVault</span>
+                </button>
+              </div>
+              <div v-else class="space-y-2">
+                <div class="flex items-center gap-3 p-2 rounded-xl" :class="darkMode ? 'bg-white/[0.03]' : 'bg-zinc-100'">
+                  <div class="w-8 h-8 rounded-full bg-amber-500 text-black font-bold flex items-center justify-center text-xs">
+                    {{ userInitial }}
+                  </div>
+                  <div class="truncate">
+                    <p class="text-xs font-bold truncate" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ user.name }}</p>
+                    <p class="text-[10px] text-zinc-400 truncate">{{ user.email }}</p>
+                  </div>
                 </div>
+                <button 
+                  class="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-rose-500/10 text-rose-500 font-semibold text-xs hover:bg-rose-500/20 transition-colors cursor-pointer"
+                  @click="$emit('logout'); isMobileDrawerOpen = false"
+                >
+                  <i class="fa-solid fa-right-from-bracket"></i>
+                  <span>Log out</span>
+                </button>
               </div>
             </div>
+
           </div>
-
-          <!-- Drawer Footer Auth -->
-          <div class="pt-4 border-t" :class="darkMode ? 'border-white/5' : 'border-zinc-100'">
-            <div v-if="!isLoggedIn">
-              <button 
-                class="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm shadow-lg shadow-amber-500/25 cursor-pointer"
-                @click="$emit('open-auth', 'login'); isMobileDrawerOpen = false"
-              >
-                <i class="fa-solid fa-right-to-bracket text-black"></i>
-                <span>Sign In to CineVault</span>
-              </button>
-            </div>
-            <div v-else class="space-y-2">
-              <div class="flex items-center gap-3 p-2 rounded-xl" :class="darkMode ? 'bg-white/[0.03]' : 'bg-zinc-100'">
-                <div class="w-8 h-8 rounded-full bg-amber-500 text-black font-bold flex items-center justify-center text-xs">
-                  {{ userInitial }}
-                </div>
-                <div class="truncate">
-                  <p class="text-xs font-bold truncate" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ user.name }}</p>
-                  <p class="text-[10px] text-zinc-400 truncate">{{ user.email }}</p>
-                </div>
-              </div>
-              <button 
-                class="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-rose-500/10 text-rose-500 font-semibold text-xs hover:bg-rose-500/20 transition-colors cursor-pointer"
-                @click="$emit('logout'); isMobileDrawerOpen = false"
-              >
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Log out</span>
-              </button>
-            </div>
-          </div>
-
         </div>
-      </div>
-    </transition>
+      </transition>
+    </Teleport>
   </header>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
 const props = defineProps({
   activeTab: { type: String, default: 'discover' },
@@ -428,6 +430,14 @@ defineEmits(['navigate', 'open-search', 'toggle-theme', 'set-theme-mode', 'open-
 const isScrolled = ref(false)
 const isUserMenuOpen = ref(false)
 const isMobileDrawerOpen = ref(false)
+
+watch(isMobileDrawerOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
 
 const isHeroBlended = computed(() => {
   return !isScrolled.value && props.activeTab === 'discover' && !props.activeSearchQuery
@@ -451,5 +461,6 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   document.removeEventListener('click', handleDocumentClick)
+  document.body.style.overflow = ''
 })
 </script>
