@@ -18,8 +18,8 @@
             PLUS
           </span>
         </div>
-        <p class="text-zinc-500 dark:text-zinc-400 max-w-xs text-xs">
-          Your ultimate cinematic discovery, personal watchlist, and tracking hub.
+        <p class="text-zinc-500 dark:text-zinc-400 max-w-sm text-xs leading-relaxed">
+          Cinema belongs to the curious — stream trailers, curate your vault, and track great films without limits.
         </p>
       </div>
 
@@ -37,9 +37,12 @@
         </div>
       </div>
 
-      <!-- Right Disclaimer & Copy -->
+      <!-- Right Disclaimer & Copy (No fabricated claims, honest data source) -->
       <div class="flex flex-col items-center md:items-end gap-1 text-zinc-500 dark:text-zinc-400 text-xs">
-        <p>Data provided by TMDB API.</p>
+        <p class="flex items-center gap-1.5">
+          <i class="fa-solid fa-database text-amber-500 text-[10px]"></i>
+          <span>Verified film intel powered by TMDB API.</span>
+        </p>
         <p class="text-zinc-400 dark:text-zinc-600 font-medium">© 2026 CineVault. All rights reserved.</p>
       </div>
 

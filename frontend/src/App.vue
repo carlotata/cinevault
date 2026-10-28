@@ -30,6 +30,7 @@
         :genres="genres"
         :is-in-watchlist="isInWatchlist"
         :is-favorite="isFavorite"
+        :dark-mode="darkMode"
         @open-details="openMovieDetails"
         @toggle-watchlist="toggleWatchlist"
         @toggle-favorite="toggleFavorite"
@@ -39,10 +40,14 @@
         @pause-autoplay="stopHeroAutoplay"
         @resume-autoplay="startHeroAutoplay"
       />
+      <HeroSkeleton 
+        v-else-if="activeTab === 'discover' && currentCategory === 'popular' && !activeSearchQuery && loading && heroMovies.length === 0"
+        :dark-mode="darkMode"
+      />
 
       <div 
         class="container content-wrapper"
-        :class="{ 'pt-24 sm:pt-28 lg:pt-32': activeTab !== 'discover' || activeSearchQuery || currentCategory !== 'popular' || heroMovies.length === 0 }"
+        :class="{ '!pt-28 sm:!pt-32 lg:!pt-36': activeTab !== 'discover' || activeSearchQuery || currentCategory !== 'popular' || heroMovies.length === 0 }"
       >
 
         <!-- Active Search Banner -->
@@ -231,6 +236,7 @@ import { useQuasar } from 'quasar'
 
 import TheNavbar from './components/TheNavbar.vue'
 import HeroCarousel from './components/HeroCarousel.vue'
+import HeroSkeleton from './components/HeroSkeleton.vue'
 import FilterToolbar from './components/FilterToolbar.vue'
 import MovieGrid from './components/MovieGrid.vue'
 import MovieDetailsModal from './components/MovieDetailsModal.vue'

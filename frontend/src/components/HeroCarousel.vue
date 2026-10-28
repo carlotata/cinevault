@@ -1,7 +1,8 @@
 <template>
   <section 
     v-if="currentMovie"
-    class="relative w-full overflow-hidden bg-[#080b11] select-none group min-h-[460px] sm:min-h-[540px] md:min-h-[620px] lg:min-h-[700px] flex items-end"
+    class="relative w-full overflow-hidden select-none group min-h-[460px] sm:min-h-[540px] md:min-h-[620px] lg:min-h-[700px] flex items-end transition-colors duration-300"
+    :class="darkMode ? 'bg-[#080b11]' : 'bg-[#f4f6fa]'"
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
     @mouseenter="$emit('pause-autoplay')"
@@ -14,15 +15,33 @@
         :style="{ backgroundImage: `url(${getBackdropUrl(currentMovie.backdrop_path)})` }"
       ></div>
 
-      <!-- Vignettes -->
-      <div class="absolute inset-0 bg-gradient-to-t from-[#080b11] via-[#080b11]/70 via-45% to-transparent"></div>
-      <div class="absolute inset-0 bg-gradient-to-r from-[#080b11]/95 via-[#080b11]/60 via-50% to-transparent hidden sm:block"></div>
-      <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#080b11]/80 to-transparent"></div>
+      <!-- Vignettes: Adaptive Light & Dark Gradients -->
+      <div 
+        class="absolute inset-0 transition-opacity duration-300"
+        :class="darkMode 
+          ? 'bg-gradient-to-t from-[#080b11] via-[#080b11]/70 via-45% to-transparent' 
+          : 'bg-gradient-to-t from-[#f4f6fa] via-[#f4f6fa]/85 via-50% to-transparent'"
+      ></div>
+      <div 
+        class="absolute inset-0 transition-opacity duration-300 hidden sm:block"
+        :class="darkMode 
+          ? 'bg-gradient-to-r from-[#080b11]/95 via-[#080b11]/60 via-50% to-transparent' 
+          : 'bg-gradient-to-r from-[#f4f6fa]/95 via-[#f4f6fa]/70 via-50% to-transparent'"
+      ></div>
+      <div 
+        class="absolute inset-x-0 top-0 h-32 transition-opacity duration-300"
+        :class="darkMode 
+          ? 'bg-gradient-to-b from-[#080b11]/85 to-transparent' 
+          : 'bg-gradient-to-b from-[#f4f6fa]/90 to-transparent'"
+      ></div>
     </div>
 
     <!-- Desktop Arrow Controls -->
     <button 
-      class="hidden md:flex absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/75 backdrop-blur-md text-white/80 hover:text-white items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg border border-white/10 cursor-pointer"
+      class="hidden md:flex absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full backdrop-blur-md items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg border cursor-pointer"
+      :class="darkMode
+        ? 'bg-black/40 hover:bg-black/75 text-white/80 hover:text-white border-white/10'
+        : 'bg-white/90 hover:bg-white text-zinc-800 hover:text-zinc-950 border-zinc-300/80 shadow-md'"
       @click="$emit('prev')"
       aria-label="Previous slide"
     >
@@ -30,7 +49,10 @@
     </button>
 
     <button 
-      class="hidden md:flex absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/75 backdrop-blur-md text-white/80 hover:text-white items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg border border-white/10 cursor-pointer"
+      class="hidden md:flex absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full backdrop-blur-md items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg border cursor-pointer"
+      :class="darkMode
+        ? 'bg-black/40 hover:bg-black/75 text-white/80 hover:text-white border-white/10'
+        : 'bg-white/90 hover:bg-white text-zinc-800 hover:text-zinc-950 border-zinc-300/80 shadow-md'"
       @click="$emit('next')"
       aria-label="Next slide"
     >
@@ -41,83 +63,137 @@
     <div class="relative z-10 w-full max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 pb-10 sm:pb-16 pt-24">
       <div class="max-w-3xl lg:max-w-4xl xl:max-w-5xl">
         
+        <!-- Scannable Theatrical Badge (Aphorism / Two-beat antithesis / Em dash) -->
+        <div 
+          class="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 text-[11px] sm:text-xs font-black tracking-wider uppercase backdrop-blur-md border transition-colors shadow-xs"
+          :class="darkMode 
+            ? 'bg-white/10 text-amber-400 border-amber-400/30' 
+            : 'bg-white/90 text-amber-600 border-amber-500/30 shadow-amber-500/10'"
+        >
+          <i class="fa-solid fa-bolt text-amber-500 text-[10px]"></i>
+          <span>Curated Cinema — Zero Search Fatigue</span>
+        </div>
+
         <!-- Big Bold Uppercase Title (Cinematic Display Typography) -->
-        <h1 class="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.5rem] font-black text-white uppercase tracking-tight leading-[0.95] drop-shadow-2xl mb-4">
+        <h1 
+          class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-black uppercase tracking-tight leading-[0.98] break-words line-clamp-3 mb-3.5 transition-colors"
+          :class="darkMode ? 'text-white drop-shadow-2xl' : 'text-zinc-950 drop-shadow-sm'"
+        >
           {{ currentMovie.title }}
         </h1>
 
         <!-- Meta Info Row -->
-        <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs sm:text-sm font-semibold text-zinc-300 mb-4 drop-shadow">
+        <div 
+          class="flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs sm:text-sm font-semibold mb-3.5 transition-colors"
+          :class="darkMode ? 'text-zinc-300 drop-shadow' : 'text-zinc-700'"
+        >
           <!-- Star Rating -->
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-black/40 backdrop-blur-md text-amber-400 font-bold">
+          <span 
+            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md backdrop-blur-md font-bold transition-colors"
+            :class="darkMode ? 'bg-black/50 text-amber-400 border border-white/10' : 'bg-white/95 text-amber-600 border border-zinc-200/90 shadow-xs'"
+          >
             <i class="fa-solid fa-star text-[11px]"></i>
             {{ formatRating(currentMovie.vote_average) }}
           </span>
 
-          <span class="text-zinc-500 font-bold">·</span>
+          <span :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'" class="font-bold">·</span>
           <span>{{ formatYear(currentMovie.release_date) }}</span>
           
           <template v-for="name in getMovieGenres(currentMovie).slice(0, 2)" :key="name">
-            <span class="text-zinc-500 font-bold">·</span>
+            <span :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'" class="font-bold">·</span>
             <span>{{ name }}</span>
           </template>
 
-          <span class="text-zinc-500 font-bold">·</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-black/50 text-zinc-300 border border-white/10">
+          <span :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'" class="font-bold">·</span>
+          <span 
+            class="px-2 py-0.5 rounded text-[10px] font-black uppercase transition-colors"
+            :class="darkMode ? 'bg-black/50 text-zinc-300 border border-white/10' : 'bg-white/95 text-zinc-800 border border-zinc-300/80 shadow-xs'"
+          >
             HD
           </span>
         </div>
 
-        <!-- Synopsis -->
-        <p class="text-xs sm:text-sm lg:text-base text-zinc-300 leading-relaxed line-clamp-2 sm:line-clamp-3 max-w-2xl mb-7 drop-shadow">
+        <!-- Synopsis (Punchy, Scannable, Body supports headline) -->
+        <p 
+          class="text-xs sm:text-sm lg:text-base leading-relaxed line-clamp-2 sm:line-clamp-3 max-w-2xl mb-4 transition-colors"
+          :class="darkMode ? 'text-zinc-300 drop-shadow' : 'text-zinc-700'"
+        >
           {{ currentMovie.overview }}
         </p>
 
-        <!-- CTA Action Buttons (Iconic White Pill + Dark Pill) -->
+        <!-- Micro Objection Handler / Key Bullets Before CTA (Write for lazy people, handle friction) -->
+        <div 
+          class="flex flex-wrap items-center gap-3 text-xs font-semibold mb-6 transition-colors"
+          :class="darkMode ? 'text-zinc-400' : 'text-zinc-600'"
+        >
+          <span class="inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-check text-emerald-500 text-[11px]"></i>
+            <span>100% Free Access</span>
+          </span>
+          <span :class="darkMode ? 'text-zinc-600' : 'text-zinc-300'">·</span>
+          <span class="inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved text-amber-500 text-[11px]"></i>
+            <span>No Credit Card</span>
+          </span>
+          <span :class="darkMode ? 'text-zinc-600' : 'text-zinc-300'">·</span>
+          <span class="inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-bolt text-sky-500 text-[11px]"></i>
+            <span>Instant HD Trailers</span>
+          </span>
+        </div>
+
+        <!-- CTA Action Buttons (Iconic High-Contrast Pills) -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           
-          <!-- Primary CTA: Prominent White Pill Button -->
+          <!-- Primary CTA: Clear Verb + Outcome -->
           <button 
-            class="h-12 px-7 rounded-full bg-white hover:bg-zinc-200 text-black font-extrabold text-sm shadow-xl shadow-black/40 flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            class="h-12 px-7 rounded-full font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            :class="darkMode 
+              ? 'bg-white hover:bg-zinc-200 text-black shadow-xl shadow-black/40' 
+              : 'bg-zinc-950 hover:bg-black text-white shadow-xl shadow-zinc-950/20'"
             @click="$emit('open-details', currentMovie)"
           >
-            <i class="fa-solid fa-circle-info text-base"></i>
-            <span>View Details & Trailer</span>
+            <i class="fa-solid fa-play text-sm"></i>
+            <span>Stream Official Trailer</span>
           </button>
 
           <div class="flex items-center gap-2.5">
-            <!-- Secondary CTA: Dark Frosted Pill Button -->
+            <!-- Secondary CTA: Clear Verb + Outcome (Watchlist) -->
             <button 
               class="flex-1 sm:flex-initial h-12 px-6 rounded-full font-bold text-sm backdrop-blur-md flex items-center justify-center gap-2 border transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               :class="[
                 isInWatchlist(currentMovie)
                   ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-lg shadow-amber-500/25'
-                  : 'bg-white/10 hover:bg-white/15 text-white border-white/10'
+                  : (darkMode 
+                      ? 'bg-white/10 hover:bg-white/15 text-white border-white/10' 
+                      : 'bg-white/95 hover:bg-white text-zinc-900 border-zinc-300 shadow-sm')
               ]"
               @click="$emit('toggle-watchlist', currentMovie)"
             >
               <i :class="isInWatchlist(currentMovie) ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
-              <span>{{ isInWatchlist(currentMovie) ? 'In Watchlist' : 'Add to Watchlist' }}</span>
+              <span>{{ isInWatchlist(currentMovie) ? 'Saved in Watchlist' : 'Add to My Watchlist' }}</span>
             </button>
 
-            <!-- Favorite Button: Round Frosted Heart Button -->
+            <!-- Favorite Button: Clear Outcome -->
             <button 
               class="h-12 w-12 rounded-full backdrop-blur-md flex items-center justify-center border transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
               :class="[
                 isFavorite(currentMovie)
                   ? 'bg-amber-500 text-black border-amber-500 shadow-lg shadow-amber-500/25'
-                  : 'bg-white/10 hover:bg-white/15 text-white border-white/10'
+                  : (darkMode 
+                      ? 'bg-white/10 hover:bg-white/15 text-white border-white/10' 
+                      : 'bg-white/95 hover:bg-white text-zinc-800 border-zinc-300 shadow-sm')
               ]"
               @click="$emit('toggle-favorite', currentMovie)"
-              :aria-label="isFavorite(currentMovie) ? 'Remove Favorite' : 'Add Favorite'"
+              :aria-label="isFavorite(currentMovie) ? 'Remove from favorites' : 'Add to favorites'"
             >
-              <i :class="isFavorite(currentMovie) ? 'fa-solid fa-heart text-black' : 'fa-regular fa-heart text-zinc-200'"></i>
+              <i :class="isFavorite(currentMovie) ? 'fa-solid fa-heart text-black' : 'fa-regular fa-heart text-zinc-400 dark:text-zinc-200'"></i>
             </button>
           </div>
 
         </div>
 
-        <!-- In-flow Mobile Pagination Dots (Fixes Collision in Screenshot 102031 & 103417) -->
+        <!-- In-flow Mobile Pagination Dots -->
         <div class="sm:hidden flex items-center justify-center gap-1.5 mt-5" v-if="movies.length > 1">
           <button 
             v-for="(movie, idx) in movies" 
@@ -126,7 +202,7 @@
             :class="[
               idx === currentIndex 
                 ? 'w-6 bg-amber-500 shadow-md shadow-amber-500/50' 
-                : 'w-1.5 bg-white/30'
+                : (darkMode ? 'w-1.5 bg-white/30' : 'w-1.5 bg-zinc-400/50')
             ]"
             :aria-label="`Slide ${idx + 1}`"
             @click="$emit('set-index', idx)"
@@ -144,7 +220,7 @@
           :class="[
             idx === currentIndex 
               ? 'w-7 bg-amber-500 shadow-md shadow-amber-500/50' 
-              : 'w-2 bg-white/30 hover:bg-white/50'
+              : (darkMode ? 'w-2 bg-white/30 hover:bg-white/50' : 'w-2 bg-zinc-400/50 hover:bg-zinc-600')
           ]"
           :aria-label="`Slide ${idx + 1}`"
           @click="$emit('set-index', idx)"
@@ -162,6 +238,7 @@ const props = defineProps({
   movies: { type: Array, default: () => [] },
   currentIndex: { type: Number, default: 0 },
   genres: { type: Array, default: () => [] },
+  darkMode: { type: Boolean, default: true },
   isInWatchlist: { type: Function, required: true },
   isFavorite: { type: Function, required: true }
 })

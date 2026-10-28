@@ -2,11 +2,18 @@
   <header 
     class="fixed top-0 inset-x-0 z-40 w-full transition-all duration-300"
     :class="[
-      isHeroBlended
-        ? 'bg-gradient-to-b from-black/85 via-black/40 to-transparent border-b border-transparent text-white'
-        : (darkMode
+      isScrolled
+        ? (darkMode
             ? 'bg-[#080b11]/92 backdrop-blur-xl border-b border-white/10 shadow-xl shadow-black/50 text-white'
             : 'bg-white/92 backdrop-blur-xl border-b border-zinc-200/90 shadow-sm text-zinc-900')
+        : (isHeroBlended
+            ? (darkMode
+                ? 'bg-gradient-to-b from-[#080b11]/90 via-[#080b11]/40 to-transparent border-b border-transparent text-white shadow-none'
+                : 'bg-gradient-to-b from-[#f4f6fa]/95 via-[#f4f6fa]/50 to-transparent border-b border-transparent text-zinc-900 shadow-none')
+            : (darkMode
+                ? 'bg-transparent border-b border-transparent text-white shadow-none'
+                : 'bg-transparent border-b border-transparent text-zinc-900 shadow-none')
+          )
     ]"
   >
     <div class="w-full max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 h-16 sm:h-20 flex items-center justify-between gap-4">
@@ -22,7 +29,7 @@
         <div class="flex items-center gap-1.5 sm:gap-2">
           <span 
             class="font-display text-lg sm:text-2xl font-black tracking-tight transition-colors"
-            :class="isHeroBlended || darkMode ? 'text-white group-hover:text-amber-400' : 'text-zinc-950 group-hover:text-amber-500'"
+            :class="darkMode ? 'text-white group-hover:text-amber-400' : 'text-zinc-950 group-hover:text-amber-500'"
           >
             CineVault
           </span>
@@ -34,11 +41,11 @@
 
       <!-- Zone 2: Balanced Center Navigation (Segmented Pill Island) -->
       <nav 
-        class="hidden md:flex items-center gap-1 p-1.5 rounded-full border backdrop-blur-md shadow-inner transition-colors duration-200"
+        class="hidden md:flex items-center gap-1 p-1.5 rounded-full border backdrop-blur-md transition-colors duration-200"
         :class="[
-          isHeroBlended || darkMode
-            ? 'bg-white/[0.05] border-white/10 shadow-black/40'
-            : 'bg-zinc-100/90 border-zinc-200/80 shadow-zinc-300/30'
+          darkMode
+            ? 'bg-white/[0.05] border-white/10 shadow-inner shadow-black/40'
+            : 'bg-white/80 border-zinc-200/80 shadow-xs'
         ]"
       >
         <button 
@@ -46,7 +53,7 @@
           :class="[
             activeTab === 'discover' && !activeSearchQuery
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
-              : (isHeroBlended || darkMode
+              : (darkMode
                   ? 'text-zinc-300 hover:text-white hover:bg-white/[0.08]'
                   : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/70')
           ]"
@@ -61,7 +68,7 @@
           :class="[
             activeTab === 'watchlist'
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
-              : (isHeroBlended || darkMode
+              : (darkMode
                   ? 'text-zinc-300 hover:text-white hover:bg-white/[0.08]'
                   : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/70')
           ]"
@@ -72,7 +79,7 @@
           <span 
             v-if="watchlistCount > 0" 
             class="ml-1 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold"
-            :class="activeTab === 'watchlist' ? 'bg-black/25 text-black' : (isHeroBlended || darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')"
+            :class="activeTab === 'watchlist' ? 'bg-black/25 text-black' : (darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')"
           >
             {{ watchlistCount }}
           </span>
@@ -83,7 +90,7 @@
           :class="[
             activeTab === 'favorites'
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
-              : (isHeroBlended || darkMode
+              : (darkMode
                   ? 'text-zinc-300 hover:text-white hover:bg-white/[0.08]'
                   : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/70')
           ]"
@@ -102,24 +109,24 @@
       </nav>
 
       <!-- Zone 3: Right Tools & Account -->
-      <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+      <div class="flex items-center gap-1 sm:gap-2.5 shrink-0">
         
         <!-- Search Trigger Button -->
         <button 
           class="hidden sm:inline-flex items-center gap-2.5 h-10 px-4 rounded-full text-xs font-semibold transition-all border cursor-pointer"
           :class="[
-            isHeroBlended || darkMode
+            darkMode
               ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/10'
-              : 'bg-zinc-100 hover:bg-zinc-200/80 text-zinc-700 hover:text-zinc-950 border-zinc-200'
+              : 'bg-white/80 hover:bg-white text-zinc-700 hover:text-zinc-950 border-zinc-200/80 shadow-xs'
           ]"
           @click="$emit('open-search')"
           aria-label="Search movies"
         >
-          <i class="fa-solid fa-magnifying-glass text-xs" :class="isHeroBlended || darkMode ? 'text-zinc-400' : 'text-zinc-500'"></i>
+          <i class="fa-solid fa-magnifying-glass text-xs" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"></i>
           <span>Search...</span>
           <kbd 
             class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold"
-            :class="isHeroBlended || darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700'"
+            :class="darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700'"
           >/</kbd>
         </button>
 
@@ -127,9 +134,9 @@
         <button 
           class="sm:hidden w-9 h-9 rounded-full flex items-center justify-center text-sm transition-colors border cursor-pointer"
           :class="[
-            isHeroBlended || darkMode
+            darkMode
               ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/10'
-              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'
+              : 'bg-white/80 hover:bg-white text-zinc-700 hover:text-zinc-950 border-zinc-200/80 shadow-xs'
           ]"
           @click="$emit('open-search')"
           aria-label="Search"
@@ -141,9 +148,9 @@
         <button 
           class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all border cursor-pointer"
           :class="[
-            isHeroBlended || darkMode
+            darkMode
               ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-amber-400 border-white/10'
-              : 'bg-zinc-100 hover:bg-zinc-200 text-amber-600 hover:text-amber-700 border-zinc-200 shadow-xs'
+              : 'bg-white/80 hover:bg-white text-amber-600 hover:text-amber-700 border-zinc-200/80 shadow-xs'
           ]"
           @click="$emit('toggle-theme')" 
           :aria-label="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
@@ -168,9 +175,9 @@
           <button 
             class="inline-flex items-center gap-2 h-10 pl-1 pr-3 rounded-full text-xs font-bold transition-all border cursor-pointer"
             :class="[
-              isHeroBlended || darkMode
+              darkMode
                 ? 'bg-white/[0.04] hover:bg-white/[0.08] text-white border-white/5'
-                : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-200 shadow-xs'
+                : 'bg-white/80 hover:bg-white text-zinc-900 border-zinc-200/80 shadow-xs'
             ]"
             @click.stop="isUserMenuOpen = !isUserMenuOpen"
             aria-label="Account menu"
@@ -178,8 +185,8 @@
             <span class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-black font-extrabold flex items-center justify-center text-xs">
               {{ userInitial }}
             </span>
-            <span class="max-w-[100px] truncate hidden sm:inline" :class="isHeroBlended || darkMode ? 'text-zinc-200' : 'text-zinc-800'">{{ user.name }}</span>
-            <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="[{ 'rotate-180': isUserMenuOpen }, isHeroBlended || darkMode ? 'text-zinc-400' : 'text-zinc-500']"></i>
+            <span class="max-w-[100px] truncate hidden sm:inline" :class="darkMode ? 'text-zinc-200' : 'text-zinc-800'">{{ user.name }}</span>
+            <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="[{ 'rotate-180': isUserMenuOpen }, darkMode ? 'text-zinc-400' : 'text-zinc-500']"></i>
           </button>
 
           <!-- User Dropdown Popover -->
@@ -233,7 +240,10 @@
 
         <!-- Mobile Menu Toggle Button -->
         <button 
-          class="md:hidden w-10 h-10 rounded-full bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-zinc-200 text-sm transition-colors border border-white/5 cursor-pointer"
+          class="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-sm transition-colors border cursor-pointer"
+          :class="darkMode 
+            ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 border-white/10' 
+            : 'bg-white/80 hover:bg-white text-zinc-800 border-zinc-200/80 shadow-xs'"
           @click="isMobileDrawerOpen = true"
           aria-label="Open mobile menu"
         >

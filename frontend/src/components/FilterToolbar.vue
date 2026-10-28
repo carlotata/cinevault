@@ -11,7 +11,7 @@
           :class="[
             currentCategory === cat.id && !activeSearchQuery
               ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
-              : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+              : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
           ]"
           @click="$emit('select-category', cat.id)"
         >
@@ -29,8 +29,8 @@
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
               activeDropdown === 'genre' || selectedGenre !== null
-                ? 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border-amber-500/30 font-extrabold'
-                : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-extrabold'
+                : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
             ]"
             @click.stop="toggleDropdown('genre')"
           >
@@ -72,8 +72,8 @@
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
               activeDropdown === 'rating' || minRating > 0
-                ? 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border-amber-500/30 font-extrabold'
-                : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-extrabold'
+                : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
             ]"
             @click.stop="toggleDropdown('rating')"
           >
@@ -112,8 +112,8 @@
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
               activeDropdown === 'sort' || sortBy !== 'popularity.desc'
-                ? 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border-amber-500/30 font-extrabold'
-                : 'bg-white/[0.04] dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-white/5 hover:bg-zinc-200/70 dark:hover:bg-white/[0.08] hover:text-zinc-950 dark:hover:text-white'
+                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-extrabold'
+                : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
             ]"
             @click.stop="toggleDropdown('sort')"
           >
