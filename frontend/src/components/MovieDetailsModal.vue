@@ -19,19 +19,21 @@
           ]"
         >
           
-          <!-- Top Close Button -->
-          <button 
-            class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all hover:scale-110 active:scale-95 shadow-lg cursor-pointer" 
-            :class="[
-              darkMode
-                ? 'bg-black/70 hover:bg-black/95 text-white/80 hover:text-white border-white/15'
-                : 'bg-white/90 hover:bg-white text-zinc-700 hover:text-black border-zinc-200 shadow-md'
-            ]"
-            @click="$emit('close')" 
-            aria-label="Close modal"
-          >
-            <i class="fa-solid fa-xmark text-sm"></i>
-          </button>
+          <!-- Sticky Top Close Button Bar -->
+          <div class="sticky top-3 sm:top-4 z-40 flex justify-end px-3 sm:px-4 pointer-events-none -mb-10 sm:-mb-12">
+            <button 
+              class="pointer-events-auto w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all hover:scale-110 active:scale-95 shadow-xl cursor-pointer" 
+              :class="[
+                darkMode
+                  ? 'bg-black/75 hover:bg-black/95 text-white/90 hover:text-white border-white/20'
+                  : 'bg-white/95 hover:bg-white text-zinc-700 hover:text-black border-zinc-300 shadow-md'
+              ]"
+              @click="$emit('close')" 
+              aria-label="Close modal"
+            >
+              <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+          </div>
 
           <!-- Video Trailer Player View or Backdrop Banner -->
           <div class="relative w-full aspect-video max-h-[380px] bg-black overflow-hidden flex items-center justify-center">
@@ -63,7 +65,7 @@
 
           <!-- Modal Body Content -->
           <div class="p-5 sm:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 sm:gap-8 items-start">
+            <div class="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] gap-6 sm:gap-8 items-start min-w-0">
               
               <!-- Left Column: Poster & Quick Action Buttons -->
               <div class="flex flex-col items-center md:items-start gap-4">
@@ -180,7 +182,7 @@
               </div>
 
               <!-- Right Column: Details, Overview & Cast -->
-              <div class="space-y-6">
+              <div class="space-y-6 min-w-0 w-full overflow-hidden">
                 
                 <!-- Title & Tagline -->
                 <div>
@@ -239,7 +241,7 @@
                 </div>
 
                 <!-- Overview Synopsis -->
-                <div class="space-y-2">
+                <div class="space-y-2 min-w-0 w-full">
                   <h4 
                     class="text-xs font-black uppercase tracking-wider !m-0"
                     :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
@@ -247,7 +249,7 @@
                     Overview
                   </h4>
                   <p 
-                    class="text-xs sm:text-sm leading-relaxed font-normal"
+                    class="text-xs sm:text-sm leading-relaxed font-normal break-words"
                     :class="darkMode ? 'text-zinc-300' : 'text-zinc-700'"
                   >
                     {{ movie.overview || 'No synopsis available for this title.' }}
@@ -256,104 +258,146 @@
 
                 <!-- Meta Info Grid -->
                 <div 
-                  class="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 rounded-2xl border text-xs"
+                  class="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 rounded-2xl border text-xs min-w-0"
                   :class="darkMode ? 'bg-black/30 border-white/5' : 'bg-zinc-50 border-zinc-200'"
                 >
-                  <div>
-                    <span class="block font-semibold mb-0.5" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Director</span>
-                    <span class="font-bold" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ directorName }}</span>
+                  <div class="min-w-0">
+                    <span class="block font-semibold mb-0.5 truncate" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Director</span>
+                    <span class="font-bold block truncate" :class="darkMode ? 'text-white' : 'text-zinc-900'" :title="directorName">{{ directorName }}</span>
                   </div>
-                  <div>
-                    <span class="block font-semibold mb-0.5" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Release Date</span>
-                    <span class="font-bold" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ formatDate(movie.release_date) }}</span>
+                  <div class="min-w-0">
+                    <span class="block font-semibold mb-0.5 truncate" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Release Date</span>
+                    <span class="font-bold block truncate" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ formatDate(movie.release_date) }}</span>
                   </div>
-                  <div v-if="movie.vote_count">
-                    <span class="block font-semibold mb-0.5" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Votes</span>
-                    <span class="font-bold" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ movie.vote_count.toLocaleString() }}</span>
+                  <div v-if="movie.vote_count" class="min-w-0">
+                    <span class="block font-semibold mb-0.5 truncate" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Votes</span>
+                    <span class="font-bold block truncate" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ movie.vote_count.toLocaleString() }}</span>
                   </div>
                 </div>
 
-                <!-- Top Cast Rail -->
-                <div v-if="castList.length > 0" class="space-y-3">
+                <!-- Top Cast Rail with Enhanced Carousel Controls -->
+                <div v-if="castList.length > 0" class="space-y-3 min-w-0 w-full">
                   <div class="flex items-center justify-between">
-                    <h4 
-                      class="text-xs font-black uppercase tracking-wider !m-0"
-                      :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
-                    >
-                      Top Cast
-                    </h4>
+                    <div class="flex items-center gap-2">
+                      <h4 
+                        class="text-xs font-black uppercase tracking-wider !m-0"
+                        :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
+                      >
+                        Top Cast
+                      </h4>
+                      <span 
+                        class="px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                        :class="darkMode ? 'bg-white/[0.05] text-zinc-400 border-white/10' : 'bg-zinc-100 text-zinc-600 border-zinc-200'"
+                      >
+                        {{ castList.length }}
+                      </span>
+                    </div>
+
+                    <!-- Header Carousel Navigation Buttons -->
                     <div class="flex items-center gap-1.5">
                       <button 
                         type="button"
-                        class="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors cursor-pointer border"
-                        :class="darkMode ? 'bg-white/[0.06] hover:bg-white/[0.15] text-zinc-400 hover:text-white border-white/5' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-900 border-zinc-200'"
+                        class="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer border shadow-xs disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                        :disabled="isCastAtStart"
+                        :class="darkMode ? 'bg-white/[0.08] hover:bg-white/[0.18] text-white border-white/15' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'"
                         @click="scrollCast('left')"
                         aria-label="Scroll cast left"
                       >
-                        <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        <i class="fa-solid fa-chevron-left text-[11px]"></i>
                       </button>
                       <button 
                         type="button"
-                        class="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors cursor-pointer border"
-                        :class="darkMode ? 'bg-white/[0.06] hover:bg-white/[0.15] text-zinc-400 hover:text-white border-white/5' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-900 border-zinc-200'"
+                        class="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer border shadow-xs disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                        :disabled="isCastAtEnd"
+                        :class="darkMode ? 'bg-white/[0.08] hover:bg-white/[0.18] text-white border-white/15' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'"
                         @click="scrollCast('right')"
                         aria-label="Scroll cast right"
                       >
-                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        <i class="fa-solid fa-chevron-right text-[11px]"></i>
                       </button>
                     </div>
                   </div>
 
-                  <div 
-                    ref="castRailRef"
-                    class="flex items-center gap-3 overflow-x-auto pb-2 scroll-smooth cursor-grab active:cursor-grabbing select-none"
-                    @wheel.passive="false"
-                    @wheel="handleCastWheel"
-                    @mousedown="startCastDrag"
-                    @mouseleave="stopCastDrag"
-                    @mouseup="stopCastDrag"
-                    @mousemove="onCastDrag"
-                  >
+                  <!-- Cast Carousel Rail with Overlay Buttons and Visible Scrollbar -->
+                  <div class="relative group/cast min-w-0 w-full">
+                    <!-- Left Floating Arrow Button -->
+                    <button
+                      v-show="!isCastAtStart"
+                      type="button"
+                      class="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer opacity-90 hover:opacity-100"
+                      :class="darkMode ? 'bg-black/80 text-white border-white/20 hover:bg-black' : 'bg-white/95 text-zinc-800 border-zinc-300 hover:bg-white shadow-zinc-400/30'"
+                      @click="scrollCast('left')"
+                      aria-label="Previous cast members"
+                    >
+                      <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+
+                    <!-- Scrollable Container -->
                     <div 
-                      v-for="person in castList" 
-                      :key="person.id"
-                      class="flex-shrink-0 w-24 flex flex-col items-center text-center p-2 rounded-xl border transition-colors"
-                      :class="darkMode ? 'bg-white/[0.02] border-white/5 hover:border-white/10' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'"
+                      ref="castRailRef"
+                      class="flex items-center gap-3 overflow-x-auto pb-3 pt-1 scroll-smooth cursor-grab active:cursor-grabbing select-none w-full min-w-0"
+                      :class="darkMode ? 'custom-cast-scroll-dark' : 'custom-cast-scroll-light'"
+                      @scroll="updateCastScrollState"
+                      @wheel.passive="false"
+                      @wheel="handleCastWheel"
+                      @mousedown="startCastDrag"
+                      @mouseleave="stopCastDrag"
+                      @mouseup="stopCastDrag"
+                      @mousemove="onCastDrag"
                     >
                       <div 
-                        class="w-14 h-14 rounded-full overflow-hidden mb-2 border shrink-0"
-                        :class="darkMode ? 'bg-zinc-800 border-white/10' : 'bg-zinc-200 border-zinc-300'"
+                        v-for="person in castList" 
+                        :key="person.id"
+                        class="flex-shrink-0 w-24 flex flex-col items-center text-center p-2 rounded-xl border transition-colors"
+                        :class="darkMode ? 'bg-white/[0.02] border-white/5 hover:border-white/10' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'"
                       >
-                        <img 
-                          v-if="person.profile_path" 
-                          :src="getPosterUrl(person.profile_path, 'w185')" 
-                          :alt="person.name" 
-                          class="w-full h-full object-cover pointer-events-none"
-                          loading="lazy" 
-                        />
                         <div 
-                          v-else 
-                          class="w-full h-full flex items-center justify-center text-base"
-                          :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
+                          class="w-14 h-14 rounded-full overflow-hidden mb-2 border shrink-0"
+                          :class="darkMode ? 'bg-zinc-800 border-white/10' : 'bg-zinc-200 border-zinc-300'"
                         >
-                          <i class="fa-solid fa-user"></i>
+                          <img 
+                            v-if="person.profile_path" 
+                            :src="getPosterUrl(person.profile_path, 'w185')" 
+                            :alt="person.name" 
+                            class="w-full h-full object-cover pointer-events-none"
+                            loading="lazy" 
+                          />
+                          <div 
+                            v-else 
+                            class="w-full h-full flex items-center justify-center text-base"
+                            :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
+                          >
+                            <i class="fa-solid fa-user"></i>
+                          </div>
                         </div>
+                        <span 
+                          class="text-[11px] font-bold truncate w-full"
+                          :class="darkMode ? 'text-white' : 'text-zinc-900'"
+                          :title="person.name"
+                        >
+                          {{ person.name }}
+                        </span>
+                        <span 
+                          class="text-[10px] truncate w-full"
+                          :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
+                          :title="person.character"
+                        >
+                          {{ person.character }}
+                        </span>
                       </div>
-                      <span 
-                        class="text-[11px] font-bold truncate w-full"
-                        :class="darkMode ? 'text-white' : 'text-zinc-900'"
-                        :title="person.name"
-                      >
-                        {{ person.name }}
-                      </span>
-                      <span 
-                        class="text-[10px] truncate w-full"
-                        :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
-                        :title="person.character"
-                      >
-                        {{ person.character }}
-                      </span>
                     </div>
+
+                    <!-- Right Floating Arrow Button -->
+                    <button
+                      v-show="!isCastAtEnd"
+                      type="button"
+                      class="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer opacity-90 hover:opacity-100"
+                      :class="darkMode ? 'bg-black/80 text-white border-white/20 hover:bg-black' : 'bg-white/95 text-zinc-800 border-zinc-300 hover:bg-white shadow-zinc-400/30'"
+                      @click="scrollCast('right')"
+                      aria-label="Next cast members"
+                    >
+                      <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
                   </div>
                 </div>
 
@@ -392,8 +436,22 @@ const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p'
 watch(() => props.movie, (newMovie) => {
   if (newMovie) {
     isTrailerPlaying.value = props.autoPlayTrailer
+    isCastAtStart.value = true
+    isCastAtEnd.value = false
+    if (castRailRef.value) {
+      castRailRef.value.scrollLeft = 0
+    }
   } else {
     isTrailerPlaying.value = false
+  }
+})
+
+watch(() => props.credits, () => {
+  isCastAtStart.value = true
+  isCastAtEnd.value = false
+  if (castRailRef.value) {
+    castRailRef.value.scrollLeft = 0
+    setTimeout(updateCastScrollState, 100)
   }
 })
 
@@ -435,17 +493,27 @@ const castList = computed(() => {
 })
 
 const castRailRef = ref(null)
+const isCastAtStart = ref(true)
+const isCastAtEnd = ref(false)
 let isDragging = false
 let startX = 0
 let scrollLeftStart = 0
 
+const updateCastScrollState = () => {
+  if (!castRailRef.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = castRailRef.value
+  isCastAtStart.value = scrollLeft <= 4
+  isCastAtEnd.value = scrollLeft + clientWidth >= scrollWidth - 6
+}
+
 const scrollCast = (direction) => {
   if (!castRailRef.value) return
-  const amount = 220
+  const amount = 240
   castRailRef.value.scrollBy({
     left: direction === 'left' ? -amount : amount,
     behavior: 'smooth'
   })
+  setTimeout(updateCastScrollState, 350)
 }
 
 const handleCastWheel = (e) => {
@@ -453,6 +521,7 @@ const handleCastWheel = (e) => {
   if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
     e.preventDefault()
     castRailRef.value.scrollLeft += e.deltaY * 1.5
+    updateCastScrollState()
   }
 }
 
@@ -465,6 +534,7 @@ const startCastDrag = (e) => {
 
 const stopCastDrag = () => {
   isDragging = false
+  updateCastScrollState()
 }
 
 const onCastDrag = (e) => {
@@ -473,6 +543,7 @@ const onCastDrag = (e) => {
   const x = e.pageX - castRailRef.value.offsetLeft
   const walk = (x - startX) * 1.5
   castRailRef.value.scrollLeft = scrollLeftStart - walk
+  updateCastScrollState()
 }
 
 const currentWatchStatus = computed(() => {
