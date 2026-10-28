@@ -8,12 +8,25 @@
           {{ title }}
         </h2>
       </div>
-      <span 
-        class="text-xs font-bold px-3 py-1 rounded-full bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/10 backdrop-blur-sm" 
-        v-if="!loading && !error"
-      >
-        {{ movies.length }} {{ movies.length === 1 ? 'Title' : 'Titles' }}
-      </span>
+      <div v-if="!loading && !error" class="flex items-center gap-2">
+        <span 
+          v-if="totalPages > 1"
+          class="text-xs font-bold px-3 py-1 rounded-full border backdrop-blur-sm transition-colors"
+          :class="darkMode 
+            ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
+            : 'bg-amber-50 text-amber-700 border-amber-200'"
+        >
+          Page {{ currentPage }} of {{ totalPages }}
+        </span>
+        <span 
+          class="text-xs font-bold px-3 py-1 rounded-full border backdrop-blur-sm transition-colors" 
+          :class="darkMode
+            ? 'bg-white/[0.05] text-zinc-300 border-white/10'
+            : 'bg-zinc-100 text-zinc-700 border-zinc-200'"
+        >
+          {{ totalResults > 0 ? totalResults.toLocaleString() + ' Titles' : movies.length + ' Titles' }}
+        </span>
+      </div>
     </div>
 
     <!-- Loading State Skeleton -->
@@ -113,13 +126,115 @@
         @cycle-status="$emit('cycle-status', movie)"
       />
     </div>
+
+    <!-- Catalog Pagination Bar -->
+    <div 
+      v-if="totalPages > 1 && !loading && !error && movies.length > 0 && (activeTab === 'discover' || activeSearchQuery)"
+      class="mt-10 sm:mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t"
+      :class="darkMode ? 'border-white/10' : 'border-zinc-200'"
+    >
+      <!-- Page Summary Info -->
+      <div class="text-xs sm:text-sm font-medium" :class="darkMode ? 'text-zinc-400' : 'text-zinc-600'">
+        Showing page <span class="font-extrabold text-amber-500">{{ currentPage }}</span> of <span class="font-extrabold" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ totalPages }}</span>
+        <span v-if="totalResults > 0" class="hidden sm:inline"> ({{ totalResults.toLocaleString() }} total titles)</span>
+      </div>
+
+      <!-- Pagination Buttons -->
+      <nav class="flex items-center gap-1.5 sm:gap-2 select-none" aria-label="Catalog Pagination">
+        <!-- First Page Button -->
+        <button
+          type="button"
+          :disabled="currentPage <= 1"
+          @click="$emit('change-page', 1)"
+          class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          :class="darkMode 
+            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
+          title="First Page"
+          aria-label="First Page"
+        >
+          <i class="fa-solid fa-angles-left"></i>
+        </button>
+
+        <!-- Previous Button -->
+        <button
+          type="button"
+          :disabled="currentPage <= 1"
+          @click="$emit('change-page', currentPage - 1)"
+          class="px-3 sm:px-3.5 h-9 sm:h-10 rounded-xl flex items-center gap-2 text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          :class="darkMode 
+            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
+          aria-label="Previous Page"
+        >
+          <i class="fa-solid fa-chevron-left text-[10px]"></i>
+          <span class="hidden sm:inline">Prev</span>
+        </button>
+
+        <!-- Numbered Page Pills -->
+        <template v-for="(p, idx) in visiblePages" :key="idx">
+          <span 
+            v-if="p === '...'" 
+            class="w-7 sm:w-8 h-9 sm:h-10 flex items-center justify-center text-xs font-bold"
+            :class="darkMode ? 'text-zinc-500' : 'text-zinc-400'"
+          >
+            ···
+          </span>
+          <button
+            v-else
+            type="button"
+            @click="$emit('change-page', p)"
+            class="min-w-[36px] sm:min-w-[40px] h-9 sm:h-10 px-2 rounded-xl flex items-center justify-center text-xs font-extrabold transition-all border cursor-pointer"
+            :class="p === currentPage 
+              ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/30' 
+              : darkMode 
+                ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+                : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
+            :aria-current="p === currentPage ? 'page' : undefined"
+          >
+            {{ p }}
+          </button>
+        </template>
+
+        <!-- Next Button -->
+        <button
+          type="button"
+          :disabled="currentPage >= totalPages"
+          @click="$emit('change-page', currentPage + 1)"
+          class="px-3 sm:px-3.5 h-9 sm:h-10 rounded-xl flex items-center gap-2 text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          :class="darkMode 
+            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
+          aria-label="Next Page"
+        >
+          <span class="hidden sm:inline">Next</span>
+          <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        </button>
+
+        <!-- Last Page Button -->
+        <button
+          type="button"
+          :disabled="currentPage >= totalPages"
+          @click="$emit('change-page', totalPages)"
+          class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          :class="darkMode 
+            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
+          title="Last Page"
+          aria-label="Last Page"
+        >
+          <i class="fa-solid fa-angles-right"></i>
+        </button>
+      </nav>
+    </div>
   </section>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import MovieCard from './MovieCard.vue'
 
-defineProps({
+const props = defineProps({
   title: { type: String, required: true },
   movies: { type: Array, default: () => [] },
   genres: { type: Array, default: () => [] },
@@ -127,6 +242,10 @@ defineProps({
   activeSearchQuery: { type: String, default: '' },
   loading: { type: Boolean, default: false },
   error: { type: String, default: null },
+  currentPage: { type: Number, default: 1 },
+  totalPages: { type: Number, default: 1 },
+  totalResults: { type: Number, default: 0 },
+  darkMode: { type: Boolean, default: true },
   isLoggedIn: { type: Boolean, default: false },
   isInWatchlist: { type: Function, required: true },
   isFavorite: { type: Function, required: true },
@@ -140,6 +259,28 @@ defineEmits([
   'cycle-status',
   'retry',
   'empty-action',
-  'open-auth'
+  'open-auth',
+  'change-page'
 ])
+
+const visiblePages = computed(() => {
+  const current = props.currentPage
+  const total = props.totalPages
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+
+  // Near the start: [1, 2, 3, 4, 5, '...', total]
+  if (current <= 4) {
+    return [1, 2, 3, 4, 5, '...', total]
+  }
+
+  // Near the end: [1, '...', total - 4, total - 3, total - 2, total - 1, total]
+  if (current >= total - 3) {
+    return [1, '...', total - 4, total - 3, total - 2, total - 1, total]
+  }
+
+  // Middle: [1, '...', current - 1, current, current + 1, '...', total]
+  return [1, '...', current - 1, current, current + 1, '...', total]
+})
 </script>

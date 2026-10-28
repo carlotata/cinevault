@@ -11,7 +11,9 @@
           :class="[
             currentCategory === cat.id && !activeSearchQuery
               ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
-              : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+              : (darkMode 
+                  ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                  : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
           ]"
           @click="$emit('select-category', cat.id)"
         >
@@ -29,8 +31,12 @@
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
               activeDropdown === 'genre' || selectedGenre !== null
-                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-extrabold'
-                : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+                ? (darkMode 
+                    ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-extrabold' 
+                    : 'bg-amber-50 text-amber-700 border-amber-400 font-extrabold shadow-xs')
+                : (darkMode 
+                    ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                    : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
             ]"
             @click.stop="toggleDropdown('genre')"
           >
@@ -42,11 +48,14 @@
           <transition name="dropdown-pop">
             <div 
               v-if="activeDropdown === 'genre'" 
-              class="absolute left-0 top-full mt-2 w-48 sm:w-56 max-h-64 overflow-y-auto rounded-2xl bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 shadow-2xl p-1.5 z-50 backdrop-blur-xl no-scrollbar"
+              class="absolute left-0 top-full mt-2 w-48 sm:w-56 max-h-64 overflow-y-auto rounded-2xl p-1.5 z-50 backdrop-blur-xl no-scrollbar border shadow-2xl transition-colors"
+              :class="darkMode ? 'bg-[#111622] border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
             >
               <div 
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
-                :class="selectedGenre === null ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                :class="selectedGenre === null 
+                  ? 'bg-amber-500 text-black font-extrabold' 
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectGenre(null)"
               >
                 <span>All Genres</span>
@@ -56,7 +65,9 @@
                 v-for="genre in genres" 
                 :key="genre.id"
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
-                :class="selectedGenre === genre.id ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                :class="selectedGenre === genre.id 
+                  ? 'bg-amber-500 text-black font-extrabold' 
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectGenre(genre.id)"
               >
                 <span>{{ genre.name }}</span>
@@ -72,8 +83,12 @@
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
               activeDropdown === 'rating' || minRating > 0
-                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-extrabold'
-                : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+                ? (darkMode 
+                    ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-extrabold' 
+                    : 'bg-amber-50 text-amber-700 border-amber-400 font-extrabold shadow-xs')
+                : (darkMode 
+                    ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                    : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
             ]"
             @click.stop="toggleDropdown('rating')"
           >
@@ -85,7 +100,8 @@
           <transition name="dropdown-pop">
             <div 
               v-if="activeDropdown === 'rating'" 
-              class="absolute left-1/2 -translate-x-1/2 md:translate-x-0 md:left-0 top-full mt-2 w-48 rounded-2xl bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 shadow-2xl p-1.5 z-50 backdrop-blur-xl"
+              class="absolute left-1/2 -translate-x-1/2 md:translate-x-0 md:left-0 top-full mt-2 w-48 rounded-2xl p-1.5 z-50 backdrop-blur-xl border shadow-2xl transition-colors"
+              :class="darkMode ? 'bg-[#111622] border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
             >
               <div 
                 v-for="opt in [
@@ -96,7 +112,9 @@
                 ]"
                 :key="opt.val"
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
-                :class="minRating === opt.val ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                :class="minRating === opt.val 
+                  ? 'bg-amber-500 text-black font-extrabold' 
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectRating(opt.val)"
               >
                 <span>{{ opt.label }}</span>
@@ -112,8 +130,12 @@
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
               activeDropdown === 'sort' || sortBy !== 'popularity.desc'
-                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-extrabold'
-                : 'bg-zinc-100 hover:bg-zinc-200/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+                ? (darkMode 
+                    ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-extrabold' 
+                    : 'bg-amber-50 text-amber-700 border-amber-400 font-extrabold shadow-xs')
+                : (darkMode 
+                    ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                    : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
             ]"
             @click.stop="toggleDropdown('sort')"
           >
@@ -125,7 +147,8 @@
           <transition name="dropdown-pop">
             <div 
               v-if="activeDropdown === 'sort'" 
-              class="absolute right-0 top-full mt-2 w-52 rounded-2xl bg-white dark:bg-[#111622] border border-zinc-200 dark:border-white/10 shadow-2xl p-1.5 z-50 backdrop-blur-xl"
+              class="absolute right-0 top-full mt-2 w-52 rounded-2xl p-1.5 z-50 backdrop-blur-xl border shadow-2xl transition-colors"
+              :class="darkMode ? 'bg-[#111622] border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
             >
               <div 
                 v-for="opt in [
@@ -136,7 +159,9 @@
                 ]"
                 :key="opt.key"
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
-                :class="sortBy === opt.key ? 'bg-amber-500 text-black font-extrabold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] hover:text-zinc-950 dark:hover:text-white'"
+                :class="sortBy === opt.key 
+                  ? 'bg-amber-500 text-black font-extrabold' 
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectSort(opt.key)"
               >
                 <span class="flex items-center gap-2">
@@ -166,7 +191,8 @@ const props = defineProps({
   selectedGenre: { type: [Number, String], default: null },
   minRating: { type: Number, default: 0 },
   sortBy: { type: String, default: 'popularity.desc' },
-  activeDropdown: { type: String, default: null }
+  activeDropdown: { type: String, default: null },
+  darkMode: { type: Boolean, default: true }
 })
 
 const emit = defineEmits([

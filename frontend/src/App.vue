@@ -148,6 +148,7 @@
           :min-rating="minRating"
           :sort-by="sortBy"
           :active-dropdown="activeDropdown"
+          :dark-mode="darkMode"
           @select-category="setCategory"
           @toggle-dropdown="toggleDropdown"
           @update:selected-genre="selectedGenre = $event"
@@ -166,6 +167,10 @@
           :active-search-query="activeSearchQuery"
           :loading="loading"
           :error="error"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :total-results="totalResults"
+          :dark-mode="darkMode"
           :is-logged-in="isLoggedIn"
           :is-in-watchlist="isInWatchlist"
           :is-favorite="isFavorite"
@@ -174,7 +179,8 @@
           @toggle-watchlist="toggleWatchlist"
           @toggle-favorite="toggleFavorite"
           @cycle-status="cycleWatchStatus"
-          @retry="fetchMovies"
+          @retry="() => fetchMovies(currentPage, true)"
+          @change-page="handlePageChange"
           @empty-action="handleEmptyAction"
           @open-auth="openAuthModal('login')"
         />
@@ -318,8 +324,12 @@ const loading = ref(false)
 const error = ref(null)
 const darkMode = ref(true)
 
+const currentPage = ref(1)
+const totalPages = ref(1)
+const totalResults = ref(0)
+
 // In-Memory Stale-While-Revalidate Caches (Instant 0ms retrieval)
-const categoryCache = new Map() // categoryId -> { movies: Array, timestamp: number }
+const categoryCache = new Map() // `${categoryId}_p${page}` -> { movies: Array, totalPages: number, totalResults: number, timestamp: number }
 const movieDetailsCache = new Map() // movieId -> { details: Object, credits: Object, videos: Array }
 
 // Slug Helper
@@ -492,17 +502,23 @@ const api = async (path, { method = 'GET', body } = {}) => {
 }
 
 // Movies Fetching with perceptual floor & in-memory cache
-const fetchMovies = async (forceRefresh = false) => {
+const fetchMovies = async (page = 1, forceRefresh = false) => {
   error.value = null
   activeSearchQuery.value = ''
 
+  const targetPage = Math.max(1, Math.min(500, Number(page) || 1))
+  currentPage.value = targetPage
+
   const catId = currentCategory.value
-  const cached = categoryCache.get(catId)
+  const cacheKey = `${catId}_p${targetPage}`
+  const cached = categoryCache.get(cacheKey)
   const isFresh = cached && (Date.now() - cached.timestamp < 300000) // 5 minutes fresh
 
   if (cached && !forceRefresh) {
     // Instant 0ms cache hit!
     movies.value = cached.movies
+    totalPages.value = cached.totalPages || 1
+    totalResults.value = cached.totalResults || cached.movies.length
     loading.value = false
     heroSlideIndex.value = 0
     startHeroAutoplay()
@@ -514,14 +530,26 @@ const fetchMovies = async (forceRefresh = false) => {
 
   const startTime = Date.now()
   try {
-    const data = await api(`/movies/category/${catId}?page=1`)
+    const data = await api(`/movies/category/${catId}?page=${targetPage}`)
     const elapsed = Date.now() - startTime
     if (!cached && elapsed < 150) {
       await new Promise(resolve => setTimeout(resolve, 150 - elapsed))
     }
     const results = data.results || []
-    categoryCache.set(catId, { movies: results, timestamp: Date.now() })
+    const maxPages = Math.min(data.total_pages || 1, 500)
+    const total = data.total_results || results.length
+
+    totalPages.value = maxPages
+    totalResults.value = total
     movies.value = results
+
+    categoryCache.set(cacheKey, { 
+      movies: results, 
+      totalPages: maxPages, 
+      totalResults: total, 
+      timestamp: Date.now() 
+    })
+
     heroSlideIndex.value = 0
     startHeroAutoplay()
     updateUrlSlug()
@@ -535,12 +563,15 @@ const fetchMovies = async (forceRefresh = false) => {
   }
 }
 
-const searchMovies = async (fromHash = false) => {
+const searchMovies = async (page = 1, fromHash = false) => {
   const query = searchQuery.value.trim()
   if (!query) {
     clearSearch()
     return
   }
+
+  const targetPage = Math.max(1, Math.min(500, Number(page) || 1))
+  currentPage.value = targetPage
 
   loading.value = true
   error.value = null
@@ -552,17 +583,37 @@ const searchMovies = async (fromHash = false) => {
 
   const startTime = Date.now()
   try {
-    const data = await api(`/movies/search?query=${encodeURIComponent(query)}`)
+    const data = await api(`/movies/search?query=${encodeURIComponent(query)}&page=${targetPage}`)
     const elapsed = Date.now() - startTime
     if (elapsed < 150) {
       await new Promise(resolve => setTimeout(resolve, 150 - elapsed))
     }
-    movies.value = data.results || []
+    const results = data.results || []
+    movies.value = results
+    totalPages.value = Math.min(data.total_pages || 1, 500)
+    totalResults.value = data.total_results || results.length
   } catch (err) {
     console.error('Movie Search Error:', err)
     error.value = 'Unable to complete search request. Please try again.'
   } finally {
     loading.value = false
+  }
+}
+
+const handlePageChange = (page) => {
+  const targetPage = Math.max(1, Math.min(totalPages.value, Number(page) || 1))
+  if (targetPage === currentPage.value) return
+
+  if (activeSearchQuery.value) {
+    searchMovies(targetPage)
+  } else {
+    fetchMovies(targetPage)
+  }
+
+  // Smoothly scroll back to the top of the content/grid section
+  const mainContent = document.querySelector('.content-wrapper') || document.querySelector('main')
+  if (mainContent) {
+    mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 }
 
@@ -579,6 +630,7 @@ const fetchGenres = async () => {
 
 // Navigation & Category
 const handleNavigate = (tab) => {
+  currentPage.value = 1
   if (tab === 'discover') {
     activeTab.value = 'discover'
     if (activeSearchQuery.value || currentCategory.value !== 'popular') {
@@ -599,7 +651,8 @@ const setCategory = (catId) => {
   activeTab.value = 'discover'
   searchQuery.value = ''
   activeSearchQuery.value = ''
-  fetchMovies()
+  currentPage.value = 1
+  fetchMovies(1)
 }
 
 const resetFilters = () => {
@@ -612,7 +665,8 @@ const resetFilters = () => {
 const clearSearch = () => {
   searchQuery.value = ''
   activeSearchQuery.value = ''
-  fetchMovies()
+  currentPage.value = 1
+  fetchMovies(1)
 }
 
 const handleEmptyAction = () => {

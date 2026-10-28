@@ -20,9 +20,6 @@
           >
             CineVault
           </span>
-          <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-500 border border-amber-500/20">
-            PLUS
-          </span>
         </div>
         <p 
           class="max-w-xs text-xs leading-relaxed transition-colors"

@@ -48,28 +48,33 @@
       </button>
 
       <!-- Hover Overlay Actions -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3 gap-2.5">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3.5 gap-2.5">
         <button 
-          class="w-9 h-9 rounded-full bg-white/20 hover:bg-white text-white hover:text-black flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-md cursor-pointer"
+          class="group/btn w-9 h-9 rounded-full bg-black/60 hover:bg-amber-500 border border-white/20 hover:border-amber-500 flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-black/50 cursor-pointer"
           @click.stop="$emit('open-details', movie)" 
           title="View Details & Trailer"
           aria-label="View Details"
         >
-          <i class="fa-solid fa-circle-info text-sm"></i>
+          <i class="fa-solid fa-circle-info text-sm text-white group-hover/btn:!text-black transition-colors"></i>
         </button>
 
         <button 
-          class="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-md cursor-pointer"
+          class="group/btn w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-200 hover:scale-110 active:scale-95 shadow-md shadow-black/50 cursor-pointer"
           :class="[
             isInWatchlist 
-              ? 'bg-amber-500 text-black shadow-amber-500/30' 
-              : 'bg-white/20 hover:bg-white text-white hover:text-black'
+              ? 'bg-amber-500 text-black border-amber-500 shadow-amber-500/30' 
+              : 'bg-black/60 hover:bg-amber-500 border-white/20 hover:border-amber-500 text-white'
           ]"
           @click.stop="$emit('toggle-watchlist', movie)" 
           :title="isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'"
           aria-label="Toggle Watchlist"
         >
-          <i :class="isInWatchlist ? 'fa-solid fa-check' : 'fa-solid fa-plus'" class="text-sm"></i>
+          <i 
+            :class="[
+              isInWatchlist ? 'fa-solid fa-check text-black' : 'fa-solid fa-plus text-white group-hover/btn:!text-black'
+            ]" 
+            class="text-sm transition-colors"
+          ></i>
         </button>
       </div>
 
