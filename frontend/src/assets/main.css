@@ -41,25 +41,12 @@ body.light-theme {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
-  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 
 .theme-card-panel {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
-  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
-}
-
-/* Universal surface transitions for smooth theme interpolation */
-header,
-main,
-footer,
-nav,
-dialog,
-[role="dialog"],
-.cineby-card {
-  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
 
 @theme {
@@ -105,17 +92,6 @@ html, body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-/* Synchronized smooth theme transition (Eliminates border flashes and lag during theme swap) */
-html.theme-transitioning,
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-  transition-property: background-color, border-color, color, fill, stroke, box-shadow !important;
-  transition-duration: 200ms !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* Neutralize Quasar heading blowup (unlayered so it overrides unlayered Quasar styles) */

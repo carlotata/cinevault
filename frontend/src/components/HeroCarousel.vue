@@ -1,8 +1,8 @@
 <template>
   <section 
     v-if="currentMovie"
-    class="relative w-full overflow-hidden select-none group min-h-[480px] sm:min-h-[520px] lg:h-[70vh] lg:min-h-[560px] lg:max-h-[760px] flex items-end transition-colors duration-200"
-    :class="darkMode ? 'bg-[#080b11]' : 'bg-[#f4f6fa]'"
+    class="relative w-full overflow-hidden select-none group min-h-120 sm:min-h-130 lg:h-[70vh] lg:min-h-140 lg:max-h-190 flex items-end"
+    :class="darkMode ? 'bg-obsidian' : 'bg-[#f4f6fa]'"
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
     @mouseenter="$emit('pause-autoplay')"
@@ -11,25 +11,25 @@
     <!-- Background Backdrop with Vignettes -->
     <div class="absolute inset-0 z-0">
       <div 
-        class="w-full h-full bg-cover bg-center sm:bg-[center_15%] transition-all duration-700 transform group-hover:scale-105"
+        class="w-full h-full bg-cover bg-center sm:bg-position-[center_15%] transition-transform duration-700 transform group-hover:scale-105"
         :class="darkMode ? '' : 'brightness-[0.98] contrast-[1.03]'"
         :style="{ backgroundImage: `url(${getBackdropUrl(currentMovie.backdrop_path)})` }"
       ></div>
 
-      <!-- Dark Mode Vignette Layer (Cross-fades smoothly via opacity) -->
+      <!-- Dark Mode Vignette Layer -->
       <div 
-        class="absolute inset-0 transition-opacity duration-200 ease-out pointer-events-none"
-        :class="darkMode ? 'opacity-100' : 'opacity-0'"
+        v-if="darkMode"
+        class="absolute inset-0 pointer-events-none"
       >
-        <div class="absolute inset-0 bg-gradient-to-t from-[#080b11] via-[#080b11]/70 via-45% to-transparent"></div>
+        <div class="absolute inset-0 bg-linear-to-t from-obsidian via-[#080b11]/70 via-45% to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-[#080b11]/95 via-[#080b11]/60 via-50% to-transparent hidden sm:block"></div>
         <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#080b11]/85 to-transparent"></div>
       </div>
 
-      <!-- Light Mode Vignette Layer (Vivid artwork with focused text scrim, never washed out) -->
+      <!-- Light Mode Vignette Layer -->
       <div 
-        class="absolute inset-0 transition-opacity duration-200 ease-out pointer-events-none"
-        :class="!darkMode ? 'opacity-100' : 'opacity-0'"
+        v-else
+        class="absolute inset-0 pointer-events-none"
       >
         <div class="absolute inset-0 bg-gradient-to-t from-[#f4f6fa] via-[#f4f6fa]/40 via-30% to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-[#f4f6fa]/90 via-[#f4f6fa]/35 via-45% to-transparent hidden sm:block"></div>

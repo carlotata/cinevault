@@ -1,6 +1,6 @@
 <template>
   <header 
-    class="fixed top-0 inset-x-0 z-40 w-full transition-colors duration-200"
+    class="fixed top-0 inset-x-0 z-40 w-full"
     :class="[
       isScrolled
         ? (darkMode
@@ -41,7 +41,7 @@
 
       <!-- Zone 2: Balanced Center Navigation (Segmented Pill Island) -->
       <nav 
-        class="hidden md:flex items-center gap-1 p-1.5 rounded-full border backdrop-blur-md transition-colors duration-200"
+        class="hidden md:flex items-center gap-1 p-1.5 rounded-full border backdrop-blur-md"
         :class="[
           darkMode
             ? 'bg-white/[0.05] border-white/10 shadow-inner shadow-black/40'
@@ -144,9 +144,9 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
 
-        <!-- 3-Mode Theme Toggle (System / Dark / Light) -->
+        <!-- 3-Mode Theme Toggle (System / Dark / Light - Hidden on mobile view as it is inside the sidebar drawer) -->
         <button 
-          class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm transition-all border cursor-pointer"
+          class="hidden md:flex w-10 h-10 rounded-full items-center justify-center text-sm border cursor-pointer transition-transform hover:scale-105 active:scale-95"
           :class="[
             darkMode
               ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-amber-400 border-white/10'
