@@ -134,7 +134,8 @@ img {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 clamp(1rem, 3vw, 2.5rem);
+  padding-left: clamp(1rem, 3vw, 2.5rem);
+  padding-right: clamp(1rem, 3vw, 2.5rem);
 }
 
 /* ==========================================================================
@@ -4452,7 +4453,8 @@ a:focus-visible,
 /* 5. Ultra-Small Screen Widths (<= 380px) */
 @media (max-width: 380px) {
   .container {
-    padding: 0 0.65rem !important;
+    padding-left: 0.65rem !important;
+    padding-right: 0.65rem !important;
   }
   .brand-badge {
     display: none !important;

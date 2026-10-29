@@ -47,8 +47,8 @@
         <i :class="isFavorite ? 'fa-solid fa-heart' : 'fa-regular fa-heart'" class="text-xs"></i>
       </button>
 
-      <!-- Hover Overlay Actions (Centered in poster - Never covering bottom status pill) -->
-      <div class="absolute inset-0 bg-linear-to-t from-black/85 via-black/45 to-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 z-20 backdrop-blur-[2px]">
+      <!-- Hover Overlay Actions (Desktop hover only - hidden on mobile/touch to prevent accidental removal) -->
+      <div class="hidden sm:flex pointer-events-none group-hover:pointer-events-auto absolute inset-0 bg-linear-to-t from-black/85 via-black/45 to-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 items-center justify-center gap-3 z-20 backdrop-blur-[2px]">
         <button 
           class="group/btn w-10 h-10 rounded-full bg-black/70 hover:bg-amber-500 border border-white/20 hover:border-amber-500 flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-xl shadow-black/60 cursor-pointer"
           @click.stop="$emit('open-details', movie)" 

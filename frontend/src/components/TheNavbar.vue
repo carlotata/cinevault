@@ -130,14 +130,10 @@
           >/</kbd>
         </button>
 
-        <!-- Compact Search Icon for Mobile -->
+        <!-- Compact Search Icon for Mobile (Clean borderless) -->
         <button 
-          class="sm:hidden w-9 h-9 rounded-full flex items-center justify-center text-sm transition-colors border cursor-pointer"
-          :class="[
-            darkMode
-              ? 'bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border-white/10'
-              : 'bg-white/80 hover:bg-white text-zinc-700 hover:text-zinc-950 border-zinc-200/80 shadow-xs'
-          ]"
+          class="sm:hidden w-9 h-9 rounded-full flex items-center justify-center text-sm transition-colors border-none bg-transparent hover:bg-white/5 active:bg-white/10 cursor-pointer shadow-none"
+          :class="darkMode ? 'text-zinc-300 hover:text-white' : 'text-zinc-700 hover:text-zinc-950'"
           @click="$emit('open-search')"
           aria-label="Search"
         >
@@ -176,20 +172,20 @@
         <!-- Logged In: User Profile Chip & Dropdown -->
         <div v-else class="relative" ref="userDropdownRef">
           <button 
-            class="inline-flex items-center gap-2 h-10 pl-1 pr-3 rounded-full text-xs font-bold transition-all border cursor-pointer"
+            class="inline-flex items-center sm:gap-2 h-8 sm:h-10 w-8 sm:w-auto p-0 sm:pl-1 sm:pr-3 rounded-full text-xs font-bold transition-all border-none sm:border cursor-pointer bg-transparent shadow-none"
             :class="[
               darkMode
-                ? 'bg-white/4 hover:bg-white/8 text-white border-white/5'
-                : 'bg-white/80 hover:bg-white text-zinc-900 border-zinc-200/80 shadow-xs'
+                ? 'sm:bg-white/4 sm:hover:bg-white/8 text-white sm:border-white/5'
+                : 'sm:bg-white/80 sm:hover:bg-white text-zinc-900 sm:border-zinc-200/80 sm:shadow-xs'
             ]"
             @click.stop="isUserMenuOpen = !isUserMenuOpen"
             aria-label="Account menu"
           >
-            <span class="w-8 h-8 rounded-full bg-linear-to-br from-amber-400 to-amber-600 text-black font-extrabold flex items-center justify-center text-xs">
+            <span class="w-8 h-8 rounded-full bg-linear-to-br from-amber-400 to-amber-600 text-black font-extrabold flex items-center justify-center text-xs shrink-0">
               {{ userInitial }}
             </span>
             <span class="max-w-25 truncate hidden sm:inline" :class="darkMode ? 'text-zinc-200' : 'text-zinc-800'">{{ user.name }}</span>
-            <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="[{ 'rotate-180': isUserMenuOpen }, darkMode ? 'text-zinc-400' : 'text-zinc-500']"></i>
+            <i class="hidden sm:inline-block fa-solid fa-chevron-down text-[10px] transition-transform duration-200 shrink-0" :class="[{ 'rotate-180': isUserMenuOpen }, darkMode ? 'text-zinc-400' : 'text-zinc-500']"></i>
           </button>
 
           <!-- User Dropdown Popover -->
@@ -277,7 +273,6 @@
                     <i class="fa-solid fa-film"></i>
                   </div>
                   <span class="text-base font-bold" :class="darkMode ? 'text-white' : 'text-zinc-900'">CineVault</span>
-                  <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-500">PLUS</span>
                 </div>
                 <button 
                   class="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors cursor-pointer"
