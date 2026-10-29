@@ -33,7 +33,7 @@
           </div>
           <div>
             <h3 
-              class="font-display text-xl font-bold tracking-tight m-0!"
+              class="font-display text-xl! font-bold! tracking-tight m-0!"
               :class="darkMode ? 'text-white' : 'text-zinc-900'"
             >
               {{ isLogin ? 'Welcome Back' : 'Create CineVault Account' }}

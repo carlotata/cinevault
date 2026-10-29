@@ -30,7 +30,7 @@
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </div>
             <h3 
-              class="font-display text-base sm:text-xl font-black tracking-tight m-0!"
+              class="font-display text-base! sm:text-xl! font-black! tracking-tight m-0!"
               :class="darkMode ? 'text-white' : 'text-zinc-900'"
             >
               Search Movies

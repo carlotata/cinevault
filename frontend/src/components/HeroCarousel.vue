@@ -22,7 +22,7 @@
         class="absolute inset-0 pointer-events-none"
       >
         <div class="absolute inset-0 bg-linear-to-t from-obsidian via-obsidian/70 via-45% to-transparent"></div>
-        <div class="absolute inset-0 bg-linear-to-r from-obsidian/95vvia-obsidian/60via-50% to-transparent hidden sm:block"></div>
+        <div class="absolute inset-0 bg-linear-to-r from-obsidian/95 via-obsidian/60 via-50% to-transparent hidden sm:block"></div>
         <div class="absolute inset-x-0 top-0 h-32 bg-linear-to-b from-obsidian/85 to-transparent"></div>
       </div>
 
@@ -66,7 +66,7 @@
         
         <!-- Big Bold Uppercase Title (Cinematic Display Typography) -->
         <h1 
-          class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-black uppercase tracking-tight leading-[0.98] wrap-break-word line-clamp-3 mb-3.5 transition-colors"
+          class="font-display text-3xl! sm:text-5xl! md:text-6xl! lg:text-7xl! xl:text-[5.25rem]! font-black! uppercase tracking-tight leading-[0.98]! wrap-break-word line-clamp-3 mb-3.5 transition-colors"
           :class="darkMode ? 'text-white drop-shadow-2xl' : 'text-zinc-950 drop-shadow-sm'"
         >
           {{ currentMovie.title }}

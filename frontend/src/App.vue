@@ -66,11 +66,11 @@
         <!-- Watchlist Header -->
         <section v-if="activeTab === 'watchlist'" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-5 border-b border-zinc-200 dark:border-white/5 mb-5">
           <div>
-            <h1 class="font-display text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 m-0!">
-              <i class="fa-solid fa-bookmark text-amber-500 text-base"></i>
+            <h1 class="font-display text-xl! sm:text-2xl! lg:text-3xl! font-extrabold! text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 sm:gap-3 m-0!">
+              <i class="fa-solid fa-bookmark text-amber-500 text-lg sm:text-xl"></i>
               <span>My Watchlist</span>
             </h1>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-medium">
+            <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1 font-medium">
               {{ watchlistCount }} {{ watchlistCount === 1 ? 'movie' : 'movies' }} in queue
             </p>
           </div>
@@ -129,11 +129,11 @@
         <!-- Favorites Header -->
         <section v-if="activeTab === 'favorites'" class="py-5 border-b border-zinc-200 dark:border-white/5 mb-5">
           <div>
-            <h1 class="font-display text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 m-0!">
-              <i class="fa-solid fa-heart text-rose-500 text-base"></i>
+            <h1 class="font-display text-xl! sm:text-2xl! lg:text-3xl! font-extrabold! text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 sm:gap-3 m-0!">
+              <i class="fa-solid fa-heart text-rose-500 text-lg sm:text-xl"></i>
               <span>Favorite Movies</span>
             </h1>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-medium">
+            <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1 font-medium">
               {{ favoriteCount }} {{ favoriteCount === 1 ? 'movie' : 'movies' }} pinned
             </p>
           </div>

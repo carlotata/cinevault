@@ -4,7 +4,7 @@
     <div v-if="activeTab !== 'watchlist' && activeTab !== 'favorites'" class="flex items-center justify-between gap-4 mb-6">
       <div class="flex items-center gap-3">
         <span class="w-2 h-6 sm:h-7 rounded-full bg-linear-to-b from-amber-400 to-amber-600 shadow-md shadow-amber-500/30"></span>
-        <h2 class="font-display text-xl sm:text-2xl lg:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight m-0! p-0!">
+        <h2 class="font-display text-xl! sm:text-2xl! lg:text-3xl! font-extrabold! text-zinc-900 dark:text-white tracking-tight m-0! p-0!">
           {{ title }}
         </h2>
       </div>

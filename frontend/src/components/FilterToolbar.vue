@@ -1,9 +1,9 @@
 <template>
-  <section class="py-4 select-none">
-    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5">
+  <section class="py-4 select-none min-w-0 w-full overflow-hidden">
+    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 min-w-0 w-full">
       
       <!-- Category Pills Strip (smooth horizontal scroll on mobile & tablet) -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 no-scrollbar whitespace-nowrap">
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 no-scrollbar whitespace-nowrap min-w-0 max-w-full">
         <button 
           v-for="cat in categories" 
           :key="cat.id"
@@ -23,10 +23,10 @@
       </div>
 
       <!-- Custom Dropdowns: 3 Symmetrical Columns on mobile/tablet, Flex on Desktop -->
-      <div class="grid grid-cols-3 lg:flex items-center gap-2">
+      <div class="grid grid-cols-3 lg:flex items-center gap-1.5 sm:gap-2 min-w-0 w-full lg:w-auto">
         
         <!-- Custom Genre Dropdown -->
-        <div class="relative">
+        <div class="relative min-w-0">
           <button 
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
@@ -78,7 +78,7 @@
         </div>
 
         <!-- Custom Rating Dropdown -->
-        <div class="relative">
+        <div class="relative min-w-0">
           <button 
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
@@ -125,7 +125,7 @@
         </div>
 
         <!-- Custom Sort Dropdown -->
-        <div class="relative">
+        <div class="relative min-w-0">
           <button 
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[

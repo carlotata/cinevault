@@ -94,11 +94,30 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Neutralize Quasar heading blowup (unlayered so it overrides unlayered Quasar styles) */
+/* Neutralize Quasar heading blowup while allowing Tailwind typography utilities */
 h1, h2, h3, h4, h5, h6 {
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
+}
+
+h1:where([class*="text-"]),
+h2:where([class*="text-"]),
+h3:where([class*="text-"]),
+h4:where([class*="text-"]),
+h5:where([class*="text-"]),
+h6:where([class*="text-"]) {
+  font-size: revert-layer;
+  line-height: revert-layer;
+}
+
+h1:where([class*="font-"]),
+h2:where([class*="font-"]),
+h3:where([class*="font-"]),
+h4:where([class*="font-"]),
+h5:where([class*="font-"]),
+h6:where([class*="font-"]) {
+  font-weight: revert-layer;
 }
 
 @layer base {
@@ -141,12 +160,16 @@ input:focus-visible {
 @media (min-width: 640px) {
   .sm\:flex { display: flex !important; }
   .sm\:inline-flex { display: inline-flex !important; }
+  .sm\:inline-block { display: inline-block !important; }
+  .sm\:inline { display: inline !important; }
   .sm\:hidden { display: none !important; }
   .sm\:block { display: block !important; }
 }
 @media (min-width: 768px) {
   .md\:flex { display: flex !important; }
   .md\:inline-flex { display: inline-flex !important; }
+  .md\:inline-block { display: inline-block !important; }
+  .md\:inline { display: inline !important; }
   .md\:hidden { display: none !important; }
   .md\:block { display: block !important; }
   .md\:grid { display: grid !important; }
@@ -154,6 +177,8 @@ input:focus-visible {
 @media (min-width: 1024px) {
   .lg\:flex { display: flex !important; }
   .lg\:inline-flex { display: inline-flex !important; }
+  .lg\:inline-block { display: inline-block !important; }
+  .lg\:inline { display: inline !important; }
   .lg\:hidden { display: none !important; }
   .lg\:block { display: block !important; }
 }

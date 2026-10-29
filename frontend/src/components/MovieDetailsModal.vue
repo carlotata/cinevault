@@ -246,7 +246,7 @@
                 <!-- Title & Tagline -->
                 <div>
                   <h2 
-                    class="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight m-0!"
+                    class="font-display text-2xl! sm:text-3xl! lg:text-4xl! font-black! tracking-tight leading-tight m-0!"
                     :class="darkMode ? 'text-white' : 'text-zinc-900'"
                   >
                     {{ movie.title }}

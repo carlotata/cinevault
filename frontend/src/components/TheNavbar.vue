@@ -33,9 +33,6 @@
           >
             CineVault
           </span>
-          <span class="hidden sm:inline-block text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/20">
-            PLUS
-          </span>
         </div>
       </div>
 
@@ -49,7 +46,7 @@
         ]"
       >
         <button 
-          class="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer"
+          class="flex items-center gap-1.5 lg:gap-2 px-3 py-1.5 lg:px-5 lg:py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer"
           :class="[
             activeTab === 'discover' && !activeSearchQuery
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
@@ -64,7 +61,7 @@
         </button>
 
         <button 
-          class="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer"
+          class="flex items-center gap-1.5 lg:gap-2 px-3 py-1.5 lg:px-5 lg:py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer"
           :class="[
             activeTab === 'watchlist'
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
@@ -86,7 +83,7 @@
         </button>
 
         <button 
-          class="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer"
+          class="flex items-center gap-1.5 lg:gap-2 px-3 py-1.5 lg:px-5 lg:py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer"
           :class="[
             activeTab === 'favorites'
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
@@ -113,7 +110,7 @@
         
         <!-- Search Trigger Button -->
         <button 
-          class="hidden sm:inline-flex items-center gap-2.5 h-10 px-4 rounded-full text-xs font-semibold transition-all border cursor-pointer"
+          class="hidden sm:inline-flex items-center gap-2.5 h-10 px-3 lg:px-4 rounded-full text-xs font-semibold transition-all border cursor-pointer"
           :class="[
             darkMode
               ? 'bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border-white/10'
@@ -123,9 +120,9 @@
           aria-label="Search movies"
         >
           <i class="fa-solid fa-magnifying-glass text-xs" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"></i>
-          <span>Search...</span>
+          <span class="hidden lg:inline">Search...</span>
           <kbd 
-            class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold"
+            class="hidden lg:inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold"
             :class="darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700'"
           >/</kbd>
         </button>
