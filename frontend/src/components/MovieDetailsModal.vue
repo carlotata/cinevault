@@ -308,7 +308,7 @@
                     Overview
                   </h4>
                   <p 
-                    class="text-xs sm:text-sm leading-relaxed font-normal break-words"
+                    class="text-xs sm:text-sm leading-relaxed font-normal wrap-break-word"
                     :class="darkMode ? 'text-zinc-300' : 'text-zinc-700'"
                   >
                     {{ movie.overview || 'No synopsis available for this title.' }}

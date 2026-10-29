@@ -1,0 +1,22 @@
+{
+  "appId": "com.cinevault.app",
+  "appName": "CineVault",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "launchAutoHide": true,
+      "backgroundColor": "#080b11"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#080b11"
+    },
+    "Keyboard": {
+      "resize": "body"
+    }
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

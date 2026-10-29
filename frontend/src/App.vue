@@ -256,6 +256,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
+import { Capacitor } from '@capacitor/core'
+import { App as CapApp } from '@capacitor/app'
 
 import TheNavbar from './components/TheNavbar.vue'
 import HeroCarousel from './components/HeroCarousel.vue'
@@ -269,7 +271,8 @@ import TheFooter from './components/TheFooter.vue'
 
 const $q = useQuasar()
 
-const API_BASE = '/api'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
+let capBackButtonListener = null
 const TOKEN_KEY = 'cinevault_token'
 const DEFAULT_RECENT_SEARCHES = ['vincenzo', 'inception', 'interstellar']
 
@@ -1417,9 +1420,33 @@ onMounted(() => {
   window.addEventListener('hashchange', handleHashChange)
   window.addEventListener('keydown', handleGlobalKeydown)
   document.addEventListener('click', handleDocumentClick)
+
+  // Native Android hardware/gesture back button handling
+  if (Capacitor.isNativePlatform()) {
+    CapApp.addListener('backButton', () => {
+      if (isAuthModalOpen.value) {
+        closeAuthModal()
+      } else if (isSearchModalOpen.value) {
+        closeSearchModal()
+      } else if (selectedMovie.value) {
+        closeModal()
+      } else if (activeDropdown.value) {
+        closeDropdowns()
+      } else if (window.location.hash && window.location.hash !== '#/' && window.location.hash !== '') {
+        window.location.hash = '#/'
+      } else {
+        CapApp.exitApp()
+      }
+    }).then(handle => {
+      capBackButtonListener = handle
+    })
+  }
 })
 
 onUnmounted(() => {
+  if (capBackButtonListener) {
+    capBackButtonListener.remove()
+  }
   stopHeroAutoplay()
   if (systemThemeMediaQuery) {
     if (systemThemeMediaQuery.removeEventListener) {

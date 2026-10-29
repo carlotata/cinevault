@@ -30,6 +30,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  server: { proxy: apiProxy },
-  preview: { proxy: apiProxy },
+  server: {
+    host: true,
+    port: 5173,
+    proxy: apiProxy,
+  },
+  preview: {
+    host: true,
+    port: 4173,
+    proxy: apiProxy,
+  },
 })

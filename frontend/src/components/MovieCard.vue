@@ -4,7 +4,7 @@
     @click="$emit('open-details', movie)"
   >
     <!-- Poster Frame (Aspect 2:3) -->
-    <div class="relative w-full aspect-2/3 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-[#182030] border border-zinc-200/80 dark:border-white/5 shadow-md shadow-zinc-300/40 dark:shadow-black/40 group-hover:shadow-2xl group-hover:shadow-amber-500/10 group-hover:border-amber-500/40 transition-shadow duration-300">
+    <div class="relative w-full aspect-2/3 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-surface-card border border-zinc-200/80 dark:border-white/5 shadow-md shadow-zinc-300/40 dark:shadow-black/40 group-hover:shadow-2xl group-hover:shadow-amber-500/10 group-hover:border-amber-500/40 transition-shadow duration-300">
       
       <!-- Shimmer Placeholder Skeleton -->
       <div 

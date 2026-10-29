@@ -1,7 +1,7 @@
 <template>
   <div 
-    class="relative w-full overflow-hidden min-h-[380px] sm:min-h-[460px] md:min-h-[520px] lg:min-h-[580px] flex items-end transition-colors duration-300"
-    :class="darkMode ? 'bg-[#080b11] border-b border-white/5' : 'bg-[#f4f6fa] border-b border-zinc-200'"
+    class="relative w-full overflow-hidden min-h-95 sm:min-h-115 md:min-h-130 lg:min-h-145 flex items-end transition-colors duration-300"
+    :class="darkMode ? 'bg-obsidian border-b border-white/5' : 'bg-[#f4f6fa] border-b border-zinc-200'"
   >
     <!-- Shimmer Background -->
     <div 

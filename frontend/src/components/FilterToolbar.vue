@@ -48,7 +48,7 @@
             @click.stop="toggleDropdown('genre')"
           >
             <i class="fa-solid fa-masks-theater text-xs opacity-75"></i>
-            <span class="truncate max-w-[70px] sm:max-w-none">{{ selectedGenreName }}</span>
+            <span class="truncate max-w-17.5 sm:max-w-none">{{ selectedGenreName }}</span>
             <i class="fa-solid fa-chevron-down text-[10px] opacity-75 transition-transform" :class="{ 'rotate-180': activeDropdown === 'genre' }"></i>
           </button>
 
@@ -100,7 +100,7 @@
             @click.stop="toggleDropdown('rating')"
           >
             <i class="fa-solid fa-star text-amber-400 text-xs"></i>
-            <span class="truncate max-w-[70px] sm:max-w-none">{{ selectedRatingLabel }}</span>
+            <span class="truncate max-w-17.5 sm:max-w-none">{{ selectedRatingLabel }}</span>
             <i class="fa-solid fa-chevron-down text-[10px] opacity-75 transition-transform" :class="{ 'rotate-180': activeDropdown === 'rating' }"></i>
           </button>
 
@@ -147,7 +147,7 @@
             @click.stop="toggleDropdown('sort')"
           >
             <i class="fa-solid fa-arrow-down-wide-short text-xs opacity-75"></i>
-            <span class="truncate max-w-[70px] sm:max-w-none">{{ selectedSortLabel }}</span>
+            <span class="truncate max-w-17.5 sm:max-w-none">{{ selectedSortLabel }}</span>
             <i class="fa-solid fa-chevron-down text-[10px] opacity-75 transition-transform" :class="{ 'rotate-180': activeDropdown === 'sort' }"></i>
           </button>
 

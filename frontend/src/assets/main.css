@@ -279,3 +279,38 @@ body.dark .bg-white:not(.keep-white) {
   background: rgba(217, 119, 6, 0.9);
 }
 
+/* Mobile Safe Area Insets & Touch Optimizations */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+.safe-area-top {
+  padding-top: var(--sat);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--sab);
+}
+
+.safe-area-pt {
+  padding-top: max(1rem, var(--sat));
+}
+
+.safe-area-pb {
+  padding-bottom: max(1rem, var(--sab));
+}
+
+/* Eliminate tap delay and unwanted callouts on mobile touch */
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+

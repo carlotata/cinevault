@@ -1,9 +1,9 @@
 <template>
   <footer 
     class="w-full border-t py-10 sm:py-12 text-xs transition-colors duration-200"
-    :class="darkMode ? 'border-white/5 bg-[#080b11] text-zinc-400' : 'border-zinc-200 bg-white text-zinc-600'"
+    :class="darkMode ? 'border-white/5 bg-obsidian text-zinc-400' : 'border-zinc-200 bg-white text-zinc-600'"
   >
-    <div class="w-full max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+    <div class="w-full max-w-360 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
       
       <!-- Brand Left -->
       <div class="flex flex-col items-center md:items-start gap-2">

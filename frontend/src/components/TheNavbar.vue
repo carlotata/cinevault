@@ -1,6 +1,6 @@
 <template>
   <header 
-    class="fixed top-0 inset-x-0 z-40 w-full"
+    class="fixed top-0 inset-x-0 z-40 w-full safe-area-top"
     :class="[
       isScrolled || activeTab !== 'discover' || !!activeSearchQuery
         ? (darkMode
