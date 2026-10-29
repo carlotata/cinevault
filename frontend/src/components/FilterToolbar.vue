@@ -1,5 +1,12 @@
 <template>
-  <section class="py-4 select-none min-w-0 w-full overflow-hidden">
+  <section class="py-4 select-none min-w-0 w-full relative z-30">
+    <!-- Click-outside Backdrop Overlay (Dismisses dropdowns, prevents movie click-through) -->
+    <div 
+      v-if="activeDropdown" 
+      class="fixed inset-0 z-40 bg-black/40 md:bg-transparent backdrop-blur-[1px] md:backdrop-blur-none"
+      @click="$emit('close-dropdowns')"
+      aria-hidden="true"
+    ></div>
     <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 min-w-0 w-full">
       
       <!-- Category Pills Strip (smooth horizontal scroll on mobile & tablet) -->
@@ -23,10 +30,10 @@
       </div>
 
       <!-- Custom Dropdowns: 3 Symmetrical Columns on mobile/tablet, Flex on Desktop -->
-      <div class="grid grid-cols-3 lg:flex items-center gap-1.5 sm:gap-2 min-w-0 w-full lg:w-auto">
+      <div class="grid grid-cols-3 lg:flex items-center gap-1.5 sm:gap-2 min-w-0 w-full lg:w-auto relative z-40">
         
         <!-- Custom Genre Dropdown -->
-        <div class="relative min-w-0">
+        <div class="custom-dropdown-container relative min-w-0" :class="{ 'z-50': activeDropdown === 'genre' }">
           <button 
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
@@ -48,7 +55,7 @@
           <transition name="dropdown-pop">
             <div 
               v-if="activeDropdown === 'genre'" 
-              class="absolute left-0 top-full mt-2 w-48 sm:w-56 max-h-64 overflow-y-auto rounded-2xl p-1.5 z-50 backdrop-blur-xl no-scrollbar border shadow-2xl transition-colors"
+              class="absolute left-0 top-full mt-2 w-56 sm:w-64 max-h-72 overflow-y-auto rounded-2xl p-1.5 z-50 backdrop-blur-xl no-scrollbar border shadow-2xl transition-colors"
               :class="darkMode ? 'bg-surface-dark border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
             >
               <div 
@@ -78,7 +85,7 @@
         </div>
 
         <!-- Custom Rating Dropdown -->
-        <div class="relative min-w-0">
+        <div class="custom-dropdown-container relative min-w-0" :class="{ 'z-50': activeDropdown === 'rating' }">
           <button 
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[
@@ -125,7 +132,7 @@
         </div>
 
         <!-- Custom Sort Dropdown -->
-        <div class="relative min-w-0">
+        <div class="custom-dropdown-container relative min-w-0" :class="{ 'z-50': activeDropdown === 'sort' }">
           <button 
             class="w-full md:w-auto h-10 px-3 sm:px-4 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-between md:justify-start gap-1.5 border cursor-pointer"
             :class="[

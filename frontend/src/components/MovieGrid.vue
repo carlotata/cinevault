@@ -1,25 +1,26 @@
 <template>
   <section class="py-6 sm:py-8">
     <!-- Section Heading Row (Only displayed for Discover and Search to avoid duplicate titles on Watchlist/Favorites) -->
-    <div v-if="activeTab !== 'watchlist' && activeTab !== 'favorites'" class="flex items-center justify-between gap-4 mb-6">
-      <div class="flex items-center gap-3">
-        <span class="w-2 h-6 sm:h-7 rounded-full bg-linear-to-b from-amber-400 to-amber-600 shadow-md shadow-amber-500/30"></span>
-        <h2 class="font-display text-xl! sm:text-2xl! lg:text-3xl! font-extrabold! text-zinc-900 dark:text-white tracking-tight m-0! p-0!">
+    <div v-if="activeTab !== 'watchlist' && activeTab !== 'favorites'" class="flex items-center justify-between gap-2.5 sm:gap-4 mb-5 sm:mb-6 min-w-0">
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink">
+        <span class="w-1.5 sm:w-2 h-5 sm:h-7 rounded-full bg-linear-to-b from-amber-400 to-amber-600 shadow-md shadow-amber-500/30 shrink-0"></span>
+        <h2 class="font-display text-lg! sm:text-2xl! lg:text-3xl! font-extrabold! text-zinc-900 dark:text-white tracking-tight truncate whitespace-nowrap m-0! p-0!">
           {{ title }}
         </h2>
       </div>
-      <div v-if="!loading && !error" class="flex items-center gap-2">
+      <div v-if="!loading && !error" class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <span 
           v-if="totalPages > 1"
-          class="text-xs font-bold px-3 py-1 rounded-full border backdrop-blur-sm transition-colors"
+          class="text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border backdrop-blur-sm transition-colors whitespace-nowrap shrink-0"
           :class="darkMode 
             ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
             : 'bg-amber-50 text-amber-700 border-amber-200'"
         >
-          Page {{ currentPage }} of {{ totalPages }}
+          <span class="sm:hidden">Pg {{ currentPage }}/{{ totalPages }}</span>
+          <span class="hidden sm:inline">Page {{ currentPage }} of {{ totalPages }}</span>
         </span>
         <span 
-          class="text-xs font-bold px-3 py-1 rounded-full border backdrop-blur-sm transition-colors" 
+          class="text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border backdrop-blur-sm transition-colors whitespace-nowrap shrink-0" 
           :class="darkMode
             ? 'bg-white/5 text-zinc-300 border-white/10'
             : 'bg-zinc-100 text-zinc-700 border-zinc-200'"

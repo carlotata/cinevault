@@ -74,9 +74,9 @@
               {{ watchlistCount }} {{ watchlistCount === 1 ? 'movie' : 'movies' }} in queue
             </p>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar whitespace-nowrap py-1 -mx-4 px-4 sm:mx-0 sm:px-0 w-full sm:w-auto min-w-0 max-w-full">
             <button 
-              class="px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-2 cursor-pointer"
+              class="shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 sm:gap-2 cursor-pointer whitespace-nowrap"
               :class="[
                 watchlistFilter === 'all'
                   ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
@@ -85,10 +85,13 @@
               @click="watchlistFilter = 'all'"
             >
               <i class="fa-solid fa-layer-group text-xs"></i>
-              <span>All ({{ watchlistCount }})</span>
+              <span>All</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full font-extrabold" :class="watchlistFilter === 'all' ? 'bg-black/20 text-black' : (darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')">
+                {{ watchlistCount }}
+              </span>
             </button>
             <button 
-              class="px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-2 cursor-pointer"
+              class="shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 sm:gap-2 cursor-pointer whitespace-nowrap"
               :class="[
                 watchlistFilter === 'plan_to_watch'
                   ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
@@ -97,10 +100,13 @@
               @click="watchlistFilter = 'plan_to_watch'"
             >
               <i class="fa-regular fa-clock text-xs"></i>
-              <span>Plan ({{ planToWatchCount }})</span>
+              <span>Plan</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full font-extrabold" :class="watchlistFilter === 'plan_to_watch' ? 'bg-black/20 text-black' : (darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')">
+                {{ planToWatchCount }}
+              </span>
             </button>
             <button 
-              class="px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-2 cursor-pointer"
+              class="shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 sm:gap-2 cursor-pointer whitespace-nowrap"
               :class="[
                 watchlistFilter === 'watching'
                   ? 'bg-sky-500 text-white border-sky-500 shadow-md shadow-sky-500/25 font-extrabold'
@@ -109,10 +115,13 @@
               @click="watchlistFilter = 'watching'"
             >
               <i class="fa-solid fa-play text-xs"></i>
-              <span>Watching ({{ watchingCount }})</span>
+              <span>Watching</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full font-extrabold" :class="watchlistFilter === 'watching' ? 'bg-black/20 text-white' : (darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')">
+                {{ watchingCount }}
+              </span>
             </button>
             <button 
-              class="px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-2 cursor-pointer"
+              class="shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 sm:gap-2 cursor-pointer whitespace-nowrap"
               :class="[
                 watchlistFilter === 'completed'
                   ? 'bg-emerald-500 text-black border-emerald-500 shadow-md shadow-emerald-500/25 font-extrabold'
@@ -121,7 +130,10 @@
               @click="watchlistFilter = 'completed'"
             >
               <i class="fa-solid fa-circle-check text-xs"></i>
-              <span>Completed ({{ watchedCount }})</span>
+              <span>Completed</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full font-extrabold" :class="watchlistFilter === 'completed' ? 'bg-black/20 text-black' : (darkMode ? 'bg-white/10 text-zinc-300' : 'bg-zinc-200 text-zinc-700')">
+                {{ watchedCount }}
+              </span>
             </button>
           </div>
         </section>
