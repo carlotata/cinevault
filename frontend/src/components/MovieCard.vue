@@ -4,12 +4,12 @@
     @click="$emit('open-details', movie)"
   >
     <!-- Poster Frame (Aspect 2:3) -->
-    <div class="relative w-full aspect-[2/3] rounded-2xl overflow-hidden bg-zinc-100 dark:bg-[#182030] border border-zinc-200/80 dark:border-white/5 shadow-md shadow-zinc-300/40 dark:shadow-black/40 group-hover:shadow-2xl group-hover:shadow-amber-500/10 group-hover:border-amber-500/40 transition-shadow duration-300">
+    <div class="relative w-full aspect-2/3 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-[#182030] border border-zinc-200/80 dark:border-white/5 shadow-md shadow-zinc-300/40 dark:shadow-black/40 group-hover:shadow-2xl group-hover:shadow-amber-500/10 group-hover:border-amber-500/40 transition-shadow duration-300">
       
       <!-- Shimmer Placeholder Skeleton -->
       <div 
         v-if="!imageLoaded && posterUrl" 
-        class="absolute inset-0 bg-gradient-to-r from-zinc-200 via-zinc-100 to-zinc-200 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 animate-pulse"
+        class="absolute inset-0 bg-linear-to-r from-zinc-200 via-zinc-100 to-zinc-200 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 animate-pulse"
       ></div>
 
       <!-- Poster Image with Smooth Fade-in -->
@@ -48,14 +48,14 @@
       </button>
 
       <!-- Hover Overlay Actions (Centered in poster - Never covering bottom status pill) -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 z-20 backdrop-blur-[2px]">
+      <div class="absolute inset-0 bg-linear-to-t from-black/85 via-black/45 to-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 z-20 backdrop-blur-[2px]">
         <button 
           class="group/btn w-10 h-10 rounded-full bg-black/70 hover:bg-amber-500 border border-white/20 hover:border-amber-500 flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-xl shadow-black/60 cursor-pointer"
           @click.stop="$emit('open-details', movie)" 
           title="View Details & Trailer"
           aria-label="View Details"
         >
-          <i class="fa-solid fa-circle-info text-base text-white group-hover/btn:!text-black transition-colors"></i>
+          <i class="fa-solid fa-circle-info text-base text-white group-hover/btn:text-black! transition-colors"></i>
         </button>
 
         <button 
@@ -71,7 +71,7 @@
         >
           <i 
             :class="[
-              isInWatchlist ? 'fa-solid fa-check text-black' : 'fa-solid fa-plus text-white group-hover/btn:!text-black'
+              isInWatchlist ? 'fa-solid fa-check text-black' : 'fa-solid fa-plus text-white group-hover/btn:text-black!'
             ]" 
             class="text-base transition-colors"
           ></i>
@@ -98,18 +98,18 @@
     <!-- Movie Details Below Poster -->
     <div class="pt-2.5 px-0.5 overflow-hidden w-full">
       <p 
-        class="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors truncate tracking-tight leading-snug !m-0 !p-0"
+        class="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors truncate tracking-tight leading-snug m-0! p-0!"
         :title="movie.title"
       >
         {{ movie.title }}
       </p>
       <div class="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-        <span class="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold flex-shrink-0">
+        <span class="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold shrink-0">
           <i class="fa-solid fa-star text-[10px]"></i>
           {{ formatRating(movie.vote_average) }}
         </span>
         <span class="text-zinc-400 dark:text-zinc-400 font-bold">·</span>
-        <span class="flex-shrink-0">{{ formatYear(movie.release_date) }}</span>
+        <span class="shrink-0">{{ formatYear(movie.release_date) }}</span>
         <span class="text-zinc-400 dark:text-zinc-400 font-bold">·</span>
         <span class="truncate text-zinc-500 dark:text-zinc-400">{{ primaryGenre }}</span>
       </div>

@@ -3,11 +3,11 @@
     <div 
       v-for="i in count" 
       :key="i"
-      class="flex flex-col gap-2 rounded-2xl bg-white/[0.02] p-2 overflow-hidden border border-white/5"
+      class="flex flex-col gap-2 rounded-2xl bg-white/2 p-2 overflow-hidden border border-white/5"
     >
       <!-- Poster Skeleton with Shimmer -->
-      <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden bg-[#111622]">
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent animate-[skeletonShimmer_1.8s_infinite] -translate-x-full"></div>
+      <div class="relative w-full aspect-2/3 rounded-xl overflow-hidden bg-surface-dark">
+        <div class="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent animate-[skeletonShimmer_1.8s_infinite] -translate-x-full"></div>
         <!-- Badge placeholders -->
         <div class="absolute top-2 left-2 w-10 h-5 rounded-md bg-white/10 animate-pulse"></div>
         <div class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/10 animate-pulse"></div>

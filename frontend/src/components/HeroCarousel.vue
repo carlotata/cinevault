@@ -21,9 +21,9 @@
         v-if="darkMode"
         class="absolute inset-0 pointer-events-none"
       >
-        <div class="absolute inset-0 bg-linear-to-t from-obsidian via-[#080b11]/70 via-45% to-transparent"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#080b11]/95 via-[#080b11]/60 via-50% to-transparent hidden sm:block"></div>
-        <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#080b11]/85 to-transparent"></div>
+        <div class="absolute inset-0 bg-linear-to-t from-obsidian via-obsidian/70 via-45% to-transparent"></div>
+        <div class="absolute inset-0 bg-linear-to-r from-obsidian/95vvia-obsidian/60via-50% to-transparent hidden sm:block"></div>
+        <div class="absolute inset-x-0 top-0 h-32 bg-linear-to-b from-obsidian/85 to-transparent"></div>
       </div>
 
       <!-- Light Mode Vignette Layer -->
@@ -31,9 +31,9 @@
         v-else
         class="absolute inset-0 pointer-events-none"
       >
-        <div class="absolute inset-0 bg-gradient-to-t from-[#f4f6fa] via-[#f4f6fa]/40 via-30% to-transparent"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#f4f6fa]/90 via-[#f4f6fa]/35 via-45% to-transparent hidden sm:block"></div>
-        <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#f4f6fa]/70 to-transparent"></div>
+        <div class="absolute inset-0 bg-linear-to-t from-[#f4f6fa] via-[#f4f6fa]/40 via-30% to-transparent"></div>
+        <div class="absolute inset-0 bg-linear-to-r from-[#f4f6fa]/90 via-[#f4f6fa]/35 via-45% to-transparent hidden sm:block"></div>
+        <div class="absolute inset-x-0 top-0 h-28 bg-linear-to-b from-[#f4f6fa]/70 to-transparent"></div>
       </div>
     </div>
 
@@ -61,12 +61,12 @@
     </button>
 
     <!-- Main Content Container -->
-    <div class="relative z-10 w-full max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 pb-10 sm:pb-16 pt-24">
+    <div class="relative z-10 w-full max-w-360 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 pb-10 sm:pb-16 pt-24">
       <div class="max-w-3xl lg:max-w-4xl xl:max-w-5xl">
         
         <!-- Big Bold Uppercase Title (Cinematic Display Typography) -->
         <h1 
-          class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-black uppercase tracking-tight leading-[0.98] break-words line-clamp-3 mb-3.5 transition-colors"
+          class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-black uppercase tracking-tight leading-[0.98] wrap-break-word line-clamp-3 mb-3.5 transition-colors"
           :class="darkMode ? 'text-white drop-shadow-2xl' : 'text-zinc-950 drop-shadow-sm'"
         >
           {{ currentMovie.title }}
@@ -118,7 +118,7 @@
           <button 
             class="h-12 px-7 rounded-full font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             :class="darkMode 
-              ? 'keep-white !bg-white hover:!bg-zinc-100 !text-zinc-950 font-black shadow-xl shadow-black/40' 
+              ? 'keep-white bg-white! hover:bg-zinc-100! text-zinc-950! font-black shadow-xl shadow-black/40' 
               : 'bg-zinc-950 hover:bg-black text-white shadow-xl shadow-zinc-950/20'"
             :style="darkMode ? { backgroundColor: '#ffffff', color: '#09090b' } : {}"
             @click="$emit('open-details', currentMovie)"

@@ -5,8 +5,8 @@
   >
     <!-- Shimmer Background -->
     <div 
-      class="absolute inset-0 bg-gradient-to-r from-transparent to-transparent animate-[skeletonShimmer_1.8s_infinite] -translate-x-full"
-      :class="darkMode ? 'via-white/[0.04]' : 'via-zinc-300/[0.3]'"
+      class="absolute inset-0 bg-linear-to-r from-transparent to-transparent animate-[skeletonShimmer_1.8s_infinite] -translate-x-full"
+      :class="darkMode ? 'via-white/4' : 'via-zinc-300/30'"
     ></div>
 
     <!-- Content Placeholder -->

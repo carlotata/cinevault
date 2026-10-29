@@ -2,28 +2,28 @@
   <header 
     class="fixed top-0 inset-x-0 z-40 w-full"
     :class="[
-      isScrolled
+      isScrolled || activeTab !== 'discover' || !!activeSearchQuery
         ? (darkMode
-            ? 'bg-[#080b11]/92 backdrop-blur-xl border-b border-white/10 shadow-xl shadow-black/50 text-white'
-            : 'bg-white/92 backdrop-blur-xl border-b border-zinc-200/90 shadow-sm text-zinc-900')
+            ? 'bg-obsidian/95 backdrop-blur-xl border-b border-white/10 shadow-xl shadow-black/50 text-white'
+            : 'bg-white/95 backdrop-blur-xl border-b border-zinc-200/90 shadow-sm text-zinc-900')
         : (isHeroBlended
             ? (darkMode
-                ? 'bg-gradient-to-b from-[#080b11]/90 via-[#080b11]/40 to-transparent border-none text-white shadow-none'
-                : 'bg-gradient-to-b from-[#f4f6fa]/95 via-[#f4f6fa]/50 to-transparent border-none text-zinc-900 shadow-none')
+                ? 'bg-linear-to-b from-obsidian/90 via-obsidian/40 to-transparent border-none text-white shadow-none'
+                : 'bg-linear-to-b from-[#f4f6fa]/95 via-[#f4f6fa]/50 to-transparent border-none text-zinc-900 shadow-none')
             : (darkMode
-                ? 'bg-transparent border-none text-white shadow-none'
-                : 'bg-transparent border-none text-zinc-900 shadow-none')
+                ? 'bg-obsidian/95 backdrop-blur-xl border-b border-white/10 text-white'
+                : 'bg-white/95 backdrop-blur-xl border-b border-zinc-200/90 text-zinc-900')
           )
     ]"
   >
-    <div class="w-full max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 h-16 sm:h-20 flex items-center justify-between gap-4">
+    <div class="w-full max-w-360 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 h-16 sm:h-20 flex items-center justify-between gap-4">
       
       <!-- Zone 1: Brand on Left -->
       <div 
         class="flex items-center gap-2 sm:gap-3 cursor-pointer select-none group shrink-0"
         @click="$emit('navigate', 'discover')"
       >
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-extrabold shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform duration-200">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-extrabold shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform duration-200">
           <i class="fa-solid fa-film text-base sm:text-lg"></i>
         </div>
         <div class="flex items-center gap-1.5 sm:gap-2">
@@ -44,7 +44,7 @@
         class="hidden md:flex items-center gap-1 p-1.5 rounded-full border backdrop-blur-md"
         :class="[
           darkMode
-            ? 'bg-white/[0.05] border-white/10 shadow-inner shadow-black/40'
+            ? 'bg-white/5 border-white/10 shadow-inner shadow-black/40'
             : 'bg-white/80 border-zinc-200/80 shadow-xs'
         ]"
       >
@@ -54,7 +54,7 @@
             activeTab === 'discover' && !activeSearchQuery
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
               : (darkMode
-                  ? 'text-zinc-300 hover:text-white hover:bg-white/[0.08]'
+                  ? 'text-zinc-300 hover:text-white hover:bg-white/8'
                   : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/70')
           ]"
           @click="$emit('navigate', 'discover')"
@@ -69,7 +69,7 @@
             activeTab === 'watchlist'
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
               : (darkMode
-                  ? 'text-zinc-300 hover:text-white hover:bg-white/[0.08]'
+                  ? 'text-zinc-300 hover:text-white hover:bg-white/8'
                   : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/70')
           ]"
           @click="$emit('navigate', 'watchlist')"
@@ -91,7 +91,7 @@
             activeTab === 'favorites'
               ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30 font-extrabold'
               : (darkMode
-                  ? 'text-zinc-300 hover:text-white hover:bg-white/[0.08]'
+                  ? 'text-zinc-300 hover:text-white hover:bg-white/8'
                   : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/70')
           ]"
           @click="$emit('navigate', 'favorites')"
@@ -116,7 +116,7 @@
           class="hidden sm:inline-flex items-center gap-2.5 h-10 px-4 rounded-full text-xs font-semibold transition-all border cursor-pointer"
           :class="[
             darkMode
-              ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/10'
+              ? 'bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border-white/10'
               : 'bg-white/80 hover:bg-white text-zinc-700 hover:text-zinc-950 border-zinc-200/80 shadow-xs'
           ]"
           @click="$emit('open-search')"
@@ -135,7 +135,7 @@
           class="sm:hidden w-9 h-9 rounded-full flex items-center justify-center text-sm transition-colors border cursor-pointer"
           :class="[
             darkMode
-              ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/10'
+              ? 'bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border-white/10'
               : 'bg-white/80 hover:bg-white text-zinc-700 hover:text-zinc-950 border-zinc-200/80 shadow-xs'
           ]"
           @click="$emit('open-search')"
@@ -149,7 +149,7 @@
           class="hidden md:flex w-10 h-10 rounded-full items-center justify-center text-sm border cursor-pointer transition-transform hover:scale-105 active:scale-95"
           :class="[
             darkMode
-              ? 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-amber-400 border-white/10'
+              ? 'bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-amber-400 border-white/10'
               : 'bg-white/80 hover:bg-white text-amber-600 hover:text-amber-700 border-zinc-200/80 shadow-xs'
           ]"
           @click="$emit('toggle-theme')" 
@@ -179,16 +179,16 @@
             class="inline-flex items-center gap-2 h-10 pl-1 pr-3 rounded-full text-xs font-bold transition-all border cursor-pointer"
             :class="[
               darkMode
-                ? 'bg-white/[0.04] hover:bg-white/[0.08] text-white border-white/5'
+                ? 'bg-white/4 hover:bg-white/8 text-white border-white/5'
                 : 'bg-white/80 hover:bg-white text-zinc-900 border-zinc-200/80 shadow-xs'
             ]"
             @click.stop="isUserMenuOpen = !isUserMenuOpen"
             aria-label="Account menu"
           >
-            <span class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-black font-extrabold flex items-center justify-center text-xs">
+            <span class="w-8 h-8 rounded-full bg-linear-to-br from-amber-400 to-amber-600 text-black font-extrabold flex items-center justify-center text-xs">
               {{ userInitial }}
             </span>
-            <span class="max-w-[100px] truncate hidden sm:inline" :class="darkMode ? 'text-zinc-200' : 'text-zinc-800'">{{ user.name }}</span>
+            <span class="max-w-25 truncate hidden sm:inline" :class="darkMode ? 'text-zinc-200' : 'text-zinc-800'">{{ user.name }}</span>
             <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="[{ 'rotate-180': isUserMenuOpen }, darkMode ? 'text-zinc-400' : 'text-zinc-500']"></i>
           </button>
 
@@ -197,7 +197,7 @@
             <div 
               v-if="isUserMenuOpen" 
               class="absolute right-0 mt-2 w-60 rounded-2xl p-2 z-50 backdrop-blur-2xl shadow-2xl transition-all"
-              :class="darkMode ? 'bg-[#111622] border border-white/10 shadow-black/80' : 'bg-white border border-zinc-200 shadow-zinc-400/20'"
+              :class="darkMode ? 'bg-surface-dark border border-white/10 shadow-black/80' : 'bg-white border border-zinc-200 shadow-zinc-400/20'"
             >
               <div class="px-3 py-2.5 border-b" :class="darkMode ? 'border-white/5' : 'border-zinc-100'">
                 <p class="text-xs font-bold truncate" :class="darkMode ? 'text-white' : 'text-zinc-900'">{{ user.name }}</p>
@@ -207,7 +207,7 @@
               <div class="pt-1.5 space-y-1">
                 <button 
                   class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-                  :class="darkMode ? 'text-zinc-300 hover:text-white hover:bg-white/[0.06]' : 'text-zinc-700 hover:text-zinc-950 hover:bg-zinc-100'"
+                  :class="darkMode ? 'text-zinc-300 hover:text-white hover:bg-white/6' : 'text-zinc-700 hover:text-zinc-950 hover:bg-zinc-100'"
                   @click="$emit('navigate', 'watchlist'); isUserMenuOpen = false"
                 >
                   <span class="flex items-center gap-2.5">
@@ -218,7 +218,7 @@
 
                 <button 
                   class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-                  :class="darkMode ? 'text-zinc-300 hover:text-white hover:bg-white/[0.06]' : 'text-zinc-700 hover:text-zinc-950 hover:bg-zinc-100'"
+                  :class="darkMode ? 'text-zinc-300 hover:text-white hover:bg-white/6' : 'text-zinc-700 hover:text-zinc-950 hover:bg-zinc-100'"
                   @click="$emit('navigate', 'favorites'); isUserMenuOpen = false"
                 >
                   <span class="flex items-center gap-2.5">
@@ -266,8 +266,8 @@
           @click.self="isMobileDrawerOpen = false"
         >
           <div 
-            class="w-[82vw] max-w-xs h-full h-dvh max-h-screen border-l p-5 flex flex-col justify-between shadow-2xl transition-colors overflow-y-auto no-scrollbar"
-            :class="darkMode ? 'bg-[#111622] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'"
+            class="w-[82vw] max-w-xs h-dvh max-h-screen border-l p-5 flex flex-col justify-between shadow-2xl transition-colors overflow-y-auto no-scrollbar"
+            :class="darkMode ? 'bg-surface-dark border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'"
           >
             <div>
               <!-- Drawer Header -->
@@ -281,7 +281,7 @@
                 </div>
                 <button 
                   class="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors cursor-pointer"
-                  :class="darkMode ? 'bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600'"
+                  :class="darkMode ? 'bg-white/6 hover:bg-white/10 text-zinc-300' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600'"
                   @click="isMobileDrawerOpen = false"
                   aria-label="Close menu"
                 >
@@ -295,7 +295,7 @@
                   class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
                   :class="activeTab === 'discover' && !activeSearchQuery 
                     ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
-                    : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
+                    : (darkMode ? 'text-zinc-300 hover:bg-white/5' : 'text-zinc-700 hover:bg-zinc-100')"
                   @click="$emit('navigate', 'discover'); isMobileDrawerOpen = false"
                 >
                   <span class="flex items-center gap-3">
@@ -307,7 +307,7 @@
                   class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
                   :class="activeTab === 'watchlist' 
                     ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
-                    : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
+                    : (darkMode ? 'text-zinc-300 hover:bg-white/5' : 'text-zinc-700 hover:bg-zinc-100')"
                   @click="$emit('navigate', 'watchlist'); isMobileDrawerOpen = false"
                 >
                   <span class="flex items-center gap-3">
@@ -322,7 +322,7 @@
                   class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
                   :class="activeTab === 'favorites' 
                     ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/25' 
-                    : (darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100')"
+                    : (darkMode ? 'text-zinc-300 hover:bg-white/5' : 'text-zinc-700 hover:bg-zinc-100')"
                   @click="$emit('navigate', 'favorites'); isMobileDrawerOpen = false"
                 >
                   <span class="flex items-center gap-3">
@@ -335,7 +335,7 @@
 
                 <button 
                   class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-                  :class="darkMode ? 'text-zinc-300 hover:bg-white/[0.05]' : 'text-zinc-700 hover:bg-zinc-100'"
+                  :class="darkMode ? 'text-zinc-300 hover:bg-white/5' : 'text-zinc-700 hover:bg-zinc-100'"
                   @click="$emit('open-search'); isMobileDrawerOpen = false"
                 >
                   <i class="fa-solid fa-magnifying-glass text-zinc-400"></i> Search Movies
@@ -344,7 +344,7 @@
                 <!-- Theme Mode Selector (Mobile Drawer) -->
                 <div class="pt-3 px-1">
                   <span class="text-[10px] font-black uppercase tracking-wider block mb-2" :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'">Appearance</span>
-                  <div class="grid grid-cols-3 gap-1 p-1 rounded-xl border" :class="darkMode ? 'bg-white/[0.04] border-white/5' : 'bg-zinc-100 border-zinc-200'">
+                  <div class="grid grid-cols-3 gap-1 p-1 rounded-xl border" :class="darkMode ? 'bg-white/4 border-white/5' : 'bg-zinc-100 border-zinc-200'">
                     <button 
                       class="py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       :class="themeMode === 'light' ? 'bg-amber-500 text-black shadow-sm font-extrabold' : (darkMode ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black')"
@@ -383,7 +383,7 @@
                 </button>
               </div>
               <div v-else class="space-y-2">
-                <div class="flex items-center gap-3 p-2 rounded-xl" :class="darkMode ? 'bg-white/[0.03]' : 'bg-zinc-100'">
+                <div class="flex items-center gap-3 p-2 rounded-xl" :class="darkMode ? 'bg-white/3' : 'bg-zinc-100'">
                   <div class="w-8 h-8 rounded-full bg-amber-500 text-black font-bold flex items-center justify-center text-xs">
                     {{ userInitial }}
                   </div>

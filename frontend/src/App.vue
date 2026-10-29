@@ -49,7 +49,7 @@
 
       <div 
         class="container content-wrapper"
-        :class="{ '!pt-28 sm:!pt-32 lg:!pt-36': activeTab !== 'discover' || activeSearchQuery || heroMovies.length === 0 }"
+        :class="activeTab !== 'discover' || activeSearchQuery || heroMovies.length === 0 ? 'pt-24 sm:pt-28 lg:pt-32' : 'pt-4 sm:pt-6'"
       >
 
         <!-- Active Search Banner -->
@@ -66,7 +66,7 @@
         <!-- Watchlist Header -->
         <section v-if="activeTab === 'watchlist'" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-5 border-b border-zinc-200 dark:border-white/5 mb-5">
           <div>
-            <h1 class="font-display !text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 !m-0">
+            <h1 class="font-display text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 m-0!">
               <i class="fa-solid fa-bookmark text-amber-500 text-base"></i>
               <span>My Watchlist</span>
             </h1>
@@ -80,7 +80,7 @@
               :class="[
                 watchlistFilter === 'all'
                   ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
-                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/4 dark:hover:bg-white/8 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
               ]"
               @click="watchlistFilter = 'all'"
             >
@@ -92,7 +92,7 @@
               :class="[
                 watchlistFilter === 'plan_to_watch'
                   ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
-                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/4 dark:hover:bg-white/8 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
               ]"
               @click="watchlistFilter = 'plan_to_watch'"
             >
@@ -104,7 +104,7 @@
               :class="[
                 watchlistFilter === 'watching'
                   ? 'bg-sky-500 text-white border-sky-500 shadow-md shadow-sky-500/25 font-extrabold'
-                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/4 dark:hover:bg-white/8 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
               ]"
               @click="watchlistFilter = 'watching'"
             >
@@ -116,7 +116,7 @@
               :class="[
                 watchlistFilter === 'completed'
                   ? 'bg-emerald-500 text-black border-emerald-500 shadow-md shadow-emerald-500/25 font-extrabold'
-                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
+                  : 'bg-zinc-100 hover:bg-zinc-200 dark:bg-white/4 dark:hover:bg-white/8 text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white border-zinc-200 dark:border-white/5'
               ]"
               @click="watchlistFilter = 'completed'"
             >
@@ -129,7 +129,7 @@
         <!-- Favorites Header -->
         <section v-if="activeTab === 'favorites'" class="py-5 border-b border-zinc-200 dark:border-white/5 mb-5">
           <div>
-            <h1 class="font-display !text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 !m-0">
+            <h1 class="font-display text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white tracking-tight flex items-center gap-2.5 m-0!">
               <i class="fa-solid fa-heart text-rose-500 text-base"></i>
               <span>Favorite Movies</span>
             </h1>
@@ -712,7 +712,7 @@ const handleNavigate = (tab) => {
   }
   closeDropdowns()
   updateUrlSlug()
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  window.scrollTo({ top: 0, behavior: 'instant' })
 }
 
 const setCategory = (catId) => {

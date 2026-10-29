@@ -7,12 +7,12 @@
         <button 
           v-for="cat in categories" 
           :key="cat.id"
-          class="flex-shrink-0 flex items-center gap-2 h-10 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
+          class="shrink-0 flex items-center gap-2 h-10 px-4 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
           :class="[
             currentCategory === cat.id && !activeSearchQuery
               ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/25 font-extrabold'
               : (darkMode 
-                  ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                  ? 'bg-white/4 hover:bg-white/8 text-zinc-300 hover:text-white border-white/5' 
                   : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
           ]"
           @click="$emit('select-category', cat.id)"
@@ -35,7 +35,7 @@
                     ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-extrabold' 
                     : 'bg-amber-50 text-amber-700 border-amber-400 font-extrabold shadow-xs')
                 : (darkMode 
-                    ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                    ? 'bg-white/4 hover:bg-white/8 text-zinc-300 hover:text-white border-white/5' 
                     : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
             ]"
             @click.stop="toggleDropdown('genre')"
@@ -49,13 +49,13 @@
             <div 
               v-if="activeDropdown === 'genre'" 
               class="absolute left-0 top-full mt-2 w-48 sm:w-56 max-h-64 overflow-y-auto rounded-2xl p-1.5 z-50 backdrop-blur-xl no-scrollbar border shadow-2xl transition-colors"
-              :class="darkMode ? 'bg-[#111622] border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
+              :class="darkMode ? 'bg-surface-dark border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
             >
               <div 
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 :class="selectedGenre === null 
                   ? 'bg-amber-500 text-black font-extrabold' 
-                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/8 hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectGenre(null)"
               >
                 <span>All Genres</span>
@@ -67,7 +67,7 @@
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 :class="selectedGenre === genre.id 
                   ? 'bg-amber-500 text-black font-extrabold' 
-                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/8 hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectGenre(genre.id)"
               >
                 <span>{{ genre.name }}</span>
@@ -87,7 +87,7 @@
                     ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-extrabold' 
                     : 'bg-amber-50 text-amber-700 border-amber-400 font-extrabold shadow-xs')
                 : (darkMode 
-                    ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                    ? 'bg-white/4 hover:bg-white/8 text-zinc-300 hover:text-white border-white/5' 
                     : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
             ]"
             @click.stop="toggleDropdown('rating')"
@@ -101,7 +101,7 @@
             <div 
               v-if="activeDropdown === 'rating'" 
               class="absolute left-1/2 -translate-x-1/2 md:translate-x-0 md:left-0 top-full mt-2 w-48 rounded-2xl p-1.5 z-50 backdrop-blur-xl border shadow-2xl transition-colors"
-              :class="darkMode ? 'bg-[#111622] border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
+              :class="darkMode ? 'bg-surface-dark border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
             >
               <div 
                 v-for="opt in [
@@ -114,7 +114,7 @@
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 :class="minRating === opt.val 
                   ? 'bg-amber-500 text-black font-extrabold' 
-                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/8 hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectRating(opt.val)"
               >
                 <span>{{ opt.label }}</span>
@@ -134,7 +134,7 @@
                     ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-extrabold' 
                     : 'bg-amber-50 text-amber-700 border-amber-400 font-extrabold shadow-xs')
                 : (darkMode 
-                    ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/5' 
+                    ? 'bg-white/4 hover:bg-white/8 text-zinc-300 hover:text-white border-white/5' 
                     : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-950 border-zinc-200/90 shadow-xs')
             ]"
             @click.stop="toggleDropdown('sort')"
@@ -148,7 +148,7 @@
             <div 
               v-if="activeDropdown === 'sort'" 
               class="absolute right-0 top-full mt-2 w-52 rounded-2xl p-1.5 z-50 backdrop-blur-xl border shadow-2xl transition-colors"
-              :class="darkMode ? 'bg-[#111622] border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
+              :class="darkMode ? 'bg-surface-dark border-white/10 text-white shadow-black/80' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl shadow-zinc-300/40'"
             >
               <div 
                 v-for="opt in [
@@ -161,7 +161,7 @@
                 class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 :class="sortBy === opt.key 
                   ? 'bg-amber-500 text-black font-extrabold' 
-                  : (darkMode ? 'text-zinc-300 hover:bg-white/[0.08] hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
+                  : (darkMode ? 'text-zinc-300 hover:bg-white/8 hover:text-white' : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950')"
                 @click.stop="selectSort(opt.key)"
               >
                 <span class="flex items-center gap-2">

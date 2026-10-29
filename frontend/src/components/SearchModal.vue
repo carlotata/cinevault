@@ -9,7 +9,7 @@
       <div 
         class="w-[94vw] sm:w-full max-w-lg max-h-[85dvh] flex flex-col rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative transition-all border overflow-hidden mx-auto"
         :class="darkMode 
-          ? 'bg-[#111622] border-white/10 text-white shadow-2xl shadow-black/80' 
+          ? 'bg-surface-dark border-white/10 text-white shadow-2xl shadow-black/80' 
           : 'bg-white border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-300/40'"
         role="dialog"
         aria-modal="true"
@@ -30,7 +30,7 @@
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </div>
             <h3 
-              class="font-display text-base sm:text-xl font-black tracking-tight !m-0"
+              class="font-display text-base sm:text-xl font-black tracking-tight m-0!"
               :class="darkMode ? 'text-white' : 'text-zinc-900'"
             >
               Search Movies
@@ -64,7 +64,7 @@
             <input 
               ref="searchInputRef"
               type="text" 
-              class="flex-1 min-w-0 bg-transparent text-xs sm:text-sm border-0 outline-none ring-0 focus:outline-none focus:ring-0 focus:border-0 !border-none !outline-none" 
+              class="flex-1 min-w-0 bg-transparent text-xs sm:text-sm border-none! outline-none! ring-0 focus:ring-0" 
               :class="darkMode 
                 ? 'text-white placeholder-zinc-500' 
                 : 'text-zinc-900 placeholder-zinc-400'"
@@ -113,7 +113,7 @@
                 :key="kw"
                 class="px-3 py-1 rounded-full text-xs font-semibold border transition-all cursor-pointer"
                 :class="darkMode 
-                  ? 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-amber-400 border-white/5' 
+                  ? 'bg-white/4 hover:bg-white/8 text-zinc-300 hover:text-amber-400 border-white/5' 
                   : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-amber-700 border-zinc-200'"
                 @click="quickSearch(kw)"
               >
@@ -147,7 +147,7 @@
                 :key="item.id || idx"
                 class="group flex items-center justify-between px-3 py-2 rounded-xl transition-colors cursor-pointer"
                 :class="darkMode 
-                  ? 'bg-transparent hover:bg-white/[0.04]' 
+                  ? 'bg-transparent hover:bg-white/4' 
                   : 'bg-transparent hover:bg-zinc-100'"
                 @click="quickSearch(item.query)"
               >

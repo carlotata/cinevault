@@ -8,7 +8,7 @@
       <div 
         class="w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-3xl p-6 sm:p-8 relative transition-all border no-scrollbar"
         :class="darkMode 
-          ? 'bg-[#111622] border-white/10 text-white shadow-2xl shadow-black/80' 
+          ? 'bg-surface-dark border-white/10 text-white shadow-2xl shadow-black/80' 
           : 'bg-white border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-300/40'"
         role="dialog" 
         aria-modal="true" 
@@ -28,12 +28,12 @@
 
         <!-- Brand Icon & Header -->
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-extrabold shadow-lg shadow-amber-500/25 shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-extrabold shadow-lg shadow-amber-500/25 shrink-0">
             <i class="fa-solid fa-film text-base"></i>
           </div>
           <div>
             <h3 
-              class="font-display text-xl font-bold tracking-tight !m-0"
+              class="font-display text-xl font-bold tracking-tight m-0!"
               :class="darkMode ? 'text-white' : 'text-zinc-900'"
             >
               {{ isLogin ? 'Welcome Back' : 'Create CineVault Account' }}
@@ -50,7 +50,7 @@
         <!-- Segmented Mode Toggle (Sign In / Create Account) -->
         <div 
           class="grid grid-cols-2 p-1 rounded-full mb-6 text-xs font-bold border"
-          :class="darkMode ? 'bg-white/[0.04] border-white/5' : 'bg-zinc-100 border-zinc-200'"
+          :class="darkMode ? 'bg-white/4 border-white/5' : 'bg-zinc-100 border-zinc-200'"
         >
           <button 
             type="button"

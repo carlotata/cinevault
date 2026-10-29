@@ -52,7 +52,7 @@
               :style="{ backgroundImage: `url('${getBackdropUrl(movie.backdrop_path)}')` }"
             >
               <div 
-                class="absolute inset-0 bg-gradient-to-t to-transparent"
+                class="absolute inset-0 bg-linear-to-t to-transparent"
                 :class="darkMode ? 'from-[#111622] via-[#111622]/40' : 'from-white via-white/50'"
               ></div>
               <div class="absolute inset-0 flex items-center justify-center">
@@ -71,7 +71,7 @@
               <div class="flex flex-col items-center md:items-start gap-4">
                 <!-- Poster Frame -->
                 <div 
-                  class="w-44 sm:w-52 md:w-full aspect-[2/3] rounded-2xl overflow-hidden border shadow-xl shadow-black/50"
+                  class="w-44 sm:w-52 md:w-full aspect-2/3 rounded-2xl overflow-hidden border shadow-xl shadow-black/50"
                   :class="darkMode ? 'bg-[#182030] border-white/10' : 'bg-zinc-100 border-zinc-200'"
                 >
                   <img 
@@ -91,70 +91,109 @@
 
                 <!-- Action Buttons Row -->
                 <div class="w-full flex flex-col gap-2.5">
-                  <!-- Add to Watchlist -->
-                  <button 
-                    class="w-full h-11 px-4 rounded-full font-bold text-xs flex items-center justify-center gap-2 border transition-all cursor-pointer shadow-md" 
-                    :class="[
-                      isInWatchlist(movie) 
-                        ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-amber-500/25' 
-                        : (darkMode 
-                            ? 'bg-white/10 hover:bg-white/15 text-white border-white/10' 
-                            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300')
-                    ]"
-                    @click="$emit('toggle-watchlist', movie)"
-                  >
-                    <i :class="isInWatchlist(movie) ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
-                    <span>{{ isInWatchlist(movie) ? 'In Watchlist' : 'Add to Watchlist' }}</span>
-                  </button>
+                  <div class="w-full grid grid-cols-2 md:flex md:flex-col gap-2.5">
+                    <!-- Add to Watchlist -->
+                    <button 
+                      class="w-full h-11 px-3 sm:px-4 rounded-full font-bold text-xs flex items-center justify-center gap-1.5 sm:gap-2 border transition-all cursor-pointer shadow-md" 
+                      :class="[
+                        isInWatchlist(movie) 
+                          ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-amber-500/25' 
+                          : (darkMode 
+                              ? 'bg-white/10 hover:bg-white/15 text-white border-white/10' 
+                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300')
+                      ]"
+                      @click="$emit('toggle-watchlist', movie)"
+                    >
+                      <i :class="isInWatchlist(movie) ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
+                      <span class="truncate">{{ isInWatchlist(movie) ? 'In Watchlist' : 'Watchlist' }}</span>
+                    </button>
 
-                  <!-- Favorite -->
-                  <button 
-                    class="w-full h-11 px-4 rounded-full font-bold text-xs flex items-center justify-center gap-2 border transition-all cursor-pointer shadow-md" 
-                    :class="[
-                      isFavorite(movie) 
-                        ? 'bg-rose-500 text-white border-rose-500 shadow-rose-500/25' 
-                        : (darkMode 
-                            ? 'bg-white/10 hover:bg-white/15 text-white border-white/10' 
-                            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300')
-                    ]"
-                    @click="$emit('toggle-favorite', movie)"
-                  >
-                    <i :class="isFavorite(movie) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
-                    <span>{{ isFavorite(movie) ? 'Favorited' : 'Add to Favorites' }}</span>
-                  </button>
+                    <!-- Favorite -->
+                    <button 
+                      class="w-full h-11 px-3 sm:px-4 rounded-full font-bold text-xs flex items-center justify-center gap-1.5 sm:gap-2 border transition-all cursor-pointer shadow-md" 
+                      :class="[
+                        isFavorite(movie) 
+                          ? 'bg-rose-500 text-white border-rose-500 shadow-rose-500/25' 
+                          : (darkMode 
+                              ? 'bg-white/10 hover:bg-white/15 text-white border-white/10' 
+                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300')
+                      ]"
+                      @click="$emit('toggle-favorite', movie)"
+                    >
+                      <i :class="isFavorite(movie) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+                      <span class="truncate">{{ isFavorite(movie) ? 'Favorited' : 'Favorite' }}</span>
+                    </button>
+                  </div>
 
-                  <!-- Watchlist Status Selector (Responsive Vertical Action List) -->
+                  <!-- Watchlist Status Selector -->
                   <div 
                     v-if="isInWatchlist(movie)" 
-                    class="w-full mt-2 p-3 rounded-2xl border transition-all"
+                    class="w-full mt-1 p-2.5 sm:p-3 rounded-2xl border transition-all"
                     :class="darkMode ? 'bg-black/40 border-white/5 shadow-inner' : 'bg-zinc-50 border-zinc-200 shadow-xs'"
                   >
+                    <!-- Header with title only (no redundant status badge) -->
                     <div 
-                      class="flex items-center justify-between text-[11px] font-black uppercase tracking-wider mb-2.5 px-0.5"
+                      class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider mb-2 px-0.5"
                       :class="darkMode ? 'text-zinc-400' : 'text-zinc-600'"
                     >
-                      <span class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-sliders text-[10px] text-amber-500"></i>
-                        <span>Watch Status</span>
-                      </span>
-                      <span 
-                        class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border"
-                        :class="[
-                          currentWatchStatus === 'completed' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : (currentWatchStatus === 'watching' ? 'bg-sky-500/20 text-sky-600 dark:text-sky-400 border-sky-500/30' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30')
-                        ]"
-                      >
-                        {{ getWatchStatusLabel(currentWatchStatus) }}
-                      </span>
+                      <i class="fa-solid fa-sliders text-[10px] text-amber-500"></i>
+                      <span>Watch Status</span>
                     </div>
 
-                    <div class="space-y-1.5 w-full">
+                    <!-- Mobile Segmented Bar (< md) -->
+                    <div class="grid grid-cols-3 gap-1.5 md:hidden w-full">
+                      <!-- Plan -->
+                      <button 
+                        type="button"
+                        class="h-9 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                        :class="currentWatchStatus === 'plan_to_watch' 
+                          ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-sm' 
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                        @click="$emit('set-watch-status', movie.id, 'plan_to_watch')"
+                        title="Plan to Watch"
+                      >
+                        <i class="fa-regular fa-clock text-[10px]"></i>
+                        <span>Plan</span>
+                      </button>
+
+                      <!-- Watching -->
+                      <button 
+                        type="button"
+                        class="h-9 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                        :class="currentWatchStatus === 'watching' 
+                          ? 'bg-sky-500 text-white border-sky-500 font-extrabold shadow-sm' 
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                        @click="$emit('set-watch-status', movie.id, 'watching')"
+                        title="Currently Watching"
+                      >
+                        <i class="fa-solid fa-play text-[10px]"></i>
+                        <span>Watching</span>
+                      </button>
+
+                      <!-- Completed -->
+                      <button 
+                        type="button"
+                        class="h-9 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                        :class="currentWatchStatus === 'completed' 
+                          ? 'bg-emerald-500 text-black border-emerald-500 font-extrabold shadow-sm' 
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                        @click="$emit('set-watch-status', movie.id, 'completed')"
+                        title="Watched / Completed"
+                      >
+                        <i class="fa-solid fa-circle-check text-[10px]"></i>
+                        <span>Done</span>
+                      </button>
+                    </div>
+
+                    <!-- Desktop Vertical List (md+) -->
+                    <div class="hidden md:flex flex-col space-y-1.5 w-full">
                       <!-- Plan to Watch Option -->
                       <button 
                         type="button"
                         class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'plan_to_watch' 
                           ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-sm' 
-                          : (darkMode ? 'bg-white/[0.04] text-zinc-300 border-white/5 hover:bg-white/[0.08] hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'plan_to_watch')"
                       >
                         <span class="flex items-center gap-2 truncate">
@@ -170,7 +209,7 @@
                         class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'watching' 
                           ? 'bg-sky-500 text-white border-sky-500 font-extrabold shadow-sm' 
-                          : (darkMode ? 'bg-white/[0.04] text-zinc-300 border-white/5 hover:bg-white/[0.08] hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'watching')"
                       >
                         <span class="flex items-center gap-2 truncate">
@@ -186,7 +225,7 @@
                         class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'completed' 
                           ? 'bg-emerald-500 text-black border-emerald-500 font-extrabold shadow-sm' 
-                          : (darkMode ? 'bg-white/[0.04] text-zinc-300 border-white/5 hover:bg-white/[0.08] hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'completed')"
                       >
                         <span class="flex items-center gap-2 truncate">
@@ -207,7 +246,7 @@
                 <!-- Title & Tagline -->
                 <div>
                   <h2 
-                    class="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight !m-0"
+                    class="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight m-0!"
                     :class="darkMode ? 'text-white' : 'text-zinc-900'"
                   >
                     {{ movie.title }}
@@ -254,7 +293,7 @@
                     v-for="genre in movieGenres" 
                     :key="genre"
                     class="px-3 py-1 rounded-full text-xs font-semibold border"
-                    :class="darkMode ? 'bg-white/[0.05] text-zinc-300 border-white/10' : 'bg-zinc-100 text-zinc-800 border-zinc-200 shadow-xs'"
+                    :class="darkMode ? 'bg-white/5 text-zinc-300 border-white/10' : 'bg-zinc-100 text-zinc-800 border-zinc-200 shadow-xs'"
                   >
                     {{ genre }}
                   </span>
@@ -263,7 +302,7 @@
                 <!-- Overview Synopsis -->
                 <div class="space-y-2 min-w-0 w-full">
                   <h4 
-                    class="text-xs font-black uppercase tracking-wider !m-0"
+                    class="text-xs font-black uppercase tracking-wider m-0!"
                     :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
                   >
                     Overview
@@ -300,14 +339,14 @@
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <h4 
-                        class="text-xs font-black uppercase tracking-wider !m-0"
+                        class="text-xs font-black uppercase tracking-wider m-0!"
                         :class="darkMode ? 'text-zinc-400' : 'text-zinc-500'"
                       >
                         Top Cast
                       </h4>
                       <span 
                         class="px-2 py-0.5 rounded-full text-[10px] font-bold border"
-                        :class="darkMode ? 'bg-white/[0.05] text-zinc-400 border-white/10' : 'bg-zinc-100 text-zinc-600 border-zinc-200'"
+                        :class="darkMode ? 'bg-white/5 text-zinc-400 border-white/10' : 'bg-zinc-100 text-zinc-600 border-zinc-200'"
                       >
                         {{ castList.length }}
                       </span>
@@ -319,7 +358,7 @@
                         type="button"
                         class="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer border shadow-xs disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
                         :disabled="isCastAtStart"
-                        :class="darkMode ? 'bg-white/[0.08] hover:bg-white/[0.18] text-white border-white/15' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'"
+                        :class="darkMode ? 'bg-white/8 hover:bg-white/18 text-white border-white/15' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'"
                         @click="scrollCast('left')"
                         aria-label="Scroll cast left"
                       >
@@ -329,7 +368,7 @@
                         type="button"
                         class="w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer border shadow-xs disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
                         :disabled="isCastAtEnd"
-                        :class="darkMode ? 'bg-white/[0.08] hover:bg-white/[0.18] text-white border-white/15' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'"
+                        :class="darkMode ? 'bg-white/8 hover:bg-white/18 text-white border-white/15' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'"
                         @click="scrollCast('right')"
                         aria-label="Scroll cast right"
                       >
@@ -356,8 +395,8 @@
                       <div 
                         v-for="person in castList" 
                         :key="person.id"
-                        class="flex-shrink-0 w-24 flex flex-col items-center text-center p-2 rounded-xl border transition-colors"
-                        :class="darkMode ? 'bg-white/[0.02] border-white/5 hover:border-white/10' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'"
+                        class="shrink-0 w-24 flex flex-col items-center text-center p-2 rounded-xl border transition-colors"
+                        :class="darkMode ? 'bg-white/2 border-white/5 hover:border-white/10' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'"
                       >
                         <div 
                           class="w-14 h-14 rounded-full overflow-hidden mb-2 border shrink-0"

@@ -11,7 +11,7 @@
           class="flex items-center gap-2.5 cursor-pointer select-none group" 
           @click="$emit('navigate', 'discover')"
         >
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-extrabold text-sm shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
+          <div class="w-8 h-8 rounded-lg bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-extrabold text-sm shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
             <i class="fa-solid fa-film"></i>
           </div>
           <span 

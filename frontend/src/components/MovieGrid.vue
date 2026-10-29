@@ -3,8 +3,8 @@
     <!-- Section Heading Row (Only displayed for Discover and Search to avoid duplicate titles on Watchlist/Favorites) -->
     <div v-if="activeTab !== 'watchlist' && activeTab !== 'favorites'" class="flex items-center justify-between gap-4 mb-6">
       <div class="flex items-center gap-3">
-        <span class="w-2 h-6 sm:h-7 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 shadow-md shadow-amber-500/30"></span>
-        <h2 class="font-display text-xl sm:text-2xl lg:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight !m-0 !p-0">
+        <span class="w-2 h-6 sm:h-7 rounded-full bg-linear-to-b from-amber-400 to-amber-600 shadow-md shadow-amber-500/30"></span>
+        <h2 class="font-display text-xl sm:text-2xl lg:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight m-0! p-0!">
           {{ title }}
         </h2>
       </div>
@@ -21,7 +21,7 @@
         <span 
           class="text-xs font-bold px-3 py-1 rounded-full border backdrop-blur-sm transition-colors" 
           :class="darkMode
-            ? 'bg-white/[0.05] text-zinc-300 border-white/10'
+            ? 'bg-white/5 text-zinc-300 border-white/10'
             : 'bg-zinc-100 text-zinc-700 border-zinc-200'"
         >
           {{ totalResults > 0 ? totalResults.toLocaleString() + ' Titles' : movies.length + ' Titles' }}
@@ -32,8 +32,8 @@
     <!-- Loading State Skeleton -->
     <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 lg:gap-5">
       <div v-for="i in 12" :key="i" class="flex flex-col">
-        <div class="relative w-full aspect-[2/3] rounded-2xl bg-zinc-200 dark:bg-zinc-900 border border-zinc-300 dark:border-white/5 overflow-hidden animate-pulse">
-          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-black/[0.04] dark:via-white/[0.04] to-transparent skeleton-shimmer"></div>
+        <div class="relative w-full aspect-2/3 rounded-2xl bg-zinc-200 dark:bg-zinc-900 border border-zinc-300 dark:border-white/5 overflow-hidden animate-pulse">
+          <div class="absolute inset-0 bg-linear-to-r from-transparent via-black/4 dark:via-white/4 to-transparent skeleton-shimmer"></div>
         </div>
         <div class="pt-2.5 px-0.5 space-y-1.5">
           <div class="h-3.5 bg-zinc-300 dark:bg-zinc-800 rounded w-3/4 animate-pulse"></div>
@@ -64,19 +64,19 @@
         <i class="fa-solid fa-film"></i>
       </div>
 
-      <h3 v-if="!isLoggedIn && activeTab === 'watchlist'" class="!text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white mb-2">
+      <h3 v-if="!isLoggedIn && activeTab === 'watchlist'" class="text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white mb-2">
         Sign in to Use Your Watchlist
       </h3>
-      <h3 v-else-if="!isLoggedIn && activeTab === 'favorites'" class="!text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white mb-2">
+      <h3 v-else-if="!isLoggedIn && activeTab === 'favorites'" class="text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white mb-2">
         Sign in to See Your Favorites
       </h3>
-      <h3 v-else-if="activeTab === 'watchlist'" class="!text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white mb-2">
+      <h3 v-else-if="activeTab === 'watchlist'" class="text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white mb-2">
         Your Watchlist is Empty
       </h3>
-      <h3 v-else-if="activeTab === 'favorites'" class="!text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white mb-2">
+      <h3 v-else-if="activeTab === 'favorites'" class="text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white mb-2">
         No Favorite Movies Yet
       </h3>
-      <h3 v-else class="!text-lg sm:!text-xl !font-bold text-zinc-900 dark:text-white mb-2">
+      <h3 v-else class="text-lg! sm:text-xl! font-bold! text-zinc-900 dark:text-white mb-2">
         No Movies Found
       </h3>
       
@@ -147,7 +147,7 @@
           @click="$emit('change-page', currentPage - 1)"
           class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           :class="darkMode 
-            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10' 
+            ? 'bg-white/4 hover:bg-white/9 text-zinc-300 hover:text-white border-white/10' 
             : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
           aria-label="Previous Page"
         >
@@ -171,7 +171,7 @@
               :class="p === currentPage 
                 ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/30' 
                 : darkMode 
-                  ? 'bg-white/[0.04] text-zinc-300 border-white/10' 
+                  ? 'bg-white/4 text-zinc-300 border-white/10' 
                   : 'bg-zinc-100 text-zinc-700 border-zinc-200'"
               :aria-current="p === currentPage ? 'page' : undefined"
             >
@@ -186,7 +186,7 @@
           @click="$emit('change-page', currentPage + 1)"
           class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           :class="darkMode 
-            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10' 
+            ? 'bg-white/4 hover:bg-white/9 text-zinc-300 hover:text-white border-white/10' 
             : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
           aria-label="Next Page"
         >
@@ -203,7 +203,7 @@
           @click="$emit('change-page', 1)"
           class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           :class="darkMode 
-            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            ? 'bg-white/4 hover:bg-white/9 text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
             : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
           title="First Page"
           aria-label="First Page"
@@ -218,7 +218,7 @@
           @click="$emit('change-page', currentPage - 1)"
           class="px-3 sm:px-3.5 h-9 sm:h-10 rounded-xl flex items-center gap-2 text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           :class="darkMode 
-            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            ? 'bg-white/4 hover:bg-white/9 text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
             : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
           aria-label="Previous Page"
         >
@@ -243,7 +243,7 @@
             :class="p === currentPage 
               ? 'bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/30' 
               : darkMode 
-                ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+                ? 'bg-white/4 hover:bg-white/9 text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
                 : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
             :aria-current="p === currentPage ? 'page' : undefined"
           >
@@ -258,7 +258,7 @@
           @click="$emit('change-page', currentPage + 1)"
           class="px-3 sm:px-3.5 h-9 sm:h-10 rounded-xl flex items-center gap-2 text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           :class="darkMode 
-            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            ? 'bg-white/4 hover:bg-white/9 text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
             : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
           aria-label="Next Page"
         >
@@ -273,7 +273,7 @@
           @click="$emit('change-page', totalPages)"
           class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all border cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           :class="darkMode 
-            ? 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
+            ? 'bg-white/4 hover:bg-white/9 text-zinc-300 hover:text-white border-white/10 hover:border-white/20' 
             : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 border-zinc-200'"
           title="Last Page"
           aria-label="Last Page"
