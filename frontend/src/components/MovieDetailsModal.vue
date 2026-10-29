@@ -14,7 +14,7 @@
           class="relative w-full max-w-4xl max-h-[92vh] sm:max-h-[90vh] border-t sm:border rounded-t-3xl sm:rounded-3xl overflow-y-auto block sm:my-auto no-scrollbar transition-all"
           :class="[
             darkMode
-              ? 'bg-[#111622] border-white/10 text-white shadow-2xl shadow-black/90'
+              ? 'bg-surface-dark border-white/10 text-white shadow-2xl shadow-black/90'
               : 'bg-white border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-400/20'
           ]"
         >
@@ -36,7 +36,7 @@
           </div>
 
           <!-- Video Trailer Player View or Backdrop Banner -->
-          <div class="relative w-full aspect-video max-h-[380px] bg-black overflow-hidden flex items-center justify-center">
+          <div class="relative w-full aspect-video max-h-95 bg-black overflow-hidden flex items-center justify-center">
             <div v-if="activeTrailerKey" class="w-full h-full">
               <iframe 
                 :src="`https://www.youtube.com/embed/${activeTrailerKey}?autoplay=${isTrailerPlaying ? 1 : 0}&rel=0`"
@@ -53,7 +53,7 @@
             >
               <div 
                 class="absolute inset-0 bg-linear-to-t to-transparent"
-                :class="darkMode ? 'from-[#111622] via-[#111622]/40' : 'from-white via-white/50'"
+                :class="darkMode ? 'from-surface-dark via-surface-dark/40' : 'from-white via-white/50'"
               ></div>
               <div class="absolute inset-0 flex items-center justify-center">
                 <span class="px-4 py-2 rounded-full bg-black/60 text-zinc-300 text-xs font-semibold backdrop-blur-md border border-white/10">
@@ -65,14 +65,14 @@
 
           <!-- Modal Body Content -->
           <div class="p-5 sm:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] gap-6 sm:gap-8 items-start min-w-0">
+            <div class="grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-6 sm:gap-8 items-start min-w-0">
               
               <!-- Left Column: Poster & Quick Action Buttons -->
               <div class="flex flex-col items-center md:items-start gap-4">
                 <!-- Poster Frame -->
                 <div 
                   class="w-44 sm:w-52 md:w-full aspect-2/3 rounded-2xl overflow-hidden border shadow-xl shadow-black/50"
-                  :class="darkMode ? 'bg-[#182030] border-white/10' : 'bg-zinc-100 border-zinc-200'"
+                  :class="darkMode ? 'bg-surface-card border-white/10' : 'bg-zinc-100 border-zinc-200'"
                 >
                   <img 
                     v-if="movie.poster_path" 
@@ -128,111 +128,111 @@
                   <!-- Watchlist Status Selector -->
                   <div 
                     v-if="isInWatchlist(movie)" 
-                    class="w-full mt-1 p-2.5 sm:p-3 rounded-2xl border transition-all"
+                    class="w-full mt-3 p-3.5 sm:p-4 rounded-2xl border transition-all"
                     :class="darkMode ? 'bg-black/40 border-white/5 shadow-inner' : 'bg-zinc-50 border-zinc-200 shadow-xs'"
                   >
-                    <!-- Header with title only (no redundant status badge) -->
+                    <!-- Header with title only -->
                     <div 
-                      class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider mb-2 px-0.5"
+                      class="flex items-center gap-2 text-xs font-black uppercase tracking-wider mb-3 px-0.5"
                       :class="darkMode ? 'text-zinc-400' : 'text-zinc-600'"
                     >
-                      <i class="fa-solid fa-sliders text-[10px] text-amber-500"></i>
+                      <i class="fa-solid fa-sliders text-xs text-amber-500"></i>
                       <span>Watch Status</span>
                     </div>
 
                     <!-- Mobile Segmented Bar (< md) -->
-                    <div class="grid grid-cols-3 gap-1.5 md:hidden w-full">
+                    <div class="grid grid-cols-3 gap-2 md:hidden w-full">
                       <!-- Plan -->
                       <button 
                         type="button"
-                        class="h-9 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                        class="h-10 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'plan_to_watch' 
                           ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-sm' 
                           : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'plan_to_watch')"
                         title="Plan to Watch"
                       >
-                        <i class="fa-regular fa-clock text-[10px]"></i>
+                        <i class="fa-regular fa-clock text-xs"></i>
                         <span>Plan</span>
                       </button>
 
                       <!-- Watching -->
                       <button 
                         type="button"
-                        class="h-9 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                        class="h-10 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'watching' 
                           ? 'bg-sky-500 text-white border-sky-500 font-extrabold shadow-sm' 
                           : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'watching')"
                         title="Currently Watching"
                       >
-                        <i class="fa-solid fa-play text-[10px]"></i>
+                        <i class="fa-solid fa-play text-xs"></i>
                         <span>Watching</span>
                       </button>
 
                       <!-- Completed -->
                       <button 
                         type="button"
-                        class="h-9 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1 border transition-all cursor-pointer"
+                        class="h-10 px-1 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'completed' 
                           ? 'bg-emerald-500 text-black border-emerald-500 font-extrabold shadow-sm' 
                           : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
                         @click="$emit('set-watch-status', movie.id, 'completed')"
                         title="Watched / Completed"
                       >
-                        <i class="fa-solid fa-circle-check text-[10px]"></i>
+                        <i class="fa-solid fa-circle-check text-xs"></i>
                         <span>Done</span>
                       </button>
                     </div>
 
                     <!-- Desktop Vertical List (md+) -->
-                    <div class="hidden md:flex flex-col space-y-1.5 w-full">
+                    <div class="hidden md:flex flex-col space-y-2.5 w-full">
                       <!-- Plan to Watch Option -->
                       <button 
                         type="button"
-                        class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
+                        class="w-full h-11 px-3.5 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'plan_to_watch' 
-                          ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-sm' 
-                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                          ? 'bg-amber-500 text-black border-amber-500 font-extrabold shadow-md shadow-amber-500/20' 
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950 shadow-xs')"
                         @click="$emit('set-watch-status', movie.id, 'plan_to_watch')"
                       >
-                        <span class="flex items-center gap-2 truncate">
-                          <i class="fa-regular fa-clock text-[11px]"></i>
-                          <span>Plan to Watch</span>
+                        <span class="flex items-center gap-2.5 truncate">
+                          <i class="fa-regular fa-clock text-xs shrink-0" :class="currentWatchStatus === 'plan_to_watch' ? 'text-black' : 'text-amber-500'"></i>
+                          <span class="truncate">Plan to Watch</span>
                         </span>
-                        <i v-if="currentWatchStatus === 'plan_to_watch'" class="fa-solid fa-check text-xs"></i>
+                        <i v-if="currentWatchStatus === 'plan_to_watch'" class="fa-solid fa-check text-xs shrink-0"></i>
                       </button>
 
                       <!-- Currently Watching Option -->
                       <button 
                         type="button"
-                        class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
+                        class="w-full h-11 px-3.5 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'watching' 
-                          ? 'bg-sky-500 text-white border-sky-500 font-extrabold shadow-sm' 
-                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                          ? 'bg-sky-500 text-white border-sky-500 font-extrabold shadow-md shadow-sky-500/25' 
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950 shadow-xs')"
                         @click="$emit('set-watch-status', movie.id, 'watching')"
                       >
-                        <span class="flex items-center gap-2 truncate">
-                          <i class="fa-solid fa-play text-[11px]"></i>
-                          <span>Currently Watching</span>
+                        <span class="flex items-center gap-2.5 truncate">
+                          <i class="fa-solid fa-play text-xs shrink-0" :class="currentWatchStatus === 'watching' ? 'text-white' : 'text-sky-400'"></i>
+                          <span class="truncate">Currently Watching</span>
                         </span>
-                        <i v-if="currentWatchStatus === 'watching'" class="fa-solid fa-check text-xs"></i>
+                        <i v-if="currentWatchStatus === 'watching'" class="fa-solid fa-check text-xs shrink-0"></i>
                       </button>
 
                       <!-- Watched / Completed Option -->
                       <button 
                         type="button"
-                        class="w-full h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
+                        class="w-full h-11 px-3.5 rounded-xl text-xs font-bold flex items-center justify-between border transition-all cursor-pointer"
                         :class="currentWatchStatus === 'completed' 
-                          ? 'bg-emerald-500 text-black border-emerald-500 font-extrabold shadow-sm' 
-                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950')"
+                          ? 'bg-emerald-500 text-black border-emerald-500 font-extrabold shadow-md shadow-emerald-500/20' 
+                          : (darkMode ? 'bg-white/4 text-zinc-300 border-white/5 hover:bg-white/8 hover:text-white' : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950 shadow-xs')"
                         @click="$emit('set-watch-status', movie.id, 'completed')"
                       >
-                        <span class="flex items-center gap-2 truncate">
-                          <i class="fa-solid fa-circle-check text-[11px]"></i>
-                          <span>Watched / Completed</span>
+                        <span class="flex items-center gap-2.5 truncate">
+                          <i class="fa-solid fa-circle-check text-xs shrink-0" :class="currentWatchStatus === 'completed' ? 'text-black' : 'text-emerald-500'"></i>
+                          <span class="truncate">Completed</span>
                         </span>
-                        <i v-if="currentWatchStatus === 'completed'" class="fa-solid fa-check text-xs"></i>
+                        <i v-if="currentWatchStatus === 'completed'" class="fa-solid fa-check text-xs shrink-0"></i>
                       </button>
                     </div>
                   </div>
